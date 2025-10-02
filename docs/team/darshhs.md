@@ -1,4 +1,4 @@
-# John Doe - Project Portfolio Page
+# Darshana Suresh - Project Portfolio Page
 
 ## Overview
 
