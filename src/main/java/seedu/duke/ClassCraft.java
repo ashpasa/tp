@@ -22,7 +22,7 @@ public class ClassCraft {
                 "                                                                                                       ";
 
         System.out.println("Hello from\n" + logo);
-        System.out.println("What is your name?");
+        System.out.println("Input your command! Type 'help' if you need assistance.");
 
         String end_line = "end";
         Scanner in = new Scanner(System.in);

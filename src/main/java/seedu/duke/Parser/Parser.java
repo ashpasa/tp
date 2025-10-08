@@ -1,47 +1,131 @@
 package seedu.duke.Parser;
 
 import seedu.duke.Command.Command;
+import seedu.duke.Command.CommandList;
+import seedu.duke.Command.CommandList.*;
+import seedu.duke.Command.ExitCommand;
 import seedu.duke.Command.HelpCommand;
 import seedu.duke.Exceptions.InvalidCommand;
 
+
+
 public class Parser {
-    public String commandType;
+    private String commandType;
+    private String userInputString;
+    private String userInstructions;
 
     public Parser(String userInput) {
-        this.commandType = userInput;
+        this.userInputString = userInput;
+        parseInstructions();
     }
 
     public Command parseInput() {
-        String command = commandType.toLowerCase();
-        switch (command) {
+        switch (commandType) {
         case "help":
             return new HelpCommand();
-//        case "add":
-//            System.out.println("Bye. Hope to see you again soon!");
-//        case "delete":
-//            System.out.println("Bye. Hope to see you again soon!");
-//        case "confirm":
-//            System.out.println("Bye. Hope to see you again soon!");
-//        case "view":
-//            System.out.println("Bye. Hope to see you again soon!");
-//        case "exit":
-//            System.out.println("Bye. Hope to see you again soon!");
+        case "add":
+            String[] addModule = parseAdd();
+            return new InvalidCommand();
+            //return new AddCommand(addModule);
+        case "delete":
+            String deleteModule = parseDelete();
+            return new InvalidCommand();
+            //return new DeleteModule(deleteModule);
+        case "confirm":
+//            parseConfirm();
+            return new InvalidCommand();
+            //return new ConfirmCommand();
+        case "view":
+            String viewItems = parseView();
+            return new InvalidCommand();
+            //return new ViewCommand(viewItems);
+        case "exit":
+            return new ExitCommand();
         default:
             return new InvalidCommand();
         }
     }
 
-    public void parseHelp() {
-        String userHelp = "Hi there, do you require help?\n"
-                + "Here are the list of commands you can use:\n"
-                + "1. add - to add a task\n"
-                + "2. delete - to delete a task\n"
-                + "3. confirm - to mark a task as done\n"
-                + "4. view - to view all tasks\n"
-                + "5. exit - to exit the program\n"
-                + "6. help - to view this message again";
-        System.out.println(userHelp);
+
+    public void parseInstructions() {
+        String[] instructions = userInputString.split(" ", 2);
+
+        if (!CommandList.isFound(instructions[0])) {
+            System.out.println("Command not found");
+            this.commandType = "invalid";
+            return;
+        }
+
+        try {
+            if (instructions.length == 1) {
+                if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("confirm"))) {
+                    throw new IllegalArgumentException("OOPS!!! The description of a " + instructions[0] + " cannot be empty.");
+                }
+                this.commandType = instructions[0];
+            } else if (instructions.length == 2) {
+                if (instructions[1].isEmpty() ) {
+                    throw new IllegalArgumentException("OOPS!!! The description of a " + instructions[0] + " cannot be empty.");
+                }
+                this.commandType = instructions[0];
+                this.userInstructions = instructions[1];
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            this.commandType = "invalid";
+        }
     }
+
+
+    public String[] parseAdd() {
+        String[] addModuleInformation = new String[2];
+        try {
+            String[] addInstructions = userInstructions.split("s/", 2);
+            String moduleCode = addInstructions[0].split("n/", 2)[1].trim();
+            String semester = addInstructions[1].trim();
+            addModuleInformation[0] = moduleCode;
+            addModuleInformation[1] = semester;
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            System.out.println("Error: Invalid input format. Please enter input in the correct format (e.g.add n/CG2111A s/2). ");
+            return new String[0];
+        }
+        return addModuleInformation;
+
+    }
+
+    public String parseDelete() {
+        String deleteModuleInformation;
+        try {
+            String moduleCode = userInstructions.split(" ", 2)[0].trim();
+            deleteModuleInformation = moduleCode;
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            System.out.println("Error: Invalid input format. Please enter input in the correct format (e.g.delete CG2111A).");
+            return "";
+        }
+        return deleteModuleInformation;
+    }
+
+
+    public String parseView() {
+        String viewItemsInformation;
+        try {
+            String viewInstructions = userInstructions.split(" ", 2)[0].trim().toLowerCase();
+
+            if (viewInstructions.equals("plan")) {
+                viewItemsInformation = "plan";
+            } else if (viewInstructions.equals("grad")) {
+                viewItemsInformation = "grad";
+            } else if (viewInstructions.equals("sample")) {
+                viewItemsInformation = "sample";
+            } else {
+                throw new IllegalArgumentException("OOPS!!! The description of a view command must be either plan, grad or sample.");
+            }
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
+            System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
+            return "";
+        }
+        return viewItemsInformation;
+    }
+
 
 
 }
