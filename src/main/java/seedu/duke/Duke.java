@@ -1,7 +1,6 @@
 package seedu.duke;
 
 import java.util.Scanner;
-import seedu.duke.NUSmodsFetcher.NUSmodsFetcher;
 
 public class Duke {
     /**
@@ -19,15 +18,5 @@ public class Duke {
         Scanner in = new Scanner(System.in);
         System.out.println("Hello " + in.nextLine());
         in.close();
-    }
-
-    private static void fetchModuleData(String moduleCode) {
-        try {
-        String description = NUSmodsFetcher.getModuleDescription(moduleCode);
-        System.out.println(description);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-        }
     }
 }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 
 // Fetches module information from NUSMods API, returns data as strings
-public class NUSmodsFetcher {
+public abstract class NUSmodsFetcher {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -40,9 +40,21 @@ public class NUSmodsFetcher {
         return root.get("department").asText();
     }
 
+    // Get faculty
+    public static String getFaculty(String moduleCode) throws Exception {
+        JsonNode root = fetchModuleJson(moduleCode);
+        return root.get("faculty").asText();
+    }
+
     // Get module description
     public static String getModuleDescription(String moduleCode) throws Exception {
         JsonNode root = fetchModuleJson(moduleCode);
         return root.get("description").asText();
+    }
+
+    // Get module prerequisites
+    public static String getModulePrerequisites(String moduleCode) throws Exception {
+        JsonNode root = fetchModuleJson(moduleCode);
+        return root.get("prerequisite").asText();
     }
 }
