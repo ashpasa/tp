@@ -1,12 +1,14 @@
 package seedu.duke;
 
+import seedu.duke.NUSmodsFetcher.NUSmodsFetcher;
+
 import java.util.HashMap;
 
 /**
  * Handles the storage and creation of Module classes
  * Stores a HashMap with modCode: Module as key value pair
  */
-public class ModuleHandler {
+public class ModuleHandler extends NUSmodsFetcher {
     private HashMap<String, Module> modules;
 
 
