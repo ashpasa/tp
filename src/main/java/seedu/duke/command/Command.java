@@ -1,6 +1,4 @@
-package seedu.duke.Command;
-
-import java.util.ArrayList;
+package seedu.duke.command;
 
 public abstract class Command {
 

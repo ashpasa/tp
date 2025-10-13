@@ -1,11 +1,10 @@
-package seedu.duke.Parser;
+package seedu.duke.parser;
 
-import seedu.duke.Command.Command;
-import seedu.duke.Command.CommandList;
-import seedu.duke.Command.CommandList.*;
-import seedu.duke.Command.ExitCommand;
-import seedu.duke.Command.HelpCommand;
-import seedu.duke.Exceptions.InvalidCommand;
+import seedu.duke.command.Command;
+import seedu.duke.command.CommandList;
+import seedu.duke.command.ExitCommand;
+import seedu.duke.command.HelpCommand;
+import seedu.duke.exceptions.InvalidCommand;
 
 
 

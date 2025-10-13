@@ -1,8 +1,8 @@
 package seedu.duke;
 
 import java.util.Scanner;
-import seedu.duke.Parser.Parser;
-import seedu.duke.Command.Command;
+import seedu.duke.parser.Parser;
+import seedu.duke.command.Command;
 
 public class Duke {
     /**

@@ -1,4 +1,4 @@
-package seedu.duke.Command;
+package seedu.duke.command;
 
 public enum CommandList {
     help, add, delete, view,  exit, confirm;

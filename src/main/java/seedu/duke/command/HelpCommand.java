@@ -1,4 +1,4 @@
-package seedu.duke.Command;
+package seedu.duke.command;
 
 public class HelpCommand extends Command{
     public HelpCommand() {
