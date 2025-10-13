@@ -32,7 +32,6 @@ public class Parser {
             return new InvalidCommand();
             //return new DeleteModule(deleteModule);
         case "confirm":
-//            parseConfirm();
             return new InvalidCommand();
             //return new ConfirmCommand();
         case "view":
