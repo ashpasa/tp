@@ -39,7 +39,7 @@ public class Duke {
 
         String userInput = "";
 
-        while (!"end".equals(userInput)) {
+        while (!"exit".equals(userInput)) {
 
             userInput = in.nextLine();
             Parser parser = new Parser(userInput);
