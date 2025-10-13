@@ -1,6 +1,6 @@
 package seedu.duke.command;
 
-public class ExitCommand extends Command{
+public class ExitCommand extends Command {
     public ExitCommand() {
         super();
     }

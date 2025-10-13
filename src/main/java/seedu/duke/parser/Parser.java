@@ -7,7 +7,6 @@ import seedu.duke.command.HelpCommand;
 import seedu.duke.exceptions.InvalidCommand;
 
 
-
 public class Parser {
     private String commandType;
     private String userInputString;
@@ -25,18 +24,18 @@ public class Parser {
         case "add":
             String[] addModule = parseAdd();
             return new InvalidCommand();
-            //return new AddCommand(addModule);
+        //return new AddCommand(addModule);
         case "delete":
             String deleteModule = parseDelete();
             return new InvalidCommand();
-            //return new DeleteModule(deleteModule);
+        //return new DeleteModule(deleteModule);
         case "confirm":
             return new InvalidCommand();
-            //return new ConfirmCommand();
+        //return new ConfirmCommand();
         case "view":
             String viewItems = parseView();
             return new InvalidCommand();
-            //return new ViewCommand(viewItems);
+        //return new ViewCommand(viewItems);
         case "exit":
             return new ExitCommand();
         default:
@@ -56,13 +55,16 @@ public class Parser {
 
         try {
             if (instructions.length == 1) {
-                if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("confirm"))) {
-                    throw new IllegalArgumentException("OOPS!!! The description of a " + instructions[0] + " cannot be empty.");
+                if (!(instructions[0].equals("help") || instructions[0].equals("exit")
+                        || instructions[0].equals("confirm"))) {
+                    throw new IllegalArgumentException("OOPS!!! The description of a " +
+                            instructions[0] + " cannot be empty.");
                 }
                 this.commandType = instructions[0];
             } else if (instructions.length == 2) {
-                if (instructions[1].isEmpty() ) {
-                    throw new IllegalArgumentException("OOPS!!! The description of a " + instructions[0] + " cannot be empty.");
+                if (instructions[1].isEmpty()) {
+                    throw new IllegalArgumentException("OOPS!!! The description of a " +
+                            instructions[0] + " cannot be empty.");
                 }
                 this.commandType = instructions[0];
                 this.userInstructions = instructions[1];
@@ -83,7 +85,8 @@ public class Parser {
             addModuleInformation[0] = moduleCode;
             addModuleInformation[1] = semester;
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
-            System.out.println("Error: Invalid input format. Please enter input in the correct format (e.g.add n/CG2111A s/2). ");
+            System.out.println("Error: Invalid input format. Please enter input in " +
+                    "the correct format (e.g.add n/CG2111A s/2). ");
             return new String[0];
         }
         return addModuleInformation;
@@ -96,7 +99,8 @@ public class Parser {
             String moduleCode = userInstructions.split(" ", 2)[0].trim();
             deleteModuleInformation = moduleCode;
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
-            System.out.println("Error: Invalid input format. Please enter input in the correct format (e.g.delete CG2111A).");
+            System.out.println("Error: Invalid input format. Please enter " +
+                    "input in the correct format (e.g.delete CG2111A).");
             return "";
         }
         return deleteModuleInformation;
@@ -115,7 +119,8 @@ public class Parser {
             } else if (viewInstructions.equals("sample")) {
                 viewItemsInformation = "sample";
             } else {
-                throw new IllegalArgumentException("OOPS!!! The description of a view command must be either plan, grad or sample.");
+                throw new IllegalArgumentException("OOPS!!! The description of a view " +
+                        "command must be either plan, grad or sample.");
             }
         } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
             System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
@@ -123,7 +128,6 @@ public class Parser {
         }
         return viewItemsInformation;
     }
-
 
 
 }
