@@ -19,3 +19,4 @@ public record StudyPlanEntry(
         return "Year " + year + " Sem " + semester;
     }
 }
+
