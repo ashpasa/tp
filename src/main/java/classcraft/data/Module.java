@@ -1,7 +1,5 @@
 package classcraft.data;
 
-import java.util.Objects;
-
 /**
  * Represents a single academic module (e.g., CS1010, MA1511).
  * This is the fundamental data unit shared across all DM components.

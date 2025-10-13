@@ -13,6 +13,7 @@ public class StudyPlan {
 
     /**
      * Constructor for creating a new StudyPlan.
+     *
      * @param planName The name of the study plan.
      */
     public StudyPlan(String planName) {
@@ -24,6 +25,7 @@ public class StudyPlan {
 
     /**
      * Adds a scheduled module entry to the study plan.
+     *
      * @param entry The StudyPlanEntry to add.
      */
     public void addEntry(StudyPlanEntry entry) {
@@ -33,6 +35,7 @@ public class StudyPlan {
     /**
      * Removes a specific module entry from the study plan based on the Module code.
      * Note: A more robust implementation might require year/semester for uniqueness.
+     *
      * @param moduleCode The module code to remove (e.g., "CS1010").
      * @return true if an entry was removed, false otherwise.
      */
@@ -48,6 +51,7 @@ public class StudyPlan {
 
     /**
      * Returns an unmodifiable list of all scheduled module entries.
+     *
      * @return A list of StudyPlanEntry objects.
      */
     public List<StudyPlanEntry> getEntries() {

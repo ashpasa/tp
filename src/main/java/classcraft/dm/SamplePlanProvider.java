@@ -1,11 +1,12 @@
 package classcraft.dm;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import classcraft.data.*;
+
+import classcraft.data.GraduationRequirements;
 import classcraft.data.Module;
+import classcraft.data.StudyPlan;
+import classcraft.data.StudyPlanEntry;
 
 /**
  * SamplePlanProvider: Responsible for creating and storing static data models,
@@ -73,6 +74,7 @@ public class SamplePlanProvider {
 
     /**
      * Returns the pre-made sample study plan for viewing.
+     *
      * @return The static sample StudyPlan instance.
      */
     public static StudyPlan getSampleStudyPlan() {
@@ -81,6 +83,7 @@ public class SamplePlanProvider {
 
     /**
      * Returns the default CEG graduation requirements.
+     *
      * @return The static GraduationRequirements instance.
      */
     public static GraduationRequirements getDefaultCEGRequirements() {
@@ -88,5 +91,6 @@ public class SamplePlanProvider {
     }
 
     // Prevents instantiation of the utility class
-    private SamplePlanProvider() {}
+    private SamplePlanProvider() {
+    }
 }

@@ -15,8 +15,9 @@ public class GraduationRequirements {
 
     /**
      * Constructor for GraduationRequirements.
+     *
      * @param totalRequiredMCs The overall minimum MCs.
-     * @param categoryMCs A map detailing minimum MCs for each requirement category.
+     * @param categoryMCs      A map detailing minimum MCs for each requirement category.
      */
     public GraduationRequirements(int totalRequiredMCs, Map<String, Integer> categoryMCs) {
         this.totalRequiredMCs = totalRequiredMCs;
@@ -30,6 +31,7 @@ public class GraduationRequirements {
 
     /**
      * Returns an unmodifiable map of category MC requirements.
+     *
      * @return A map where keys are requirement types and values are minimum MCs.
      */
     public Map<String, Integer> getCategoryMCs() {

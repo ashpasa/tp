@@ -1,6 +1,5 @@
 package classcraft.data;
 
-import java.util.Objects;
 
 /**
  * Represents a module placed within a specific academic semester.
@@ -13,6 +12,7 @@ public record StudyPlanEntry(
 ) {
     /**
      * Helper method to generate a human-readable display string for the semester.
+     *
      * @return A string like "Year 1 Sem 1".
      */
     public String getSemesterDisplay() {
