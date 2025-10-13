@@ -41,11 +41,13 @@ class SamplePlanProviderTest {
         assertNotNull(samplePlan, "SamplePlanProvider should successfully initialize the sample study plan.");
 
         // 2. Check if the plan has the expected name
-        assertEquals("Sample CEG 4-Year Plan", samplePlan.getPlanName(), "The plan name should match the initialization value.");
+        assertEquals("Sample CEG 4-Year Plan", samplePlan.getPlanName(),
+                "The plan name should match the initialization value.");
 
         // 3. Check if the plan has modules (based on the current SamplePlanProvider data)
         assertFalse(samplePlan.getEntries().isEmpty(), "Sample plan should not be empty.");
-        assertEquals(5, samplePlan.getEntries().size(), "Sample plan should contain 5 initial entries (based on current implementation).");
+        assertEquals(5, samplePlan.getEntries().size(),
+                "Sample plan should contain 5 initial entries (based on current implementation).");
     }
 
     @Test
@@ -54,7 +56,8 @@ class SamplePlanProviderTest {
         assertNotNull(requirements, "SamplePlanProvider should successfully initialize the graduation requirements.");
 
         // 2. Check a few key values (based on the current example data: 160)
-        assertEquals(160, requirements.getTotalRequiredMCs(), "Total required MCs should be 160 (based on example data).");
+        assertEquals(160, requirements.getTotalRequiredMCs(),
+                "Total required MCs should be 160 (based on example data).");
 
         // 3. Check if all categories are present (4 categories in example)
         Map<String, Integer> categoryMap = requirements.getCategoryMCs();
@@ -80,7 +83,8 @@ class SamplePlanProviderTest {
         }, "Adding to the list returned by getEntries() should fail.");
 
         // Verify the original size is unchanged
-        assertEquals(5, samplePlan.getEntries().size(), "Original plan size must remain unchanged after failed modification attempt.");
+        assertEquals(5, samplePlan.getEntries().size(),
+                "Original plan size must remain unchanged after failed modification attempt.");
     }
 
     @Test
@@ -94,7 +98,8 @@ class SamplePlanProviderTest {
         }, "Modifying the map returned by getCategoryMCs() should fail.");
 
         // Verify the original size is unchanged
-        assertEquals(4, categoriesView.size(), "Original map size must remain unchanged after failed modification attempt.");
+        assertEquals(4, categoriesView.size(),
+                "Original map size must remain unchanged after failed modification attempt.");
     }
 
     // --- Tests for specific data integrity ---

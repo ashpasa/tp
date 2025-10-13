@@ -35,6 +35,9 @@ public class SamplePlanProvider {
         DEFAULT_REQUIREMENTS = createDefaultCEGRequirements();
     }
 
+    private SamplePlanProvider() {
+    }
+
     // --- Private Helper Methods for Initialization ---
 
     /**
@@ -88,9 +91,5 @@ public class SamplePlanProvider {
      */
     public static GraduationRequirements getDefaultCEGRequirements() {
         return DEFAULT_REQUIREMENTS;
-    }
-
-    // Prevents instantiation of the utility class
-    private SamplePlanProvider() {
     }
 }
