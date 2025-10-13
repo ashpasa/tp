@@ -26,6 +26,7 @@ public class Duke {
 
         String end_line = "end";
         Scanner in = new Scanner(System.in);
+
         String userInput = "";
 
         while (!(userInput.equals(end_line))) {
