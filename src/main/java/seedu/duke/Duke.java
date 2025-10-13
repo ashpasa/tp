@@ -4,7 +4,7 @@ import java.util.Scanner;
 import seedu.duke.Parser.Parser;
 import seedu.duke.Command.Command;
 
-public class ClassCraft {
+public class Duke {
     /**
      * Main entry-point for the java.duke.ClassCraft application.
      */

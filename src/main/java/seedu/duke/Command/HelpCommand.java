@@ -9,12 +9,12 @@ public class HelpCommand extends Command{
     public void executeCommand() {
         String userHelp = "Hi there, do you require help?\n"
                 + "Here are the list of commands you can use:\n"
-                + "1. add - to add a task\n"
-                + "2. delete - to delete a task\n"
-                + "3. confirm - to mark a task as done\n"
-                + "4. view - to view all tasks\n"
-                + "5. exit - to exit the program\n"
-                + "6. help - to view this message again";
+                + "1. add — Adds a task. Format: add n/{MODULE_CODE} s/{SEMESTER} (SEMESTER: 1 to 8)\n"
+                + "2. delete — Deletes a task. Format: delete {MODULE_CODE} \n"
+                + "3. confirm — Confirm study plan\n"
+                + "4. view — View all tasks/ Format: view {INFORMATION} (INFORMATION: plan,grad,sample\n"
+                + "5. exit — Exit the program\n"
+                + "6. help — View this message again";
         System.out.println(userHelp);
     }
 }
