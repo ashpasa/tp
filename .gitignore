@@ -15,3 +15,9 @@ bin/
 
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
+
+# Sample JSON file to reference format and types of information stored
+/src/main/java/seedu/duke/NUSmodsFetcher/CG2271.json
+
+# IDE settings
+/.vscode/
