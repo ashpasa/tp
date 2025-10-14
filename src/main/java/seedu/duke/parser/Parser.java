@@ -8,9 +8,9 @@ import seedu.duke.exceptions.InvalidCommand;
 
 
 public class Parser {
-    private String commandType;
-    private String userInputString;
-    private String userInstructions;
+    public String commandType;
+    public String userInputString;
+    public String userInstructions;
 
     public Parser(String userInput) {
         this.userInputString = userInput;
@@ -48,7 +48,6 @@ public class Parser {
         String[] instructions = userInputString.split(" ", 2);
 
         if (!CommandList.isFound(instructions[0])) {
-            System.out.println("Command not found");
             this.commandType = "invalid";
             return;
         }
@@ -131,3 +130,4 @@ public class Parser {
 
 
 }
+
