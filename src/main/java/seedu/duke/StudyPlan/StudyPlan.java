@@ -53,15 +53,25 @@ public class StudyPlan {
 
             System.out.println("Added " + moduleString + " to semester " + prereqs);
         } catch (StudyPlanException e) {
-            System.out.println("Error occurred while fetching prerequisites for " + moduleString);
+            System.out.println("Error occurred when adding " + moduleString);
         }
     }
 
     public void removeModule(String moduleString) {
-        Integer sem = modules.get(moduleString);
-        studyPlan.get(sem - 1).remove(moduleString);
-        modules.remove(moduleString);
-        System.out.println("Removed " + moduleString);
+        try {
+            if (!modules.containsKey(moduleString)) {
+                System.out.println("Module " + moduleString + " does not exist");
+                throw new StudyPlanException("Module " + moduleString + " does not exist");
+            }
+
+            Integer sem = modules.get(moduleString);
+            studyPlan.get(sem - 1).remove(moduleString);
+            modules.remove(moduleString);
+
+            System.out.println("Removed " + moduleString);
+        } catch (StudyPlanException e) {
+            System.out.println("Error occurred when removing " + moduleString);
+        }
     }
 
     public ArrayList<ArrayList<String>> getStudyPlan() {
