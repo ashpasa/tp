@@ -1,4 +1,4 @@
-package classcraft.data;
+package seedu.duke.data;
 
 /**
  * Represents a single academic module (e.g., CS1010, MA1511).

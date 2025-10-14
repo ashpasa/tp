@@ -1,4 +1,4 @@
-package classcraft.data;
+package seedu.duke.data;
 
 import java.util.Collections;
 import java.util.Map;
