@@ -1,5 +1,7 @@
 package seedu.duke.StudyPlan;
 
+import seedu.duke.exceptions.StudyPlanException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,11 +13,18 @@ public class StudyPlan {
     HashMap<String, Integer> modules; // stores moduleCode: semester
 
     public StudyPlan(int totalSemesters) {
-        for (int i = 0; i < totalSemesters; i++) {
-            ArrayList<String> innerList = new ArrayList<>();
-            studyPlan.add(innerList);
+        try {
+            if (!((totalSemesters > 0) && (totalSemesters <= 8))) {
+                throw new StudyPlanException("An invalid number of semesters was input when creating StudyPlan");
+            }
+            for (int i = 0; i < totalSemesters; i++) {
+                ArrayList<String> innerList = new ArrayList<>();
+                studyPlan.add(innerList);
+            }
+            modules = new HashMap<>();
+        } catch (StudyPlanException e) {
+            System.out.println("Please input a valid number of semesters, from 1 to 8");
         }
-        modules = new HashMap<>();
     }
 
     // queries for module info, prints prereqs and adds to study plan based on semester
