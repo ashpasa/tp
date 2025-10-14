@@ -20,8 +20,8 @@ public class StudyPlanTest {
 
         assertNotNull(studyPlanList, "StudyPlan list should not be null");
 
-        assertEquals(studyPlanList.size(), 8, "StudyPlan list should have 8 sems");
-        assertEquals(studyPlanList.get(1).size(), 2, "StudyPlan sem 2 should have 2 mods");
+        assertEquals(8, studyPlanList.size(), "StudyPlan list should have 8 sems");
+        assertEquals(2, studyPlanList.get(1).size(), "StudyPlan sem 2 should have 2 mods");
 
         assertEquals("EE2026", studyPlanList.get(0).get(0), "The module EE2026 should be in sem 1");
         assertEquals("CG2271", studyPlanList.get(1).get(0), "The module CG2271 should be in sem 1");
