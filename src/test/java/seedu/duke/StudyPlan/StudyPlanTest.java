@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StudyPlanTest {
     @Test
-    public void StudyPlanTest_with_four_mods() throws Exception {
+    public void studyPlanTestWithFourMods() throws Exception {
         StudyPlan studyPlan = new StudyPlan(8);
         studyPlan.addModule("EE2026",1);
         studyPlan.addModule("CG2271",2);
