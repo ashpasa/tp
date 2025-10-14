@@ -16,3 +16,4 @@ public class ViewSamplePlanCommand extends Command {
         ui.displaySamplePlan(samplePlan);
     }
 }
+

@@ -57,7 +57,7 @@ public class Duke {
                 command.executeCommand(currentStudyPlan, ui);
 
             } catch (Exception e) {
-               ui.printMessage("Error: " + e.getMessage());
+                ui.printMessage("Error: " + e.getMessage());
             }
 
         }

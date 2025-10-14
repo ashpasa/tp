@@ -10,6 +10,7 @@ public class ViewGradReqCommand extends Command {
     public void executeCommand(StudyPlan currentStudyPlan, Ui ui) throws Exception {
         String requirements = Grad.getAllRequirementsDisplay();
 
-       ui.printMessage(requirements);
+        ui.printMessage(requirements);
     }
 }
+
