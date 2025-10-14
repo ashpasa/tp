@@ -29,3 +29,4 @@ public class StudyPlanTest {
         assertEquals("CS2040C", studyPlanList.get(2).get(0).getModCode(), "The module CS2040C should be in sem 3");
     }
 }
+
