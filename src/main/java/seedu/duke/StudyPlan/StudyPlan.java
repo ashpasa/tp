@@ -1,5 +1,7 @@
 package seedu.duke.StudyPlan;
 
+import seedu.duke.exceptions.StudyPlanException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -43,10 +45,20 @@ public class StudyPlan {
 
 
     public void removeModule(String moduleString) {
-        Integer sem = modules.get(moduleString);
-        studyPlan.get(sem - 1).remove(moduleString);
-        modules.remove(moduleString);
-        System.out.println("Removed " + moduleString);
+        try {
+            if (!modules.containsKey(moduleString)) {
+                System.out.println("Module " + moduleString + " does not exist");
+                throw new StudyPlanException("Module " + moduleString + " does not exist");
+            }
+
+            Integer sem = modules.get(moduleString);
+            studyPlan.get(sem - 1).remove(moduleString);
+            modules.remove(moduleString);
+
+            System.out.println("Removed " + moduleString);
+        } catch (StudyPlanException e) {
+            System.out.println("Error occurred when removing " + moduleString);
+        }
     }
 
     public ArrayList<ArrayList<Module>> getStudyPlan() {
