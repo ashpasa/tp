@@ -1,4 +1,4 @@
-package seedu.duke.nusmodsfetcher;
+package seedu.duke.NUSmodsFetcher;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
