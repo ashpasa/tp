@@ -1,7 +1,7 @@
 package seedu.duke.ui;
 
-import seedu.duke.StudyPlan.StudyPlan;
-import seedu.duke.StudyPlan.Module;
+import seedu.duke.studyplan.StudyPlan;
+import seedu.duke.studyplan.Module;
 import java.util.ArrayList;
 
 public class Ui {
