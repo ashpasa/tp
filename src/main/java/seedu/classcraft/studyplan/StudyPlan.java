@@ -1,9 +1,10 @@
-package seedu.duke.studyplan;
+package seedu.classcraft.studyplan;
 
-import seedu.duke.exceptions.StudyPlanException;
+import seedu.classcraft.exceptions.StudyPlanException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Creates a study plan based on modules added by user
@@ -52,7 +53,12 @@ public class StudyPlan {
             }
 
             Integer sem = modules.get(moduleString);
-            studyPlan.get(sem - 1).remove(moduleString);
+            for (int i = 0; i < studyPlan.get(sem - 1).size(); i++) {
+                if (Objects.equals(studyPlan.get(sem - 1).get(i).getModCode(), moduleString)) {
+                    studyPlan.get(sem - 1).remove(i);
+                }
+            }
+
             modules.remove(moduleString);
 
             System.out.println("Removed " + moduleString);

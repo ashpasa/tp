@@ -1,4 +1,4 @@
-package seedu.duke.command;
+package seedu.classcraft.command;
 
 public enum CommandList {
     help, add, delete, view, exit, confirm;

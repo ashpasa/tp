@@ -1,13 +1,13 @@
-package seedu.duke;
+package seedu.classcraft;
 
 import java.util.Scanner;
 
-import seedu.duke.parser.Parser;
-import seedu.duke.command.Command;
-import seedu.duke.studyplan.StudyPlan;
-import seedu.duke.ui.Ui;
+import seedu.classcraft.parser.Parser;
+import seedu.classcraft.command.Command;
+import seedu.classcraft.studyplan.StudyPlan;
+import seedu.classcraft.ui.Ui;
 
-public class Duke {
+public class ClassCraft {
     /**
      * Main entry-point for the java.duke.ClassCraft application.
      */

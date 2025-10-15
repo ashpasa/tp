@@ -1,16 +1,16 @@
-package seedu.duke.parser;
+package seedu.classcraft.parser;
 
-import seedu.duke.command.Command;
-import seedu.duke.command.AddCommand;
-// import seedu.duke.command.DeleteCommand;
-import seedu.duke.command.CommandList;
-import seedu.duke.command.ExitCommand;
-import seedu.duke.command.HelpCommand;
-import seedu.duke.command.InvalidCommand;
-import seedu.duke.command.ViewSamplePlanCommand;
-import seedu.duke.command.ViewGradReqCommand;
-import seedu.duke.command.ViewCurrentPlanCommand;
-import seedu.duke.studyplan.StudyPlan;
+import seedu.classcraft.command.Command;
+import seedu.classcraft.command.AddCommand;
+import seedu.classcraft.command.DeleteCommand;
+import seedu.classcraft.command.CommandList;
+import seedu.classcraft.command.ExitCommand;
+import seedu.classcraft.command.HelpCommand;
+import seedu.classcraft.command.InvalidCommand;
+import seedu.classcraft.command.ViewSamplePlanCommand;
+import seedu.classcraft.command.ViewGradReqCommand;
+import seedu.classcraft.command.ViewCurrentPlanCommand;
+import seedu.classcraft.studyplan.StudyPlan;
 
 public class Parser {
     public String commandType;
@@ -33,8 +33,8 @@ public class Parser {
             return new AddCommand(addModuleInfo);
         case "delete":
             String deleteModuleCode = parseDelete();
-            return new InvalidCommand();
-            // return new DeleteCommand(deleteModuleCode);
+            // return new InvalidCommand();
+            return new DeleteCommand(deleteModuleCode);
         case "confirm":
             return new InvalidCommand();
             //return new ConfirmCommand();
@@ -114,7 +114,7 @@ public class Parser {
     public String parseDelete() {
         String deleteModuleInformation;
         try {
-            String moduleCode = userInstructions.split(" ", 2)[1].trim();
+            String moduleCode = userInstructions.split(" ", 2)[0].trim();
             deleteModuleInformation = moduleCode;
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
             System.out.println("Error: Invalid input format. Please enter " +
@@ -147,6 +147,4 @@ public class Parser {
         }
         return viewItemsInformation;
     }
-
-
 }

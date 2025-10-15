@@ -1,4 +1,4 @@
-package seedu.duke.exceptions;
+package seedu.classcraft.exceptions;
 
 public class StudyPlanException extends Exception {
     public StudyPlanException() {
