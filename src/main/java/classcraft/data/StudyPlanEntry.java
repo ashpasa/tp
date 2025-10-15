@@ -1,4 +1,4 @@
-package seedu.duke.data;
+package classcraft.data;
 
 
 /**

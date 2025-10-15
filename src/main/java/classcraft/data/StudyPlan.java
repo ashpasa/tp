@@ -1,4 +1,4 @@
-package seedu.duke.data;
+package classcraft.data;
 
 import java.util.ArrayList;
 import java.util.List;

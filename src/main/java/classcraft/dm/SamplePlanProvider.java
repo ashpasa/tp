@@ -1,12 +1,12 @@
-package seedu.duke.dm;
+package classcraft.dm;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import seedu.duke.data.GraduationRequirements;
-import seedu.duke.data.Module;
-import seedu.duke.data.StudyPlan;
-import seedu.duke.data.StudyPlanEntry;
+import classcraft.data.GraduationRequirements;
+import classcraft.data.Module;
+import classcraft.data.StudyPlan;
+import classcraft.data.StudyPlanEntry;
 
 /**
  * SamplePlanProvider: Responsible for creating and storing static data models,
