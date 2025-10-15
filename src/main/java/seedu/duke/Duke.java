@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 import seedu.duke.parser.Parser;
 import seedu.duke.command.Command;
-import seedu.duke.StudyPlan.StudyPlan;
+import seedu.duke.studyplan.StudyPlan;
 import seedu.duke.ui.Ui;
 
 public class Duke {

@@ -1,4 +1,4 @@
-package seedu.duke.StudyPlan;
+package seedu.duke.studyplan;
 
 import seedu.duke.exceptions.StudyPlanException;
 

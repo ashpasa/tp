@@ -1,5 +1,4 @@
 Hello from
 Classcraft
 Input your command! Type 'help' if you need assistance.
-Command not found
 I'm sorry, but I don't know what that means :-(
