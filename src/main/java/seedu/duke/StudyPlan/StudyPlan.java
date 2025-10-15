@@ -1,5 +1,6 @@
 package seedu.duke.StudyPlan;
 
+import seedu.duke.exceptions.NUSmodsFetcherException;
 import seedu.duke.exceptions.StudyPlanException;
 
 import java.util.ArrayList;
@@ -38,12 +39,10 @@ public class StudyPlan {
                 System.out.println("Module " + moduleString + " already exists");
                 throw new StudyPlanException("Module " + moduleString + " already exists");
             }
-
-            ModuleHandler fetcher = new ModuleHandler();
             String prereqs;
             try {
-                prereqs = fetcher.getModulePrerequisites(moduleString);
-            } catch (Exception e) {
+                prereqs = ModuleHandler.getModulePrerequisites(moduleString);
+            } catch (NUSmodsFetcherException e) {
                 throw new StudyPlanException(moduleString + " does not contain any prerequisites");
             }
             System.out.println("Prerequisites for " + moduleString + ": " + prereqs);
