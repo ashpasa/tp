@@ -114,7 +114,7 @@ public class Parser {
     public String parseDelete() {
         String deleteModuleInformation;
         try {
-            String moduleCode = userInstructions.split(" ", 2)[0].trim();
+            String moduleCode = userInstructions.split(" ", 2)[1].trim();
             deleteModuleInformation = moduleCode;
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
             System.out.println("Error: Invalid input format. Please enter " +
