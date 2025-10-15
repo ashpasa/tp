@@ -32,11 +32,11 @@ test {
 }
 
 application {
-    mainClass.set("seedu.duke.Duke")
+    mainClass.set("seedu.classcraft.ClassCraft")
 }
 
 shadowJar {
-    archiveBaseName.set("duke")
+    archiveBaseName.set("classcraft")
     archiveClassifier.set("")
 }
 

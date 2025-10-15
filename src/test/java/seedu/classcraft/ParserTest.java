@@ -1,4 +1,4 @@
-package seedu.duke;
+package seedu.classcraft;
 /*
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

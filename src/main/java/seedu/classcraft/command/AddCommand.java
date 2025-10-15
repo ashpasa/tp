@@ -1,8 +1,8 @@
-package seedu.duke.command;
+package seedu.classcraft.command;
 
 
-import seedu.duke.studyplan.StudyPlan;
-import seedu.duke.ui.Ui;
+import seedu.classcraft.studyplan.StudyPlan;
+import seedu.classcraft.ui.Ui;
 
 public class AddCommand extends Command{
     public String[] moduleAddInfo;

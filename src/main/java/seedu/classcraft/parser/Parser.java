@@ -1,16 +1,16 @@
-package seedu.duke.parser;
+package seedu.classcraft.parser;
 
-import seedu.duke.command.Command;
-import seedu.duke.command.AddCommand;
-import seedu.duke.command.DeleteCommand;
-import seedu.duke.command.CommandList;
-import seedu.duke.command.ExitCommand;
-import seedu.duke.command.HelpCommand;
-import seedu.duke.command.InvalidCommand;
-import seedu.duke.command.ViewSamplePlanCommand;
-import seedu.duke.command.ViewGradReqCommand;
-import seedu.duke.command.ViewCurrentPlanCommand;
-import seedu.duke.studyplan.StudyPlan;
+import seedu.classcraft.command.Command;
+import seedu.classcraft.command.AddCommand;
+import seedu.classcraft.command.DeleteCommand;
+import seedu.classcraft.command.CommandList;
+import seedu.classcraft.command.ExitCommand;
+import seedu.classcraft.command.HelpCommand;
+import seedu.classcraft.command.InvalidCommand;
+import seedu.classcraft.command.ViewSamplePlanCommand;
+import seedu.classcraft.command.ViewGradReqCommand;
+import seedu.classcraft.command.ViewCurrentPlanCommand;
+import seedu.classcraft.studyplan.StudyPlan;
 
 public class Parser {
     public String commandType;
@@ -147,6 +147,4 @@ public class Parser {
         }
         return viewItemsInformation;
     }
-
-
 }
