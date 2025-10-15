@@ -5,6 +5,8 @@ import seedu.duke.command.CommandList;
 import seedu.duke.command.ExitCommand;
 import seedu.duke.command.HelpCommand;
 import seedu.duke.exceptions.InvalidCommand;
+import seedu.duke.command.ViewSamplePlanCommand;
+import seedu.duke.command.ViewGradReqCommand;
 
 
 public class Parser {
@@ -34,8 +36,17 @@ public class Parser {
         //return new ConfirmCommand();
         case "view":
             String viewItems = parseView();
-            return new InvalidCommand();
-        //return new ViewCommand(viewItems);
+            switch (viewItems) {
+            case "sample":
+                return new ViewSamplePlanCommand();
+            case "grad":
+                return new ViewGradReqCommand();
+            case "plan":
+                // return new ViewCurrentPlanCommand();
+                return new InvalidCommand();
+            default:
+                return new InvalidCommand();
+            }
         case "exit":
             return new ExitCommand();
         default:

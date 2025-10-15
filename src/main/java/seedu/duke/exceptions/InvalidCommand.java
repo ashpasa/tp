@@ -1,5 +1,7 @@
 package seedu.duke.exceptions;
 
+import seedu.duke.StudyPlan.StudyPlan;
+import seedu.duke.ui.Ui;
 import seedu.duke.command.Command;
 
 public class InvalidCommand extends Command {
@@ -8,7 +10,7 @@ public class InvalidCommand extends Command {
     }
 
     @Override
-    public void executeCommand() {
+    public void executeCommand(StudyPlan studyPlan, Ui ui) {
         System.out.println("I'm sorry, but I don't know what that means :-(");
     }
 }

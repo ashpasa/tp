@@ -9,53 +9,40 @@ import java.util.HashMap;
  * Creates a study plan based on modules added by user
  */
 public class StudyPlan {
-    ArrayList<ArrayList<String>> studyPlan = new ArrayList<>();
+    ArrayList<ArrayList<Module>> studyPlan = new ArrayList<>();
     HashMap<String, Integer> modules; // stores moduleCode: semester
+    private ModuleHandler moduleHandler;
+
 
     public StudyPlan(int totalSemesters) {
-        try {
-            if (!((totalSemesters > 0) && (totalSemesters <= 8))) {
-                throw new StudyPlanException("An invalid number of semesters was input when creating StudyPlan");
-            }
-            for (int i = 0; i < totalSemesters; i++) {
-                ArrayList<String> innerList = new ArrayList<>();
-                studyPlan.add(innerList);
-            }
-            modules = new HashMap<>();
-        } catch (StudyPlanException e) {
-            System.out.println("Please input a valid number of semesters, from 1 to 8");
+        for (int i = 0; i < totalSemesters; i++) {
+            ArrayList<Module> innerList = new ArrayList<>();
+            studyPlan.add(innerList);
         }
+        this.modules = new HashMap<>();
+        this.moduleHandler = new ModuleHandler();
     }
 
-    // queries for module info, prints prereqs and adds to study plan based on semester
-    public void addModule(String moduleString, int semester) throws Exception {
-        try {
-            if (!((semester > 0) && (semester <= studyPlan.size()))) {
-                System.out.println("An invalid semester was input when creating StudyPlan");
-                throw new StudyPlanException("An invalid semester was input when creating StudyPlan");
-            }
-            if (modules.containsKey(moduleString)) {
-                System.out.println("Module " + moduleString + " already exists");
-                throw new StudyPlanException("Module " + moduleString + " already exists");
-            }
-
-            ModuleHandler fetcher = new ModuleHandler();
-            String prereqs;
-            try {
-                prereqs = fetcher.getModulePrerequisites(moduleString);
-            } catch (Exception e) {
-                throw new StudyPlanException(moduleString + " does not contain any prerequisites");
-            }
-            System.out.println("Prerequisites for " + moduleString + ": " + prereqs);
-
-            studyPlan.get(semester - 1).add(moduleString);
-            modules.put(moduleString, semester);
-
-            System.out.println("Added " + moduleString + " to semester " + prereqs);
-        } catch (StudyPlanException e) {
-            System.out.println("Error occurred when adding " + moduleString);
+    public void addModule(Module module, int semester) throws IllegalArgumentException {
+        if (semester < 1 || semester > studyPlan.size()) {
+            throw new IllegalArgumentException("Semester " + semester + " is invalid.");
         }
+
+        studyPlan.get(semester - 1).add(module);
+        modules.put(module.getModCode(), semester);
+
+        module.setSemesterTaught(semester);
     }
+
+    public void addModule(String moduleCode, int semester) throws Exception {
+        // Use ModuleHandler to fetch data and create the Module object
+        Module newModule = moduleHandler.createModule(moduleCode);
+        addModule(newModule, semester);
+
+        System.out.println("Added " + moduleCode + " to semester " + semester);
+        // Removed old System.out.println that used fetcher.getModulePrerequisites(moduleCode)
+    }
+
 
     public void removeModule(String moduleString) {
         try {
@@ -74,7 +61,46 @@ public class StudyPlan {
         }
     }
 
-    public ArrayList<ArrayList<String>> getStudyPlan() {
+    public ArrayList<ArrayList<Module>> getStudyPlan() {
         return studyPlan;
+    }
+
+    public static StudyPlan createSampleStudyPlan() {
+        // Assuming CEG is an 8-semester course
+        StudyPlan samplePlan = new StudyPlan(8);
+        ModuleHandler handler = samplePlan.moduleHandler; // Use StudyPlan's internal handler
+
+        try {
+
+            // Semester 1
+            Module cs1010 = handler.createModule("CS1010");
+            samplePlan.addModule(cs1010, 1);
+
+            Module ma1511 = handler.createModule("MA1511");
+            samplePlan.addModule(ma1511, 1);
+
+            // Semester 2
+            Module cs2030s = handler.createModule("CS2030S");
+            samplePlan.addModule(cs2030s, 2);
+
+            Module ee2026 = handler.createModule("EE2026");
+            samplePlan.addModule(ee2026, 2);
+
+            // Semester 3
+            Module cs2040s = handler.createModule("CS2040S");
+            samplePlan.addModule(cs2040s, 3);
+
+            // Add other core/sample modules for Semesters 3 to 8 (to be added)
+
+        } catch (Exception e) {
+            System.err.println("Error creating sample study plan module: " + e.getMessage());
+            // This usually means NUSModsFetcher failed to retrieve data.
+        }
+
+        return samplePlan;
+    }
+
+    public static StudyPlan getSampleStudyPlan() {
+        return createSampleStudyPlan();
     }
 }
