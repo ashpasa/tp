@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 import seedu.duke.parser.Parser;
 import seedu.duke.command.Command;
+import seedu.duke.StudyPlan.StudyPlan;
+import seedu.duke.ui.Ui;
 
 public class Duke {
     /**
@@ -35,6 +37,9 @@ public class Duke {
         System.out.println("Hello from\n" + "Classcraft");
         System.out.println("Input your command! Type 'help' if you need assistance.");
 
+        Ui ui = new Ui();
+        StudyPlan currentStudyPlan = new StudyPlan(8);
+
         Scanner in = new Scanner(System.in);
         String userInput = "";
 
@@ -44,9 +49,16 @@ public class Duke {
                 return;
             }
             userInput = in.nextLine();
-            Parser parser = new Parser(userInput);
-            Command command = parser.parseInput();
-            command.executeCommand();
+
+            try {
+                Parser parser = new Parser(userInput);
+                Command command = parser.parseInput();
+
+                command.executeCommand(currentStudyPlan, ui);
+
+            } catch (Exception e) {
+                ui.printMessage("Error: " + e.getMessage());
+            }
 
         }
 

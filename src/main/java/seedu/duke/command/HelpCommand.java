@@ -1,12 +1,15 @@
 package seedu.duke.command;
 
+import seedu.duke.StudyPlan.StudyPlan;
+import seedu.duke.ui.Ui;
+
 public class HelpCommand extends Command {
     public HelpCommand() {
         super();
     }
 
     @Override
-    public void executeCommand() {
+    public void executeCommand(StudyPlan studyPlan, Ui ui) {
         String userHelp = "Hi there, do you require help?\n"
                 + "Here are the list of commands you can use:\n"
                 + "1. add - Adds a task. Format: add n/{MODULE_CODE} s/{SEMESTER} (SEMESTER: 1 to 8)\n"

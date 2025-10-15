@@ -80,4 +80,16 @@ public class Module {
     public void setDefaultSemester(int defaultSemester) {
         this.defaultSemester = defaultSemester;
     }
+
+    public String getPrerequisitesDisplay() {
+        List<String> prereqs = getPrerequisites();
+
+        if (prereqs == null || prereqs.isEmpty()) {
+            return "bugs!!";
+        }
+
+        String prereqsString = String.join(", ", prereqs);
+        return " (Prereqs: " + prereqsString + ")";
+    }
 }
+
