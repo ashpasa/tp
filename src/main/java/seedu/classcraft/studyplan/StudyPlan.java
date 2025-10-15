@@ -1,6 +1,6 @@
-package seedu.duke.studyplan;
+package seedu.classcraft.studyplan;
 
-import seedu.duke.exceptions.StudyPlanException;
+import seedu.classcraft.exceptions.StudyPlanException;
 
 import java.util.ArrayList;
 import java.util.HashMap;

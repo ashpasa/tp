@@ -1,4 +1,4 @@
-package seedu.duke.studyplan;
+package seedu.classcraft.studyplan;
 
 import org.junit.jupiter.api.Test;
 // import seedu.duke.studyplan.Module;

@@ -1,7 +1,7 @@
-package seedu.duke.command;
+package seedu.classcraft.command;
 
-import seedu.duke.studyplan.StudyPlan;
-import seedu.duke.ui.Ui;
+import seedu.classcraft.studyplan.StudyPlan;
+import seedu.classcraft.ui.Ui;
 
 /**
  * Command to generate and display the default sample study plan for CEG.

@@ -1,10 +1,9 @@
-package seedu.duke.command;
+package seedu.classcraft.command;
 
-import seedu.duke.studyplan.StudyPlan;
-import seedu.duke.ui.Ui;
+import seedu.classcraft.studyplan.StudyPlan;
+import seedu.classcraft.ui.Ui;
 
 public class DeleteCommand extends Command{
-    // private StudyPlan studyPlan;
     public String moduleToDelete;
 
     public DeleteCommand(String moduleCode) {

@@ -1,4 +1,4 @@
-package seedu.duke.studyplan;
+package seedu.classcraft.studyplan;
 
 import java.util.List;
 

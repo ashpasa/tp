@@ -1,4 +1,4 @@
-package seedu.duke.studyplan;
+package seedu.classcraft.studyplan;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import seedu.duke.nusmodsfetcher.NUSmodsFetcher;
+import seedu.classcraft.nusmodsfetcher.NUSmodsFetcher;
 
 import java.util.Iterator;
 import java.util.Map;
