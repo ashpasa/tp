@@ -1,8 +1,8 @@
-package seedu.duke.StudyPlan;
+package seedu.duke.studyplan;
 
 import org.junit.jupiter.api.Test;
-import seedu.duke.studyplan.Module;
-import seedu.duke.studyplan.StudyPlan;
+// import seedu.duke.studyplan.Module;
+// import seedu.duke.studyplan.StudyPlan;
 
 import java.util.ArrayList;
 
