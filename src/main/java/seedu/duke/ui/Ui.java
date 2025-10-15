@@ -46,4 +46,8 @@ public class Ui {
     public void displaySamplePlan(StudyPlan samplePlan) {
         displayStudyPlan(samplePlan, "CEG Sample Study Plan");
     }
+
+    public void displayCurrentPlan(StudyPlan currentPlan) {
+        displayStudyPlan(currentPlan, "Current Study Plan");
+    }
 }
