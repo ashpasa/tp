@@ -4,13 +4,14 @@ import java.util.Scanner;
 
 import seedu.duke.parser.Parser;
 import seedu.duke.command.Command;
+//import seedu.duke.studyplan.StudyPlan;
 
 public class Duke {
     /**
      * Main entry-point for the java.duke.ClassCraft application.
      */
-    public static void main(String[] args) {
 
+    public static void main(String[] args) {
         String logo = " ________  ___       ________  ________   ________  ________  __" +
                 "______  ________  ________ _________   \n" +
                 "|\\   ____\\|\\  \\     |\\   __  \\|\\   ____\\ |\\   ____\\|\\   ____\\|\\" +
@@ -38,13 +39,14 @@ public class Duke {
         Scanner in = new Scanner(System.in);
         String userInput = "";
 
+        //StudyPlan studyPlan = new StudyPlan(8);
 
         while (!"exit".equals(userInput)) {
             if (!in.hasNextLine()) {
                 return;
             }
             userInput = in.nextLine();
-            Parser parser = new Parser(userInput);
+            Parser parser = new Parser( userInput);
             Command command = parser.parseInput();
             command.executeCommand();
 

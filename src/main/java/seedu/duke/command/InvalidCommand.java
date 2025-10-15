@@ -1,6 +1,4 @@
-package seedu.duke.exceptions;
-
-import seedu.duke.command.Command;
+package seedu.duke.command;
 
 public class InvalidCommand extends Command {
     public InvalidCommand() {

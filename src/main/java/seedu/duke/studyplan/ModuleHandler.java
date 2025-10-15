@@ -1,6 +1,6 @@
-package seedu.duke.StudyPlan;
+package seedu.duke.studyplan;
 
-import seedu.duke.NUSmodsFetcher.NUSmodsFetcher;
+import seedu.duke.nusmodsfetcher.NUSmodsFetcher;
 
 import java.util.HashMap;
 

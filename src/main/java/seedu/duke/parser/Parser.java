@@ -1,19 +1,22 @@
 package seedu.duke.parser;
 
+//import seedu.duke.command.AddCommand;
 import seedu.duke.command.Command;
 import seedu.duke.command.CommandList;
+//import seedu.duke.command.DeleteCommand;
 import seedu.duke.command.ExitCommand;
 import seedu.duke.command.HelpCommand;
-import seedu.duke.exceptions.InvalidCommand;
-
+import seedu.duke.command.InvalidCommand;
+//import seedu.duke.studyplan.StudyPlan;
 
 public class Parser {
     public String commandType;
     public String userInputString;
     public String userInstructions;
-
-    public Parser(String userInput) {
+    //public StudyPlan studyPlan;
+    public Parser( String userInput) {
         this.userInputString = userInput;
+        //is.studyPlan = studyPlan;
         parseInstructions();
     }
 
@@ -22,20 +25,19 @@ public class Parser {
         case "help":
             return new HelpCommand();
         case "add":
-            String[] addModule = parseAdd();
+            String[] addModuleInfo = parseAdd();
             return new InvalidCommand();
-        //return new AddCommand(addModule);
+            //return new AddCommand(studyPlan, addModuleInfo);
         case "delete":
-            String deleteModule = parseDelete();
+            String deleteModuleCode = parseDelete();
             return new InvalidCommand();
-        //return new DeleteModule(deleteModule);
+            //return new DeleteCommand(deleteModuleCode);
         case "confirm":
             return new InvalidCommand();
-        //return new ConfirmCommand();
+            //return new ConfirmCommand();
         case "view":
-            String viewItems = parseView();
+            String viewItem = parseView();
             return new InvalidCommand();
-        //return new ViewCommand(viewItems);
         case "exit":
             return new ExitCommand();
         default:
@@ -43,7 +45,8 @@ public class Parser {
         }
     }
 
-
+    //parses the user input into command type and instructions
+    //returns invalid command if command type is not found
     public void parseInstructions() {
         String[] instructions = userInputString.split(" ", 2);
 
@@ -74,7 +77,8 @@ public class Parser {
         }
     }
 
-
+    //parses the user input for add command
+    //returns an array of module code and semester
     public String[] parseAdd() {
         String[] addModuleInformation = new String[2];
         try {
@@ -92,6 +96,8 @@ public class Parser {
 
     }
 
+    //parses the user input for delete command
+    //returns the module code to be deleted
     public String parseDelete() {
         String deleteModuleInformation;
         try {
@@ -105,7 +111,8 @@ public class Parser {
         return deleteModuleInformation;
     }
 
-
+    //parses the user input for view command
+    //returns the information to be viewed (plan, grad or sample)
     public String parseView() {
         String viewItemsInformation;
         try {

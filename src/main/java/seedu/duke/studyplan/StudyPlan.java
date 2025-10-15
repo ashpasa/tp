@@ -1,4 +1,4 @@
-package seedu.duke.StudyPlan;
+package seedu.duke.studyplan;
 
 import java.util.ArrayList;
 import java.util.HashMap;
