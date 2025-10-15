@@ -1,12 +1,12 @@
 package seedu.duke.studyplan;
 
-import seedu.duke.NUSmodsFetcher.NUSmodsFetcher;
-
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import seedu.duke.nusmodsfetcher.NUSmodsFetcher;
 
 import java.util.Iterator;
 import java.util.Map;
