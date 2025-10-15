@@ -1,7 +1,7 @@
 package seedu.duke.command;
 
-import seedu.duke.list.Grad;
-import seedu.duke.StudyPlan.StudyPlan;
+import seedu.duke.studyplan.Grad;
+import seedu.duke.studyplan.StudyPlan;
 import seedu.duke.ui.Ui;
 
 public class ViewGradReqCommand extends Command {
@@ -13,4 +13,3 @@ public class ViewGradReqCommand extends Command {
         ui.printMessage(requirements);
     }
 }
-

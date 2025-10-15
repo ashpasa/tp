@@ -1,9 +1,7 @@
-package seedu.duke.list;
+package seedu.duke.studyplan;
 
 import java.util.List;
 import java.util.Arrays;
-import seedu.duke.StudyPlan.Module;
-import seedu.duke.StudyPlan.ModuleHandler;
 
 /**
  * Stores and provides access to the CEG Default Graduation Requirements
@@ -57,8 +55,6 @@ public class Grad {
         for (String mod : GENERAL_EDUCATION_MODULES) {
             sb.append("- ").append(mod).append("\n");
         }
-
-        sb.append("=======================================================\n");
         return sb.toString();
     }
 }

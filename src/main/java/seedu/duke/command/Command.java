@@ -1,6 +1,6 @@
 package seedu.duke.command;
 
-import seedu.duke.StudyPlan.StudyPlan;
+import seedu.duke.studyplan.StudyPlan;
 import seedu.duke.ui.Ui;
 
 public abstract class Command {

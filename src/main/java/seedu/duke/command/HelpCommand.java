@@ -1,6 +1,6 @@
 package seedu.duke.command;
 
-import seedu.duke.StudyPlan.StudyPlan;
+import seedu.duke.studyplan.StudyPlan;
 import seedu.duke.ui.Ui;
 
 public class HelpCommand extends Command {
@@ -15,7 +15,7 @@ public class HelpCommand extends Command {
                 + "1. add - Adds a task. Format: add n/{MODULE_CODE} s/{SEMESTER} (SEMESTER: 1 to 8)\n"
                 + "2. delete - Deletes a task. Format: delete {MODULE_CODE} \n"
                 + "3. confirm - Confirm study plan\n"
-                + "4. view - View all tasks/ Format: view {INFORMATION} (INFORMATION: plan,grad,sample\n"
+                + "4. view - View all tasks/ Format: view {INFORMATION} (INFORMATION: plan,grad,sample)\n"
                 + "5. exit - Exit the program\n"
                 + "6. help - View this message again";
         System.out.println(userHelp);

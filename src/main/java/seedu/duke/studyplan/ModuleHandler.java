@@ -1,12 +1,13 @@
-package seedu.duke.StudyPlan;
+package seedu.duke.studyplan;
 
-import seedu.duke.NUSmodsFetcher.NUSmodsFetcher;
+import seedu.duke.nusmodsfetcher.NUSmodsFetcher;
 
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import java.util.Map;
  * Handles the storage and creation of Module classes
  * Stores a HashMap with modCode: Module as key value pair
  */
-public class ModuleHandler{
+public class ModuleHandler {
     private HashMap<String, Module> modules;
 
 
@@ -84,9 +85,7 @@ public class ModuleHandler{
             for (JsonNode subNode : node) {
                 extractModuleCodes(subNode, result);
             }
-        }
-
-        else if (node.isObject()) {
+        } else if (node.isObject()) {
             Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
             while (fields.hasNext()) {
                 Map.Entry<String, JsonNode> field = fields.next();
