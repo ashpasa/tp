@@ -2,7 +2,7 @@ package seedu.duke.parser;
 
 import seedu.duke.command.Command;
 import seedu.duke.command.AddCommand;
-// import seedu.duke.command.DeleteCommand;
+import seedu.duke.command.DeleteCommand;
 import seedu.duke.command.CommandList;
 import seedu.duke.command.ExitCommand;
 import seedu.duke.command.HelpCommand;
@@ -33,8 +33,8 @@ public class Parser {
             return new AddCommand(addModuleInfo);
         case "delete":
             String deleteModuleCode = parseDelete();
-            return new InvalidCommand();
-            // return new DeleteCommand(deleteModuleCode);
+            // return new InvalidCommand();
+            return new DeleteCommand(deleteModuleCode);
         case "confirm":
             return new InvalidCommand();
             //return new ConfirmCommand();
@@ -114,7 +114,7 @@ public class Parser {
     public String parseDelete() {
         String deleteModuleInformation;
         try {
-            String moduleCode = userInstructions.split(" ", 2)[1].trim();
+            String moduleCode = userInstructions.split(" ", 2)[0].trim();
             deleteModuleInformation = moduleCode;
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
             System.out.println("Error: Invalid input format. Please enter " +
