@@ -1,24 +1,24 @@
 package seedu.duke.parser;
 
 import seedu.duke.command.Command;
-//import seedu.duke.command.AddCommand;
-//import seedu.duke.command.DeleteCommand;
+import seedu.duke.command.AddCommand;
+import seedu.duke.command.DeleteCommand;
 import seedu.duke.command.CommandList;
 import seedu.duke.command.ExitCommand;
 import seedu.duke.command.HelpCommand;
 import seedu.duke.command.InvalidCommand;
 import seedu.duke.command.ViewSamplePlanCommand;
 import seedu.duke.command.ViewGradReqCommand;
-//import seedu.duke.studyplan.StudyPlan;
+import seedu.duke.studyplan.StudyPlan;
 
 public class Parser {
     public String commandType;
     public String userInputString;
     public String userInstructions;
-    //public StudyPlan studyPlan;
-    public Parser( String userInput) {
+    public StudyPlan studyPlan;
+    public Parser(String userInput) {
         this.userInputString = userInput;
-        //is.studyPlan = studyPlan;
+        // this.studyPlan = studyPlan;
         parseInstructions();
     }
 
@@ -28,12 +28,12 @@ public class Parser {
             return new HelpCommand();
         case "add":
             String[] addModuleInfo = parseAdd();
-            return new InvalidCommand();
-            //return new AddCommand(studyPlan, addModuleInfo);
+            // return new InvalidCommand();
+            return new AddCommand(addModuleInfo);
         case "delete":
             String deleteModuleCode = parseDelete();
             return new InvalidCommand();
-            //return new DeleteCommand(deleteModuleCode);
+            // return new DeleteCommand(deleteModuleCode);
         case "confirm":
             return new InvalidCommand();
             //return new ConfirmCommand();
