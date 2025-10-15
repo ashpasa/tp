@@ -13,7 +13,7 @@ public abstract class NUSmodsFetcher {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     // Fetch JSON as a tree of JsonNodes
-    private static JsonNode fetchModuleJson(String moduleCode) throws Exception {
+    public static JsonNode fetchModuleJson(String moduleCode) throws Exception {
         String url = "https://api.nusmods.com/v2/2024-2025/modules/" + moduleCode + ".json";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
