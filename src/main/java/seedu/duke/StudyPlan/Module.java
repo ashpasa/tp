@@ -85,7 +85,7 @@ public class Module {
         List<String> prereqs = getPrerequisites();
 
         if (prereqs == null || prereqs.isEmpty()) {
-            return "bugs!!";
+            return "(No Prerequisites)";
         }
 
         String prereqsString = String.join(", ", prereqs);
