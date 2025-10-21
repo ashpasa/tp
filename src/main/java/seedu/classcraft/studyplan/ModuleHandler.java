@@ -49,6 +49,8 @@ public class ModuleHandler {
         Module newModule = new Module(modName, moduleCode, modDescription, prerequisites, -1, -1);
 
         addModule(newModule);
+
+        assert modules.containsKey(moduleCode) : "New module must be added to modules map.";
         return newModule;
     }
 
