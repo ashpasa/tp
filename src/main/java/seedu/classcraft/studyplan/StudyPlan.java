@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * Creates a study plan based on modules added by user
  */
@@ -33,6 +36,11 @@ public class StudyPlan {
         modules.put(module.getModCode(), semester);
 
         module.setSemesterTaught(semester);
+
+        assert studyPlan.get(semester - 1).contains(module) :
+                "Module should be in the study plan list after adding.";
+        assert modules.containsKey(module.getModCode()) :
+                "Module code should be in the modules map after adding.";
     }
 
     public void addModule(String moduleCode, int semester) throws Exception {
