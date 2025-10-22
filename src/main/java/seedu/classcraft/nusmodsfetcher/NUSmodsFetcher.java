@@ -14,7 +14,7 @@ public abstract class NUSmodsFetcher {
 
     // Fetch JSON as a tree of JsonNodes
     public static JsonNode fetchModuleJson(String moduleCode) throws Exception {
-        String url = "https://api.nusmods.com/v2/2024-2025/modules/" + moduleCode + ".json";
+        String url = "https://api.nusmods.com/v2/2025-2026/modules/" + moduleCode + ".json";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .build();
