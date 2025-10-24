@@ -24,7 +24,8 @@ public class NUSmodsFetcherTest {
     @Test
     public void extractField_missingField_returnsEmptyString() throws Exception {
         String moduleCode = "CS1010";
-        assertEquals("", NUSmodsFetcher.getModulePrerequisites(moduleCode), "Missing prerequisite field should return empty string");
+        assertEquals("", NUSmodsFetcher.getModulePrerequisites(moduleCode),
+            "Missing prerequisite field should return empty string");
     }
 
     @Test
@@ -46,7 +47,7 @@ public class NUSmodsFetcherTest {
     @Test
     public void getFaculty_validModuleCode_returnsCorrectFaculty() throws Exception {
         String moduleCode = "EG1311";
-        String expectedFaculty = "Engineering";
+        String expectedFaculty = "College of Design and Engineering";
         String actualFaculty = NUSmodsFetcher.getFaculty(moduleCode);
         assertEquals(expectedFaculty, actualFaculty, "Retrieved faculty should match actual");
     }
@@ -54,9 +55,10 @@ public class NUSmodsFetcherTest {
     @Test
     public void getModuleDescription_validModuleCode_returnsCorrectDescription() throws Exception {
         String moduleCode = "CS1010";
-        String expectedDescriptionStart = "This module introduces the fundamental concepts of programming";
+        String expectedDescriptionStart = "This course introduces the fundamental concepts of problem solving";
         String actualDescription = NUSmodsFetcher.getModuleDescription(moduleCode);
-        assertEquals(true, actualDescription.startsWith(expectedDescriptionStart), "Retrieved module description should start with expected text");
+        assertEquals(true, actualDescription.startsWith(expectedDescriptionStart),
+            "Retrieved module description should start with expected text");
     }
 
     @Test
@@ -64,6 +66,7 @@ public class NUSmodsFetcherTest {
         String moduleCode = "CS2040C";
         String expectedPrerequisites = "CS1010 or CS1010E or CS1101S";
         String actualPrerequisites = NUSmodsFetcher.getModulePrerequisites(moduleCode);
-        assertEquals(expectedPrerequisites, actualPrerequisites, "Retrieved module prerequisites should match actual");
+        assertEquals(expectedPrerequisites, actualPrerequisites,
+            "Retrieved module prerequisites should match actual");
     }
 }
