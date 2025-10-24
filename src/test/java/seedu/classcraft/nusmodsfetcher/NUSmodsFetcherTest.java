@@ -64,7 +64,9 @@ public class NUSmodsFetcherTest {
     @Test
     public void getModulePrerequisites_validModuleCode_returnsCorrectPrerequisites() throws Exception {
         String moduleCode = "CS2040C";
-        String expectedPrerequisites = "CS1010 or CS1010E or CS1101S";
+        String expectedPrerequisites = "If undertaking an Undergraduate DegreeTHEN"
+            + "( must have completed 1 of CS1010/CS1010A/CS1010E/CS1010J/CS1010S/CS1010X/CS1101S/UTC2851"
+            + " at a grade of at least D)";
         String actualPrerequisites = NUSmodsFetcher.getModulePrerequisites(moduleCode);
         assertEquals(expectedPrerequisites, actualPrerequisites,
             "Retrieved module prerequisites should match actual");
