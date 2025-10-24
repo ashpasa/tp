@@ -51,9 +51,11 @@ public abstract class NUSmodsFetcher {
      * @return String representing the module credits that the module counts for
      * @throws Exception
      */
-    public static String getModuleCredits(String moduleCode) throws Exception {
+    public static int getModuleCredits(String moduleCode) throws Exception {
         JsonNode root = fetchModuleJson(moduleCode);
-        return extractField(root, "moduleCredit");
+        String moduleCreditsAsString = extractField(root, "moduleCredit");
+        int moduleCredits = Integer.parseInt(moduleCreditsAsString);
+        return moduleCredits;
     }
 
     /**

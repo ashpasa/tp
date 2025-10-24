@@ -30,8 +30,8 @@ public class NUSmodsFetcherTest {
     @Test
     public void getModuleCredits_validModuleCode_returnsCorrectCredits() throws Exception {
         String moduleCode = "CS1231";
-        String expectedCredits = "4";
-        String actualCredits = NUSmodsFetcher.getModuleCredits(moduleCode);
+        int expectedCredits = 4;
+        int actualCredits = NUSmodsFetcher.getModuleCredits(moduleCode);
         assertEquals(expectedCredits, actualCredits, "Retrieved module credits should match actual");
     }
 
