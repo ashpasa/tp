@@ -8,8 +8,6 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Creates a study plan based on modules added by user
