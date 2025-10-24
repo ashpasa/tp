@@ -12,7 +12,7 @@ public class ClassCraft {
      * Main entry-point for the java.duke.ClassCraft application.
      */
     public static void main(String[] args) {
-
+        assert false : "dummy assertion set to fail";
         String logo = " ________  ___       ________  ________   ________  ________  __" +
                 "______  ________  ________ _________   \n" +
                 "|\\   ____\\|\\  \\     |\\   __  \\|\\   ____\\ |\\   ____\\|\\   ____\\|\\" +
