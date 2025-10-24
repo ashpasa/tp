@@ -105,3 +105,5 @@ streamlined and guided approach to academic planning.
     again and confirm the module is placed in the specified semester.
 5.  **Delete a Module:** Enter a command to delete a module (e.g., `delete CS3230`). View the study
     plan and confirm the module is removed.
+
+    
