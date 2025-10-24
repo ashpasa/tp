@@ -12,7 +12,11 @@ public abstract class NUSmodsFetcher {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    // Fetch JSON as a tree of JsonNodes
+    /**
+     * Fetches the module JSON data from NUSMods API for the given module code
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods
+     * @return JsonNode representing the module data
+     */
     public static JsonNode fetchModuleJson(String moduleCode) throws Exception {
         String url = "https://api.nusmods.com/v2/2025-2026/modules/" + moduleCode + ".json";
         HttpRequest request = HttpRequest.newBuilder()
@@ -22,39 +26,73 @@ public abstract class NUSmodsFetcher {
         return mapper.readTree(response.body());
     }
 
-    // Get module title
+    /**
+     * Helper method to extract a specific field from the JSON root
+     * @param root The root JsonNode, obtained from fetchModuleJson
+     * @param fieldName The field name to extract
+     * @return The text stored in the .json file under fieldName, as a string
+     */
+    private static String extractField(JsonNode root, String fieldName) {
+        return root.path(fieldName).asText("");
+    }
+
+    /**
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods
+     * @return String representing the module title
+     * @throws Exception
+     */
     public static String getModuleTitle(String moduleCode) throws Exception {
         JsonNode root = fetchModuleJson(moduleCode);
-        return root.get("title").asText();
+        return extractField(root, "title");
     }
 
-    // Get module credits
+    /**
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods
+     * @return String representing the module credits that the module counts for
+     * @throws Exception
+     */
     public static String getModuleCredits(String moduleCode) throws Exception {
         JsonNode root = fetchModuleJson(moduleCode);
-        return root.get("moduleCredit").asText();
+        return extractField(root, "moduleCredit");
     }
 
-    // Get department
+    /**
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods
+     * @return String representing the department offering the module
+     * @throws Exception
+     */
     public static String getDepartment(String moduleCode) throws Exception {
         JsonNode root = fetchModuleJson(moduleCode);
-        return root.get("department").asText();
+        return extractField(root, "department");
     }
 
-    // Get faculty
+    /**
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods
+     * @return String representing the faculty offering the module
+     * @throws Exception
+     */
     public static String getFaculty(String moduleCode) throws Exception {
         JsonNode root = fetchModuleJson(moduleCode);
-        return root.get("faculty").asText();
+        return extractField(root, "faculty");
     }
 
-    // Get module description
+    /**
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods
+     * @return The description of the module on NUSMods, as a string
+     * @throws Exception
+     */
     public static String getModuleDescription(String moduleCode) throws Exception {
         JsonNode root = fetchModuleJson(moduleCode);
-        return root.get("description").asText();
+        return extractField(root, "description");
     }
 
-    // Get module prerequisites
+    /**
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods
+     * @return The direct prerequisites of the module on NUSMods, as a string
+     * @throws Exception
+     */
     public static String getModulePrerequisites(String moduleCode) throws Exception {
         JsonNode root = fetchModuleJson(moduleCode);
-        return root.get("prerequisite").asText();
+        return extractField(root, "prerequisite");
     }
 }
