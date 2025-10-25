@@ -157,20 +157,15 @@ public class Parser {
         try {
             String specInstructions = userInstructions.split(" ", 2)[0].trim().toLowerCase();
 
-            if (specInstructions.equals("ae")) {
-                specItemsInformation = "ae";
-            } else if (specInstructions.equals("4.0")) {
-                specItemsInformation = "4.0";
-            } else if (specInstructions.equals("iot")) {
-                specItemsInformation = "iot";
-            } else if (specInstructions.equals("robotics")) {
-                specItemsInformation = "robotics";
-            } else if (specInstructions.equals("st")) {
-                specItemsInformation = "st";
-            } else {
-                throw new IllegalArgumentException("OOPS!!! The specialisation must be either " +
+            specItemsInformation = switch (specInstructions) {
+                case "ae" -> "ae";
+                case "4.0" -> "4.0";
+                case "iot" -> "iot";
+                case "robotics" -> "robotics";
+                case "st" -> "st";
+                default -> throw new IllegalArgumentException("OOPS!!! The specialisation must be either " +
                         "ae, 4.0, iot, robotics or st.");
-            }
+            };
         } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
             System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
             return "";
