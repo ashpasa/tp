@@ -158,7 +158,8 @@ public class Parser {
         try {
             String specInstructions = userInstructions.split(" ", 2)[0].trim().toLowerCase();
 
-            specItemsInformation = switch (specInstructions) {
+            specItemsInformation =
+                switch (specInstructions) {
                 case "ae" -> "ae";
                 case "4.0" -> "4.0";
                 case "iot" -> "iot";
