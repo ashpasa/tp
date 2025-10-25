@@ -15,8 +15,8 @@ import java.util.List;
  * Fetches data from SpecData.json and prints data when a specialisation is queried.
  */
 public class SpecCommand extends Command {
-    public String specToQuery;
     private static final String SPECDATA = "src/main/java/seedu/classcraft/data/SpecData.json";
+    public String specToQuery;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public SpecCommand(String specName) {
