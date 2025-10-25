@@ -7,6 +7,7 @@ import seedu.classcraft.command.CommandList;
 import seedu.classcraft.command.ExitCommand;
 import seedu.classcraft.command.HelpCommand;
 import seedu.classcraft.command.InvalidCommand;
+import seedu.classcraft.command.SpecCommand;
 import seedu.classcraft.command.ViewSamplePlanCommand;
 import seedu.classcraft.command.ViewGradReqCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
@@ -53,6 +54,9 @@ public class Parser {
             }
         case "exit":
             return new ExitCommand();
+        case "spec":
+            String specItems = parseSpec();
+            return  new SpecCommand(specItems);
         default:
             return new InvalidCommand();
         }
@@ -146,5 +150,31 @@ public class Parser {
             return "";
         }
         return viewItemsInformation;
+    }
+
+    public String parseSpec() {
+        String specItemsInformation;
+        try {
+            String specInstructions = userInstructions.split(" ", 2)[0].trim().toLowerCase();
+
+            if (specInstructions.equals("ae")) {
+                specItemsInformation = "ae";
+            } else if (specInstructions.equals("4.0")) {
+                specItemsInformation = "4.0";
+            } else if (specInstructions.equals("iot")) {
+                specItemsInformation = "iot";
+            } else if (specInstructions.equals("robotics")) {
+                specItemsInformation = "robotics";
+            } else if (specInstructions.equals("st")) {
+                specItemsInformation = "st";
+            } else {
+                throw new IllegalArgumentException("OOPS!!! The specialisation must be either " +
+                        "ae, 4.0, iot, robotics or st.");
+            }
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
+            System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
+            return "";
+        }
+        return specItemsInformation;
     }
 }
