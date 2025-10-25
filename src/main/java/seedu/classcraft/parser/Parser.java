@@ -18,6 +18,7 @@ public class Parser {
     public String userInputString;
     public String userInstructions;
     public StudyPlan studyPlan;
+
     public Parser(String userInput) {
         this.userInputString = userInput;
         // this.studyPlan = studyPlan;
@@ -38,7 +39,7 @@ public class Parser {
             return new DeleteCommand(deleteModuleCode);
         case "confirm":
             return new InvalidCommand();
-            //return new ConfirmCommand();
+        //return new ConfirmCommand();
         case "view":
             String viewItems = parseView();
             switch (viewItems) {
@@ -48,7 +49,7 @@ public class Parser {
                 return new ViewGradReqCommand();
             case "plan":
                 return new ViewCurrentPlanCommand();
-                // return new InvalidCommand();
+            // return new InvalidCommand();
             default:
                 return new InvalidCommand();
             }
@@ -56,7 +57,7 @@ public class Parser {
             return new ExitCommand();
         case "spec":
             String specItems = parseSpec();
-            return  new SpecCommand(specItems);
+            return new SpecCommand(specItems);
         default:
             return new InvalidCommand();
         }
