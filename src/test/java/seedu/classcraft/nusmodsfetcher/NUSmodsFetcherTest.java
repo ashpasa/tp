@@ -24,14 +24,15 @@ public class NUSmodsFetcherTest {
     @Test
     public void extractField_missingField_returnsEmptyString() throws Exception {
         String moduleCode = "CS1010";
-        assertEquals("", NUSmodsFetcher.getModulePrerequisites(moduleCode), "Missing prerequisite field should return empty string");
+        assertEquals("", NUSmodsFetcher.getModulePrerequisites(moduleCode),
+            "Missing prerequisite field should return empty string");
     }
 
     @Test
     public void getModuleCredits_validModuleCode_returnsCorrectCredits() throws Exception {
         String moduleCode = "CS1231";
-        String expectedCredits = "4";
-        String actualCredits = NUSmodsFetcher.getModuleCredits(moduleCode);
+        int expectedCredits = 4;
+        int actualCredits = NUSmodsFetcher.getModuleCredits(moduleCode);
         assertEquals(expectedCredits, actualCredits, "Retrieved module credits should match actual");
     }
 
@@ -46,7 +47,7 @@ public class NUSmodsFetcherTest {
     @Test
     public void getFaculty_validModuleCode_returnsCorrectFaculty() throws Exception {
         String moduleCode = "EG1311";
-        String expectedFaculty = "Engineering";
+        String expectedFaculty = "College of Design and Engineering";
         String actualFaculty = NUSmodsFetcher.getFaculty(moduleCode);
         assertEquals(expectedFaculty, actualFaculty, "Retrieved faculty should match actual");
     }
@@ -54,16 +55,20 @@ public class NUSmodsFetcherTest {
     @Test
     public void getModuleDescription_validModuleCode_returnsCorrectDescription() throws Exception {
         String moduleCode = "CS1010";
-        String expectedDescriptionStart = "This module introduces the fundamental concepts of programming";
+        String expectedDescriptionStart = "This course introduces the fundamental concepts of problem solving";
         String actualDescription = NUSmodsFetcher.getModuleDescription(moduleCode);
-        assertEquals(true, actualDescription.startsWith(expectedDescriptionStart), "Retrieved module description should start with expected text");
+        assertEquals(true, actualDescription.startsWith(expectedDescriptionStart),
+            "Retrieved module description should start with expected text");
     }
 
     @Test
     public void getModulePrerequisites_validModuleCode_returnsCorrectPrerequisites() throws Exception {
         String moduleCode = "CS2040C";
-        String expectedPrerequisites = "CS1010 or CS1010E or CS1101S";
+        String expectedPrerequisites = "If undertaking an Undergraduate DegreeTHEN"
+            + "( must have completed 1 of CS1010/CS1010A/CS1010E/CS1010J/CS1010S/CS1010X/CS1101S/UTC2851"
+            + " at a grade of at least D)";
         String actualPrerequisites = NUSmodsFetcher.getModulePrerequisites(moduleCode);
-        assertEquals(expectedPrerequisites, actualPrerequisites, "Retrieved module prerequisites should match actual");
+        assertEquals(expectedPrerequisites, actualPrerequisites,
+            "Retrieved module prerequisites should match actual");
     }
 }
