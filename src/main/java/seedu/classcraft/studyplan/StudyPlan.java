@@ -5,11 +5,15 @@ import seedu.classcraft.exceptions.StudyPlanException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 
 /**
  * Creates a study plan based on modules added by user
  */
 public class StudyPlan {
+    private static final Logger LOGGER = Logger.getLogger(StudyPlan.class.getName());
     ArrayList<ArrayList<Module>> studyPlan = new ArrayList<>();
     HashMap<String, Integer> modules; // stores moduleCode: semester
     private ModuleHandler moduleHandler;
@@ -33,6 +37,11 @@ public class StudyPlan {
         modules.put(module.getModCode(), semester);
 
         module.setSemesterTaught(semester);
+
+        assert studyPlan.get(semester - 1).contains(module) :
+                "Module should be in the study plan list after adding.";
+        assert modules.containsKey(module.getModCode()) :
+                "Module code should be in the modules map after adding.";
     }
 
     public void addModule(String moduleCode, int semester) throws Exception {
@@ -40,7 +49,7 @@ public class StudyPlan {
         Module newModule = moduleHandler.createModule(moduleCode);
         addModule(newModule, semester);
 
-        System.out.println("Added " + moduleCode + " to semester " + semester);
+        LOGGER.info("Added " + moduleCode + " to semester " + semester);
         // Removed old System.out.println that used fetcher.getModulePrerequisites(moduleCode)
     }
 
@@ -48,7 +57,7 @@ public class StudyPlan {
     public void removeModule(String moduleString) {
         try {
             if (!modules.containsKey(moduleString)) {
-                System.out.println("Module " + moduleString + " does not exist");
+                LOGGER.warning("Module " + moduleString + " does not exist");
                 throw new StudyPlanException("Module " + moduleString + " does not exist");
             }
 
@@ -61,9 +70,9 @@ public class StudyPlan {
 
             modules.remove(moduleString);
 
-            System.out.println("Removed " + moduleString);
+            LOGGER.info("Removed " + moduleString);
         } catch (StudyPlanException e) {
-            System.out.println("Error occurred when removing " + moduleString);
+            LOGGER.log(Level.SEVERE, "Error occurred when removing " + moduleString, e);
         }
     }
 
@@ -99,7 +108,7 @@ public class StudyPlan {
             // Add other core/sample modules for Semesters 3 to 8 (to be added)
 
         } catch (Exception e) {
-            System.err.println("Error creating sample study plan module: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error creating sample study plan module: " + e.getMessage(), e);
             // This usually means NUSModsFetcher failed to retrieve data.
         }
 

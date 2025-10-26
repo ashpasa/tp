@@ -3,6 +3,7 @@ package seedu.classcraft.studyplan;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -16,6 +17,7 @@ import java.util.Map;
  * Stores a HashMap with modCode: Module as key value pair
  */
 public class ModuleHandler {
+    private static final Logger LOGGER = Logger.getLogger(ModuleHandler.class.getName());
     private HashMap<String, Module> modules;
 
 
@@ -41,11 +43,14 @@ public class ModuleHandler {
             }
 
         } catch (Exception e) {
-            System.err.println("Warning: Could not fetch details for " + moduleCode + ". Using default values.");
+            LOGGER.warning("Could not fetch details for " + moduleCode
+                    + ". Using default values. Error: " + e.getMessage());
         }
         Module newModule = new Module(modName, moduleCode, modDescription, prerequisites, -1, -1);
 
         addModule(newModule);
+
+        assert modules.containsKey(moduleCode) : "New module must be added to modules map.";
         return newModule;
     }
 
