@@ -34,7 +34,7 @@ public class ClassCraft {
                 "                                                                " +
                 "                                       ";
 
-        System.out.println("Hello from\n" + "Classcraft");
+        System.out.println("Hello from\n" + "ClassCraft");
         System.out.println("Input your command! Type 'help' if you need assistance.");
 
         Ui ui = new Ui();
@@ -62,5 +62,6 @@ public class ClassCraft {
 
         }
 
+        in.close();
     }
 }

@@ -1,14 +1,14 @@
 package seedu.classcraft;
-/*
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seedu.duke.parser.Parser;
+import seedu.classcraft.parser.Parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull; */
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ParserTest {
-    /*        
+
     private Parser parser;
     private String userInput = "null";
 
@@ -117,5 +117,5 @@ class ParserTest {
                 "should have length 0 for null input.");
 
     }
-    */
+
 }
