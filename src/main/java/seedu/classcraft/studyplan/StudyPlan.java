@@ -118,4 +118,40 @@ public class StudyPlan {
     public static StudyPlan getSampleStudyPlan() {
         return createSampleStudyPlan();
     }
+
+    // @@author ashpasa
+    /**
+     * Calculates the total credits for a specific semester or for the entire study plan.
+     * @param semesterIndex Index of the semester (0-based), with -1 returning total credits for the entire study plan
+     * @return Total credits for the specified semester or entire study plan
+     */
+    public int calculateSemCredits(int semesterIndex) {
+        if (semesterIndex == -1) {
+            return calculateTotalCredits();
+        }
+
+        if (semesterIndex < 0 || semesterIndex >= studyPlan.size()) {
+            LOGGER.warning("Semester " + (semesterIndex + 1) + " is invalid.");
+            throw new IllegalArgumentException("Semester " + (semesterIndex + 1) + " is invalid.");
+        }
+
+        int semesterCredits = 0;
+        for (Module module : studyPlan.get(semesterIndex)) {
+            semesterCredits += module.getModCreds();
+        }
+        return semesterCredits;
+    }
+
+    /**
+     * @return Total credits for the entire study plan
+     */
+    private int calculateTotalCredits() {
+        int totalCredits = 0;
+        for (int i = 0; i < studyPlan.size(); i++) {
+            int semCreds = calculateSemCredits(i);
+            totalCredits += semCreds;
+        }
+        return totalCredits;
+    }
+    // @@author
 }

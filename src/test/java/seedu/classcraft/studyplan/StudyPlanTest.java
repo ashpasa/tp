@@ -50,5 +50,24 @@ public class StudyPlanTest {
             assertTrue(plan.get(i).isEmpty(), "Semester " + (i + 1) + " should be empty in the current sample plan.");
         }
     }
+
+    @Test
+    public void calculateSemCredits_validSemester_correctCredits() {
+        StudyPlan samplePlan = StudyPlan.createSampleStudyPlan();
+
+        int sem1Credits = samplePlan.calculateSemCredits(0);
+        assertEquals(6, sem1Credits, "Semester 1 should have 6 credits.");
+
+        int sem2Credits = samplePlan.calculateSemCredits(1);
+        assertEquals(8, sem2Credits, "Semester 2 should have 8 credits.");
+
+        int sem3Credits = samplePlan.calculateSemCredits(2);
+        assertEquals(4, sem3Credits, "Semester 3 should have 4 credits.");
+
+        for (int i = 3; i < 8; i++) {
+            int semCredits = samplePlan.calculateSemCredits(i);
+            assertEquals(0, semCredits, "Semester " + (i + 1) + " should have 0 credits.");
+        }
+    }
 }
 

@@ -50,4 +50,25 @@ public class Ui {
     public void displayCurrentPlan(StudyPlan currentPlan) {
         displayStudyPlan(currentPlan, "Current Study Plan");
     }
+
+    /**
+     * @param semesterIndex The index of the semester in the ArrayList, with -1 representing overall total
+     * @param totalCredits The number of module credits for the corresponding semester, or overall
+     */
+    public void displayTotalCredits(int semesterIndex, int totalCredits) {
+        String semesterString = "";
+        try {
+            if (semesterIndex == -1) {
+                semesterString = "Total";
+            } else {
+                semesterString = "Semester " + Integer.toString(semesterIndex + 1);
+            }
+        } catch (Exception e) {
+            semesterString = "Invalid Semester";
+        }
+
+        System.out.print(line);
+        System.out.println(semesterString + " Module Credits: " + Integer.toString(totalCredits));
+        System.out.print(line);
+    }
 }

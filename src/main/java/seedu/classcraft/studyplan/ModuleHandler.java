@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import seedu.classcraft.exceptions.NUSmodsFetcherException;
 import seedu.classcraft.nusmodsfetcher.NUSmodsFetcher;
 
 import java.util.Iterator;
@@ -27,15 +28,23 @@ public class ModuleHandler {
 
     // Fetches module data from NUSMods and create a module object
     public Module createModule(String moduleCode) {
-        String modName = moduleCode;
-        String modDescription = "N/A (Details not fetched)";
+        String modName = "placeholder";
+        int modCreds = 0;
+        String modDescription = "placeholder";
+
+        try {
+            modName = NUSmodsFetcher.getModuleTitle(moduleCode);
+            modCreds = NUSmodsFetcher.getModuleCredits(moduleCode);
+            modDescription = NUSmodsFetcher.getModuleDescription(moduleCode);
+        } catch (NUSmodsFetcherException e) {
+            LOGGER.warning("Could not fetch details for " + moduleCode
+                    + ". Using default values. Error: " + e.getMessage());
+        }
+
         List<String> prerequisites = new ArrayList<>();
 
         try {
             JsonNode rootJson = NUSmodsFetcher.fetchModuleJson(moduleCode);
-
-            modName = rootJson.get("title").asText();
-            modDescription = rootJson.get("description").asText();
 
             JsonNode prerequisiteNode = rootJson.get("prereqTree");
             if (prerequisiteNode != null && !prerequisiteNode.isNull()) {
@@ -46,7 +55,7 @@ public class ModuleHandler {
             LOGGER.warning("Could not fetch details for " + moduleCode
                     + ". Using default values. Error: " + e.getMessage());
         }
-        Module newModule = new Module(modName, moduleCode, modDescription, prerequisites, -1, -1);
+        Module newModule = new Module(modName, moduleCode, modCreds, modDescription, prerequisites, -1, -1);
 
         addModule(newModule);
 
