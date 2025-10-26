@@ -2,6 +2,7 @@ package seedu.classcraft.parser;
 
 import seedu.classcraft.command.Command;
 import seedu.classcraft.command.AddCommand;
+import seedu.classcraft.command.CalcCreditsCommand;
 import seedu.classcraft.command.DeleteCommand;
 import seedu.classcraft.command.CommandList;
 import seedu.classcraft.command.ExitCommand;
@@ -40,6 +41,9 @@ public class Parser {
         case "confirm":
             return new InvalidCommand();
         //return new ConfirmCommand();
+        case "mc":
+            int semester = parseMC();
+            return new CalcCreditsCommand(semester - 1);
         case "view":
             String viewItems = parseView();
             switch (viewItems) {
@@ -151,6 +155,21 @@ public class Parser {
             return "";
         }
         return viewItemsInformation;
+    }
+
+    private int parseMC() {
+        int semester = -1;
+        try {
+            if (userInstructions == "total") {
+                semester = 0;
+            } else {
+                semester = Integer.parseInt(userInstructions.trim());
+            }
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
+            System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
+            return -1;
+        }
+        return semester;
     }
 
     public String parseSpec() {

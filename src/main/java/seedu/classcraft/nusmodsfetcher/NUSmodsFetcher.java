@@ -4,9 +4,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
+import seedu.classcraft.exceptions.NUSmodsFetcherException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 
+// @@author ashpasa
 // Fetches module information from NUSMods API, returns data as strings
 public abstract class NUSmodsFetcher {
     private static final HttpClient client = HttpClient.newHttpClient();
@@ -17,13 +19,17 @@ public abstract class NUSmodsFetcher {
      * @param moduleCode The module code to fetch data for, as displayed on NUSMods
      * @return JsonNode representing the module data
      */
-    public static JsonNode fetchModuleJson(String moduleCode) throws Exception {
+    public static JsonNode fetchModuleJson(String moduleCode) throws NUSmodsFetcherException {
         String url = "https://api.nusmods.com/v2/2025-2026/modules/" + moduleCode + ".json";
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return mapper.readTree(response.body());
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return mapper.readTree(response.body());
+        } catch (Exception e) {
+            throw new NUSmodsFetcherException("Failed to fetch module data for " + moduleCode + ": " + e.getMessage());
+        }
     }
 
     /**
@@ -41,7 +47,7 @@ public abstract class NUSmodsFetcher {
      * @return String representing the module title
      * @throws Exception
      */
-    public static String getModuleTitle(String moduleCode) throws Exception {
+    public static String getModuleTitle(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
         return extractField(root, "title");
     }
@@ -51,7 +57,7 @@ public abstract class NUSmodsFetcher {
      * @return String representing the module credits that the module counts for
      * @throws Exception
      */
-    public static int getModuleCredits(String moduleCode) throws Exception {
+    public static int getModuleCredits(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
         String moduleCreditsAsString = extractField(root, "moduleCredit");
         int moduleCredits = Integer.parseInt(moduleCreditsAsString);
@@ -63,7 +69,7 @@ public abstract class NUSmodsFetcher {
      * @return String representing the department offering the module
      * @throws Exception
      */
-    public static String getDepartment(String moduleCode) throws Exception {
+    public static String getDepartment(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
         return extractField(root, "department");
     }
@@ -73,7 +79,7 @@ public abstract class NUSmodsFetcher {
      * @return String representing the faculty offering the module
      * @throws Exception
      */
-    public static String getFaculty(String moduleCode) throws Exception {
+    public static String getFaculty(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
         return extractField(root, "faculty");
     }
@@ -83,7 +89,7 @@ public abstract class NUSmodsFetcher {
      * @return The description of the module on NUSMods, as a string
      * @throws Exception
      */
-    public static String getModuleDescription(String moduleCode) throws Exception {
+    public static String getModuleDescription(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
         return extractField(root, "description");
     }
@@ -93,8 +99,9 @@ public abstract class NUSmodsFetcher {
      * @return The direct prerequisites of the module on NUSMods, as a string
      * @throws Exception
      */
-    public static String getModulePrerequisites(String moduleCode) throws Exception {
+    public static String getModulePrerequisites(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
         return extractField(root, "prerequisite");
     }
 }
+// @@author

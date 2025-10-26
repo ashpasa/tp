@@ -8,16 +8,18 @@ import java.util.List;
 public class Module {
     private String modName;
     private String modCode;
+    private int modCreds;
     private String modDescription;
     private List<String> prerequisites;
     private int semesterTaught;
     private int defaultSemester;
     private int prerequisitesCount; // default 0, updates when added to ModuleHandler
 
-    public Module(String modName, String modCode, String modDescription, List<String> prerequisites,
+    public Module(String modName, String modCode, int modCreds, String modDescription, List<String> prerequisites,
                    int semesterTaught, int defaultSemester) {
         this.modName = modName;
         this.modCode = modCode;
+        this.modCreds = modCreds;
         this.modDescription = modDescription;
         this.prerequisites = prerequisites;
         this.semesterTaught = semesterTaught;
@@ -47,6 +49,14 @@ public class Module {
 
     public void setModCode(String modCode) {
         this.modCode = modCode;
+    }
+
+    public void setModCreds(int modCreds) {
+        this.modCreds = modCreds;
+    }
+
+    public int getModCreds() {
+        return modCreds;
     }
 
     public String getModDescription() {
