@@ -2,10 +2,13 @@ package seedu.classcraft;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import seedu.classcraft.exceptions.EmptyInstruction;
 import seedu.classcraft.parser.Parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 class ParserTest {
 
@@ -20,101 +23,96 @@ class ParserTest {
     //Test for valid parsing of user input string into commandType and userInstructions
     @Test
     void parseInstructions_validInput() {
-        parser.userInputString = "help";
+        parser.setUserInputString("help");
         parser.parseInstructions();
-        assertEquals("help", parser.commandType);
-        assertNull(parser.userInstructions,
+        assertEquals("help", parser.getCommandType());
+        assertNull(parser.getUserInstructions(),
                 "userInstructions should be " +
                         "null for input 'help'.");
 
-        parser.userInputString = "exit";
+        parser.setUserInputString("exit");
         parser.parseInstructions();
-        assertEquals("exit", parser.commandType);
-        assertNull(parser.userInstructions,
+        assertEquals("exit", parser.getCommandType());
+        assertNull(parser.getUserInstructions(),
                 "userInstructions should be " +
                         "null for input 'exit'.");
 
-        parser.userInputString = "delete CS2113";
+        parser.setUserInputString("delete CS2113");
         parser.parseInstructions();
-        assertEquals("delete", parser.commandType);
-        assertEquals("CS2113", parser.userInstructions);
+        assertEquals("delete", parser.getCommandType());
+        assertEquals("CS2113", parser.getUserInstructions());
 
-        parser.userInputString = "unknown arg";
+        parser.setUserInputString("unknown arg");
         parser.parseInstructions();
-        assertEquals("invalid", parser.commandType);
+        assertEquals("invalid", parser.getCommandType());
 
-        parser.userInputString = "delete ";
+        parser.setUserInputString("");
         parser.parseInstructions();
-        assertEquals("invalid", parser.commandType,
-                "The commandType " +
-                        "should be 'invalid' for input 'delete' without a corresponding module code.");
-
-        parser.userInputString = "";
-        parser.parseInstructions();
-        assertEquals("invalid", parser.commandType,
+        assertEquals("invalid", parser.getCommandType(),
                 "The commandType " +
                         "should be 'invalid' for empty input.");
+
     }
 
     //Test for valid parsing of user instructions for view command
     @Test
-    void parseView_validInstructions() {
-        parser.userInstructions = "plan";
+    void parseView_validInstructions() throws EmptyInstruction {
+        parser.setUserInstructions("plan");
         assertEquals("plan", parser.parseView());
 
-        parser.userInstructions = "grad";
+        parser.setUserInstructions("grad");
         assertEquals("grad", parser.parseView());
 
-        parser.userInstructions = "sample extra arguments";
+        parser.setUserInstructions("sample extra arguments");
         assertEquals("sample", parser.parseView());
 
-        parser.userInstructions = "invalidCommand";
-        assertEquals("", parser.parseView(),
-                "The view command should " +
-                "return an empty string for invalid input.");
+        parser.setUserInstructions("invalidCommand");
+        assertThrows(EmptyInstruction.class, () -> parser.parseView());
+
     }
 
     //Test for valid parsing of user instructions for delete command
     @Test
-    void parseDelete_validModuleCode() {
-        parser.userInstructions = "CG2111A extra arguments";
+    void parseDelete_validModuleCode() throws EmptyInstruction {
+        parser.setUserInstructions("CG2111A extra arguments");
         assertEquals("CG2111A", parser.parseDelete());
 
-        parser.userInstructions = null;
-        assertEquals("", parser.parseDelete(),
-                "The delete command should " +
-                "return an empty string for null input.");
+        parser.setUserInstructions(null);
+        assertThrows(EmptyInstruction.class, () -> parser.parseDelete(),
+                "An EmptyInstruction exception " +
+                "should be thrown for null input.");
 
-        parser.userInstructions = "";
-        assertEquals("", parser.parseDelete(),
-                "The delete command " +
-                "should return an empty string for empty input.");
+        parser.setUserInstructions("");
+        assertThrows(EmptyInstruction.class, () -> parser.parseDelete(),
+                "An EmptyInstruction exception " +
+                "should be thrown for empty input.");
+
     }
 
 
     //Test for valid parsing of user instructions for add command
     @Test
-    void parseAdd_validInput() {
-        parser.userInstructions = "n/CG2111A s/2";
+    void parseAdd_validInput() throws EmptyInstruction {
+        parser.setUserInstructions("n/CG2111A s/2");
         String[] result = parser.parseAdd();
         assertEquals(2, result.length);
         assertEquals("CG2111A", result[0]);
         assertEquals("2", result[1]);
 
-        parser.userInstructions = "n/CG2111A";
-        assertEquals(0, parser.parseAdd().length,
-                "The result array " +
-                "should have length 0 for missing semester.");
+        parser.setUserInstructions("n/CG2111A");
+        assertThrows(EmptyInstruction.class, () -> parser.parseAdd(),
+                "An EmptyInstruction exception " +
+                        "should be thrown for null input.");
 
-        parser.userInstructions = "s/2";
-        assertEquals(0, parser.parseAdd().length,
-                "The result array " +
-                "should have length 0 for missing module code.");
+        parser.setUserInstructions("s/2");
+        assertThrows(EmptyInstruction.class, () -> parser.parseAdd(),
+                "An EmptyInstruction exception " +
+                        "should be thrown for null input.");
 
-        parser.userInstructions = null;
-        assertEquals(0, parser.parseAdd().length,
-                "The result array " +
-                "should have length 0 for null input.");
+        parser.setUserInstructions(null);
+        assertThrows(EmptyInstruction.class, () -> parser.parseAdd(),
+                "An EmptyInstruction exception " +
+                "should be thrown for null input.");
 
     }
 
