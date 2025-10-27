@@ -12,7 +12,6 @@ import seedu.classcraft.command.SpecCommand;
 import seedu.classcraft.command.ViewSamplePlanCommand;
 import seedu.classcraft.command.ViewGradReqCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
-import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.exceptions.EmptyInstruction;
 
 import java.util.logging.Level;
@@ -28,7 +27,6 @@ public class Parser {
     private String commandType;
     private String userInputString;
     private String userInstructions;
-    public StudyPlan studyPlan;
 
     /**
      * Constructor for Parser class.
