@@ -11,15 +11,34 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Storage class responsible for handling file operations related to
+ * storing and retrieving study plan data.
+ * A storage object is initialized with a file path where the data is stored.
+ */
 public class Storage {
 
     private String dataFile;
 
+    /**
+     * Constructor for Storage class.
+     * Initializes the storage with the specified data file path.
+     * Calls createFile to ensure the file and directory exists.
+     *
+     * @param dataFile The path to the data file for storing study plan information.
+     */
     public Storage(String dataFile) {
         this.dataFile = dataFile;
-        createFile(dataFile);
+        createFile();
     }
 
+    /**
+     * Appends a module code to the specified semester in the data file.
+     * Reads all lines from the file, updates the line for the given semester,
+     * and writes the updated lines back to the file.
+     * @param moduleCode The module code to append.
+     * @param semester The semester number (1-8) to which the module code should be appended.
+     */
     public void appendToFile( String moduleCode, int semester) {
         Path filePath = Paths.get(dataFile);
         try {
@@ -36,8 +55,14 @@ public class Storage {
 
 
 
-    public void createFile(String filePath) {
-        File f = new File(filePath);
+    /**
+     * Method to create a file at the specified file path.
+     * If the parent directory does not exist, it creates the necessary directories.
+     * If the file is created successfully, it initializes the file with
+     * semester headers from 1 to 8.
+     */
+    public void createFile() {
+        File f = new File(dataFile);
         File parentDir = f.getParentFile();
 
         if (parentDir != null && !parentDir.exists()) {
@@ -66,6 +91,13 @@ public class Storage {
     }
 
 
+    /**
+     * Deletes a module code from the specified semester in the data file.
+     * Reads all lines from the file, updates the line for the given semester, by
+     * removing the specified module code, and writes the updated lines back to the file.
+     *
+     * @param moduleToDelete The module code to delete.
+     */
     public void deleteModule(String moduleToDelete, int semester) {
         try {
             Path filePath = Paths.get(dataFile);
@@ -80,8 +112,17 @@ public class Storage {
 
     }
 
+    /**
+     * Restores study plan data from the data file.
+     * Reads each line from the file, parses the semester and module codes,
+     * and adds the modules to a StudyPlan object using the addModule method.
+     *
+     * @param storage The storage handler to read/write data.
+     * @return A StudyPlan object populated with the restored data.
+     */
     public StudyPlan restoreData (Storage storage) {
-        StudyPlan studyPlan = new StudyPlan(8);
+        int totalSemesters = 8;
+        StudyPlan studyPlan = new StudyPlan(totalSemesters);
         try {
             Path filePath = Paths.get(dataFile);
             List<String> lines = Files.readAllLines(filePath);
