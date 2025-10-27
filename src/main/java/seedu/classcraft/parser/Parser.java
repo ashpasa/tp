@@ -143,7 +143,7 @@ public class Parser {
      * Checks if the command is found in the CommandList enum.
      *
      * @param instructions Array of strings containing command and instructions,
-     * which checks the first element of the array.
+     *                     which checks the first element of the array.
      *
      *  @return boolean indicating if the command is found.
      */
