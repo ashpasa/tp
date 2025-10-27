@@ -20,7 +20,6 @@ class ParserTest {
         parser = new Parser( userInput);
     }
 
-    //Test for valid parsing of user input string into commandType and userInstructions
     @Test
     void parseInstructions_validInput() {
         parser.setUserInputString("help");
@@ -54,7 +53,6 @@ class ParserTest {
 
     }
 
-    //Test for valid parsing of user instructions for view command
     @Test
     void parseView_validInstructions() throws EmptyInstruction {
         parser.setUserInstructions("plan");
@@ -71,7 +69,6 @@ class ParserTest {
 
     }
 
-    //Test for valid parsing of user instructions for delete command
     @Test
     void parseDelete_validModuleCode() throws EmptyInstruction {
         parser.setUserInstructions("CG2111A extra arguments");
@@ -89,8 +86,6 @@ class ParserTest {
 
     }
 
-
-    //Test for valid parsing of user instructions for add command
     @Test
     void parseAdd_validInput() throws EmptyInstruction {
         parser.setUserInstructions("n/CG2111A s/2");
