@@ -1,5 +1,6 @@
 package seedu.classcraft.storage;
 
+import seedu.classcraft.parser.Parser;
 import seedu.classcraft.studyplan.StudyPlan;
 
 import java.io.File;
@@ -11,6 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
 /**
  * Storage class responsible for handling file operations related to
  * storing and retrieving study plan data.
@@ -18,6 +21,7 @@ import java.util.List;
  */
 public class Storage {
 
+    private static Logger logger = Logger.getLogger(Parser.class.getName());
     private String dataFile;
 
     /**
@@ -28,6 +32,7 @@ public class Storage {
      * @param dataFile The path to the data file for storing study plan information.
      */
     public Storage(String dataFile) {
+        assert dataFile != null : "Data file path cannot be null.";
         this.dataFile = dataFile;
         createFile();
     }
@@ -69,6 +74,7 @@ public class Storage {
             if (parentDir.mkdirs()) {
                 System.out.println("Parent directory created successfully.");
             } else {
+                logger.log(Level.WARNING, "Failed to create parent directory.");
                 System.out.println("Failed to create parent directory.");
                 return;
             }
@@ -78,6 +84,7 @@ public class Storage {
             if (f.createNewFile()) {
                 System.out.println("Yay! A file created successfully.");
                 try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
+                    logger.log(Level.INFO, "Initializing new data file with semester headers.");
                     for (int i = 1; i <= 8; i++) {
                         bw.write(i + " -");
                         bw.newLine();
@@ -102,8 +109,10 @@ public class Storage {
         try {
             Path filePath = Paths.get(dataFile);
             List<String> lines = Files.readAllLines(filePath);
+            assert semester >= 1 && semester <= lines.size() : "Semester number out of bounds.";
             String line = lines.get(semester -1);
             String updatedLine = line.replace(" " + moduleToDelete + ",", "");
+            logger.log(Level.INFO, " Updated line after deletion." + updatedLine);
             lines.set(semester -1, updatedLine);
             Files.write(filePath, lines);
         } catch (IOException e) {
@@ -127,13 +136,13 @@ public class Storage {
             Path filePath = Paths.get(dataFile);
             List<String> lines = Files.readAllLines(filePath);
             for (String line : lines) {
-                String[] parts = line.split("-");
-                int semester = Integer.parseInt(parts[0].trim());
-
-                if (parts.length == 1) {// No modules for this semester
+                String[] restorationParts = line.split("-");
+                int semester = Integer.parseInt(restorationParts[0].trim());
+                if (restorationParts.length == 1) {
                     continue;
                 }
-                String modulesPart = parts[1].trim();
+                assert restorationParts.length == 2 : "Each line should contain a semester and module codes.";
+                String modulesPart = restorationParts[1].trim();
 
                 String[] modules = modulesPart.split(",");
                 for (String module : modules) {
@@ -145,8 +154,10 @@ public class Storage {
 
             }
         } catch (IOException e) {
+            logger.log(Level.WARNING, "Failed to read the data file: " + e.getMessage());
             System.out.println("Oh no! I was not able to read the file: " + e.getMessage());
         } catch (Exception e) {
+            logger.log(Level.WARNING, "Error while restoring data: " + e.getMessage());
             throw new RuntimeException(e);
         }
         return studyPlan;
