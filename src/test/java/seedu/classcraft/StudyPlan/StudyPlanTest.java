@@ -1,6 +1,7 @@
 package seedu.classcraft.studyplan;
 
 import org.junit.jupiter.api.Test;
+import seedu.classcraft.storage.Storage;
 // import seedu.duke.studyplan.Module;
 // import seedu.duke.studyplan.StudyPlan;
 
@@ -13,10 +14,11 @@ public class StudyPlanTest {
     @Test
     public void studyPlanTestWithFourMods() throws Exception {
         StudyPlan studyPlan = new StudyPlan(8);
-        studyPlan.addModule("EE2026", 1);
-        studyPlan.addModule("CG2271", 2);
-        studyPlan.addModule("CG2028", 2);
-        studyPlan.addModule("CS2040C", 3);
+        Storage storage = new Storage("./ClassCraftData/studyPlan.txt");
+        studyPlan.addModule("EE2026", 1, storage, true);
+        studyPlan.addModule("CG2271", 2, storage, true );
+        studyPlan.addModule("CG2028", 2, storage, true);
+        studyPlan.addModule("CS2040C", 3, storage, true);
 
         ArrayList<ArrayList<Module>> studyPlanList = studyPlan.getStudyPlan();
 

@@ -1,5 +1,6 @@
 package seedu.classcraft.command;
 
+import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
@@ -9,7 +10,7 @@ public class ExitCommand extends Command {
     }
 
     @Override
-    public void executeCommand(StudyPlan studyPlan, Ui ui) {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         System.out.println("Exiting the program. Goodbye!");
         System.exit(0);
     }

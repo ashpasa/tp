@@ -1,5 +1,6 @@
 package seedu.classcraft.command;
 
+import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
@@ -9,7 +10,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void executeCommand(StudyPlan studyPlan, Ui ui) {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         String userHelp = "Hi there, do you require help?\n"
                 + "Here are the list of commands you can use:\n"
                 + "1. add - Adds a task. Format: add n/{MODULE_CODE} s/{SEMESTER} (SEMESTER: 1 to 8)\n"
