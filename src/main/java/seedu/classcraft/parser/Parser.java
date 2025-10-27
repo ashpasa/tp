@@ -15,12 +15,24 @@ import seedu.classcraft.exceptions.EmptyInstruction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Parser class to parse user input into commands.
+ * A parser object is instantiated with the user input string,
+ * and it extracts the command type and instructions.
+ */
 public class Parser {
     private static Logger logger = Logger.getLogger(Parser.class.getName());
     private String commandType;
     private String userInputString;
     private String userInstructions;
 
+    /**
+     * Constructor for Parser class.
+     * Initializes the parser with the user input string and
+     * calls parseInstructions to extract command type and instructions.
+     *
+     * @return Command object corresponding to the user input.
+     */
     public Parser(String userInput) {
         assert userInput != null : "User input must not be null";
         this.userInputString = userInput;
@@ -54,6 +66,15 @@ public class Parser {
 
 
 
+    /**
+     * Parses the user input into a command object.
+     * Using the commandType and userInstructions parsed earlier,
+     * it creates the corresponding Command object based on the command type.
+     * Catches EmptyInstruction exceptions and returns an InvalidCommand
+     * if any required instructions/its components are missing.
+     *
+     * @return Command object corresponding to the user input.
+     */
     public Command parseInput() {
         logger.log(Level.INFO,"Parsing input, detected commandType: " + commandType);
         try {
@@ -90,8 +111,13 @@ public class Parser {
 
     }
 
-    //parses the user input into command type and instructions
-    //returns invalid command if command type is not found
+    /**
+     * Parses the user input string to extract command type and instructions.
+     * Splits the input string into command and instructions based on the first space,
+     * handles single and dual instruction cases using helper methods.
+     * Catches EmptyInstruction exceptions and sets commandType to "invalid"
+     * if any required instructions/its components are missing.
+     */
     public void parseInstructions() {
         String[] instructions = userInputString.split(" ", 2);
         assert instructions.length > 0 : "Instructions must have at least one element";
@@ -113,10 +139,24 @@ public class Parser {
         }
     }
 
+    /**
+     * Checks if the command is found in the CommandList enum.
+     *
+     * @param instructions Array of strings containing command and instructions,
+     * which checks the first element of the array.
+     *
+     *  @return boolean indicating if the command is found.
+     */
     private boolean isCommandFound(String[] instructions) {
-        return CommandList.isFound(instructions[0]);
+        return CommandList.isCommandFound(instructions[0]);
     }
 
+    /**
+     * Handles single instruction commands.
+     * Validates that the command is one of the allowed single instruction commands
+     * (help, exit, confirm) and sets the commandType accordingly.
+     * Throws EmptyInstruction if the command is not valid.
+     */
     private void handleSingleInstruction(String[] instructions) throws  EmptyInstruction{
         if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("confirm"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
@@ -126,6 +166,14 @@ public class Parser {
 
     }
 
+    /**
+     * Handles dual instruction commands.
+     * Validates that the second part of the array is not empty,
+     * sets the commandType and userInstructions accordingly.
+     * Throws EmptyInstruction if the second part of array is empty.
+     *
+     * @param instructions Array of strings containing command and instructions.
+     */
     private void handleDualInstruction(String[] instructions) throws EmptyInstruction {
         if (instructions[1].isEmpty()) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
@@ -136,20 +184,25 @@ public class Parser {
 
     }
 
+    /**
+     * Parses the user input for add command.
+     * Extracts module code and semester information from the userInstructions,
+     * and splits them based on the expected format to obtain module code and semester.
+     * Throws EmptyInstruction if any required components are missing or empty.
+     * Catches ArrayIndexOutOfBoundsException and NullPointerException.
+     *
+     * @return String array containing module code and semester information.
+     */
     public String[] parseAdd() throws EmptyInstruction {
         String[] addModuleInformation = new String[2];
         try {
 
             String[] addInstructions = userInstructions.split("s/", 2);
             if (addInstructions.length < 2) {
-                System.out.println("Error: Invalid input format. Please enter input in " +
-                    "the correct format (e.g.add n/CG2111A s/2). ");
                 throw new EmptyInstruction("add");
             }
             String[] moduleSplit = addInstructions[0].split("n/", 2);
             if (moduleSplit.length < 2) {
-                System.out.println("Error: Invalid input format. Please enter input in " +
-                    "the correct format (e.g.add n/CG2111A s/2). ");
                 throw new EmptyInstruction("add");
             }
             String moduleCode = moduleSplit[1].trim();
@@ -169,9 +222,15 @@ public class Parser {
         return addModuleInformation;
     }
 
-
-    //parses the user input for delete command
-    //returns the module code to be deleted
+    /**
+     * Parses the user input for delete command.
+     * Extracts module code from the userInstructions and splits it based
+     * on the expected format to get module code.
+     * Throws EmptyInstruction if module code is missing or empty.
+     * Catches ArrayIndexOutOfBoundsException and NullPointerException.
+     *
+     * @return String containing module code to be deleted.
+     */
     public String parseDelete() throws EmptyInstruction {
         try {
             String moduleCode = userInstructions.split(" ", 2)[0].trim();
@@ -185,8 +244,16 @@ public class Parser {
         }
     }
 
-    //parses the user input for view command
-    //returns the information to be viewed (plan, grad or sample)
+    /**
+     * Parses the user input for view command.
+     * Extracts the item to view from the userInstructions and splits it
+     * based on the expected format to get the view item.
+     * Validates that the view item is one of the allowed options (plan, grad, sample).
+     * Throws EmptyInstruction if view item is missing, empty, or invalid.
+     * Catches ArrayIndexOutOfBoundsException, NullPointerException, and IllegalArgumentException
+     *
+     * @return String containing the item to view.
+     */
     public String parseView() throws EmptyInstruction {
         try {
 
