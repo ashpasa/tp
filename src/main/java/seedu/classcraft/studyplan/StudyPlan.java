@@ -163,8 +163,18 @@ public class StudyPlan {
     }
     // @@author
 
+    /**
+     * Indicates to the user which semesters have a high workload (2 or more modules than their average workload)
+     */
     public void balanceStudyPlan() {
-        System.out.println("testing 123");
+        int totalCredits = calculateTotalCredits();
+        int numberOfSems = studyPlan.size();
+        for (int i = 0; i < numberOfSems; i++) {
+            if (calculateSemCredits(i) > (totalCredits/numberOfSems) + 5) {
+                System.out.println("Semester " + (i + 1) + " has a high workload. Please consider moving some modules" +
+                        "to other semesters instead");
+            }
+        }
     }
 
 }
