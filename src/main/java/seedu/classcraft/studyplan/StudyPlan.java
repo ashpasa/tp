@@ -162,4 +162,24 @@ public class StudyPlan {
         return totalCredits;
     }
     // @@author
+
+    /**
+     * Indicates to the user which semesters have a high workload (2 or more modules than their average workload)
+     */
+    public void balanceStudyPlan() {
+        int totalCredits = calculateTotalCredits();
+        int numberOfSems = studyPlan.size();
+        int numberOfHighWorkloadSemesters = 0;
+        for (int i = 0; i < numberOfSems; i++) {
+            if (calculateSemCredits(i) > (totalCredits/numberOfSems) + 5) {
+                System.out.println("Semester " + (i + 1) + " has a high workload. Please consider moving some modules" +
+                        " to other semesters instead");
+                numberOfHighWorkloadSemesters++;
+            }
+        }
+        if (numberOfHighWorkloadSemesters > 0) {
+            System.out.println("YAY! Your study plan is well balanced!");
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package seedu.classcraft.parser;
 
+import seedu.classcraft.command.BalanceCommand;
 import seedu.classcraft.command.Command;
 import seedu.classcraft.command.AddCommand;
 import seedu.classcraft.command.CalcCreditsCommand;
@@ -67,6 +68,8 @@ public class Parser {
         case "prereq":
             String prereqModuleCode = parsePrereq();
             return new PrereqCommand(prereqModuleCode);
+        case "balance":
+            return new BalanceCommand();
         default:
             return new InvalidCommand();
         }
@@ -85,7 +88,7 @@ public class Parser {
         try {
             if (instructions.length == 1) {
                 if (!(instructions[0].equals("help") || instructions[0].equals("exit")
-                        || instructions[0].equals("confirm"))) {
+                        || instructions[0].equals("confirm") || instructions[0].equals("balance"))) {
                     throw new IllegalArgumentException("OOPS!!! The description of a " +
                             instructions[0] + " cannot be empty.");
                 }
