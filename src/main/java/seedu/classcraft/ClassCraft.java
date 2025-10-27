@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import seedu.classcraft.parser.Parser;
 import seedu.classcraft.command.Command;
+import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
@@ -11,6 +12,7 @@ public class ClassCraft {
     /**
      * Main entry-point for the java.duke.ClassCraft application.
      */
+    public static String studyPlanFile = "./ClassCraftData/studyPlan.txt";
     public static void main(String[] args) {
 
         String logo = " ________  ___       ________  ________   ________  ________  __" +
@@ -34,12 +36,13 @@ public class ClassCraft {
                 "                                                                " +
                 "                                       ";
 
-        System.out.println("Hello from\n" + "ClassCraft");
+        System.out.println("Hello from " + "ClassCraft");
         System.out.println("Input your command! Type 'help' if you need assistance.");
 
+        Storage storage = new Storage(studyPlanFile);
         Ui ui = new Ui();
-        StudyPlan currentStudyPlan = new StudyPlan(8);
 
+        StudyPlan currentStudyPlan = storage.restoreData(storage);
         Scanner in = new Scanner(System.in);
         String userInput = "";
 
@@ -54,7 +57,7 @@ public class ClassCraft {
                 Parser parser = new Parser(userInput);
                 Command command = parser.parseInput();
 
-                command.executeCommand(currentStudyPlan, ui);
+                command.executeCommand(currentStudyPlan, ui, storage);
 
             } catch (Exception e) {
                 ui.printMessage("Error: " + e.getMessage());

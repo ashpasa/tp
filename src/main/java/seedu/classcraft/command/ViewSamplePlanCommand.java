@@ -1,5 +1,6 @@
 package seedu.classcraft.command;
 
+import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
@@ -10,7 +11,7 @@ import seedu.classcraft.ui.Ui;
 public class ViewSamplePlanCommand extends Command {
 
     @Override
-    public void executeCommand(StudyPlan currentStudyPlan, Ui ui) throws Exception {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws Exception {
         StudyPlan samplePlan = StudyPlan.getSampleStudyPlan();
 
         ui.displaySamplePlan(samplePlan);
