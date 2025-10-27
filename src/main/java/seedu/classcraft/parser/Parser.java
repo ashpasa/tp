@@ -2,14 +2,17 @@ package seedu.classcraft.parser;
 
 import seedu.classcraft.command.Command;
 import seedu.classcraft.command.AddCommand;
+import seedu.classcraft.command.CalcCreditsCommand;
 import seedu.classcraft.command.DeleteCommand;
 import seedu.classcraft.command.CommandList;
 import seedu.classcraft.command.ExitCommand;
 import seedu.classcraft.command.HelpCommand;
 import seedu.classcraft.command.InvalidCommand;
+import seedu.classcraft.command.SpecCommand;
 import seedu.classcraft.command.ViewSamplePlanCommand;
 import seedu.classcraft.command.ViewGradReqCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
+import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.exceptions.EmptyInstruction;
 
 import java.util.logging.Level;
@@ -25,6 +28,7 @@ public class Parser {
     private String commandType;
     private String userInputString;
     private String userInstructions;
+    public StudyPlan studyPlan;
 
     /**
      * Constructor for Parser class.
@@ -33,6 +37,8 @@ public class Parser {
      *
      * @return Command object corresponding to the user input.
      */
+
+
     public Parser(String userInput) {
         assert userInput != null : "User input must not be null";
         this.userInputString = userInput;
@@ -87,6 +93,9 @@ public class Parser {
             case "delete":
                 String deleteModuleCode = parseDelete();
                 return new DeleteCommand(deleteModuleCode);
+            case "mc":
+                int semester = parseMC();
+                return new CalcCreditsCommand(semester - 1);
             case "view":
                 String viewItems = parseView();
                 switch (viewItems) {
@@ -99,6 +108,9 @@ public class Parser {
                 default:
                     return new InvalidCommand();
                 }
+            case "spec":
+                String specItems = parseSpec();
+                return new SpecCommand(specItems);
             case "exit":
                 return new ExitCommand();
             default:
@@ -272,4 +284,45 @@ public class Parser {
         }
     }
 
+
+    private int parseMC() {
+        int semester = -1;
+        try {
+            if (userInstructions == "total") {
+                semester = 0;
+            } else {
+                semester = Integer.parseInt(userInstructions.trim());
+            }
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
+            System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
+            return -1;
+        }
+        return semester;
+    }
+
+    public String parseSpec() {
+        String specItemsInformation;
+        try {
+            String specInstructions = userInstructions.split(" ", 2)[0].trim().toLowerCase();
+
+            if (specInstructions.equals("ae")) {
+                specItemsInformation = "ae";
+            } else if (specInstructions.equals("4.0")) {
+                specItemsInformation = "4.0";
+            } else if (specInstructions.equals("iot")) {
+                specItemsInformation = "iot";
+            } else if (specInstructions.equals("robotics")) {
+                specItemsInformation = "robotics";
+            } else if (specInstructions.equals("st")) {
+                specItemsInformation = "st";
+            } else {
+                throw new IllegalArgumentException("OOPS!!! The specialisation must be either " +
+                        "ae, 4.0, iot, robotics or st.");
+            }
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
+            System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
+            return "";
+        }
+        return specItemsInformation;
+    }
 }

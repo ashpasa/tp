@@ -1,42 +1,89 @@
-# User Guide
+# User Guide - ClassCraft
+
 
 ## Introduction
 
-{Give a product intro}
+ClassCraft is a module management tool for NUS students. It helps you to organize modules,
+track graduation requirements and plan your academic journey efficiently. Using this, you will be
+able to plan your semesters effectively, ensuring you meet all necessary requirements for graduation.
+
 
 ## Quick Start
 
-{Give steps to get started quickly}
-
 1. Ensure that you have Java 17 or above installed.
-1. Down the latest version of `Duke` from [here](http://link.to/duke).
+2. Download the latest version of `ClassCraft` from your project repository or release page.
+3. Run the application using the command: `java -jar classcraft.jar`
 
 ## Features 
 
-{Give detailed description of each feature}
+### Add a Module: `add`
+Adds a module to your study plan, to a selected semester.
 
-### Adding a todo: `todo`
-Adds a new item to the list of todo items.
+Format: `add n/MODULE_CODE s/SEMESTER`,
+where `MODULE_CODE` is a valid code of a module you want to add, 
+and `SEMESTER` is the semester number (1-8), where you want to add the module to.
 
-Format: `todo n/TODO_NAME d/DEADLINE`
+Example: `add n/CS2113 s/1`
 
-* The `DEADLINE` can be in a natural language format.
-* The `TODO_NAME` cannot contain punctuation.  
+### Delete a Module: `delete`
+Removes a module from your study plan.
 
-Example of usage: 
+Format: `delete {MODULE_CODE}`
 
-`todo n/Write the rest of the User Guide d/next week`
+Example: `delete CS2113`
 
-`todo n/Refactor the User Guide to remove passive voice d/13/04/2020`
+### View Current Study Plan: `view {INFORMATION}`
+Displays your current study plan.
 
-## FAQ
+Format: `view {INFORMATION}`, where `{INFORMATION}` can be:`grad`, `sample` or `plan`.
 
-**Q**: How do I transfer my data to another computer? 
 
-**A**: {your answer here}
+### 1) View Graduation Requirements: `view grad`
+Shows the graduation requirements for your course.
+
+Format: `view grad`
+
+### 2) View Sample Study Plan: `view sample`
+Displays a sample study plan for reference.
+
+Format: `view sample`
+
+    _____________________________________________________
+    CEG Sample Study Plan
+    _____________________________________________________
+    Semester 1:
+      - CS1010 (Programming Methodology)(No Prerequisites)
+      - MA1511 (Engineering Calculus) (Prereqs: MA1301, MA1301X)
+    Semester 2:
+      - CS2030S (Programming Methodology II) (Prereqs: CS1010, CS1010E, CS1010X, CS1101S, CS1010S, CS1010J, CS1010A)
+      - EE2026 (Digital Design) (Prereqs: EE1111A, EE1111B, EE2111A, CG1111A, CS1010E, CS1010)
+    Semester 3: ...
+
+
+### 3) View Sample Study Plan: `view plan`
+Displays current study plan, with modules chosen by the user, in their respective semester.
+
+Format: `view plan`
+
+### Help: `help`
+Shows a list of available commands and their usage.
+
+Format: `help`
+
+### Exit: `exit`
+Exits the application.
+
+Format: `exit`
+
 
 ## Command Summary
-
-{Give a 'cheat sheet' of commands here}
-
-* Add todo `todo n/TODO_NAME d/DEADLINE`
+    
+    | Command       | Format                          | Description                       |
+    |---------------|---------------------------------|-----------------------------------|
+    | Add Module    | add m/MODULE_CODE s/SEMESTER    | Add a module to your study plan   |
+    | Delete Module | delete m/MODULE_CODE            | Remove a module from your plan    |
+    | View Plan     | view                            | Show your current study plan      |
+    | View Grad req | viewgrad                        | Show graduation requirements      |
+    | View Sample   | viewsample                      | Show a sample study plan          |
+    | Help          | help                            | Show help information             |
+    | Exit          | exit                            | Exit the application              |
