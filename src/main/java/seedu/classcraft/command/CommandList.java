@@ -1,7 +1,7 @@
 package seedu.classcraft.command;
 
 public enum CommandList {
-    help, add, delete, view, mc, spec, exit, confirm, prereq;
+    help, add, delete, view, mc, spec, exit, confirm, prereq, balance;
 
     public static boolean isFound(String test) {
         for (CommandList c : CommandList.values()) {

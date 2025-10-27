@@ -162,4 +162,9 @@ public class StudyPlan {
         return totalCredits;
     }
     // @@author
+
+    public void balanceStudyPlan() {
+        System.out.println("testing 123");
+    }
+
 }
