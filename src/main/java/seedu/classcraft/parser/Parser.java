@@ -8,11 +8,13 @@ import seedu.classcraft.command.CommandList;
 import seedu.classcraft.command.ExitCommand;
 import seedu.classcraft.command.HelpCommand;
 import seedu.classcraft.command.InvalidCommand;
+import seedu.classcraft.command.PrereqCommand;
 import seedu.classcraft.command.SpecCommand;
 import seedu.classcraft.command.ViewSamplePlanCommand;
 import seedu.classcraft.command.ViewGradReqCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
 import seedu.classcraft.studyplan.StudyPlan;
+
 
 public class Parser {
     public String commandType;
@@ -62,6 +64,9 @@ public class Parser {
         case "spec":
             String specItems = parseSpec();
             return new SpecCommand(specItems);
+        case "prereq":
+            String prereqModuleCode = parsePrereq();
+            return new PrereqCommand(prereqModuleCode);
         default:
             return new InvalidCommand();
         }
@@ -105,7 +110,7 @@ public class Parser {
         String[] addModuleInformation = new String[2];
         try {
             String[] addInstructions = userInstructions.split("s/", 2);
-            String moduleCode = addInstructions[0].split("n/", 2)[1].trim();
+            String moduleCode = addInstructions[0].split("n/", 2)[1].trim().toUpperCase();
             String semester = addInstructions[1].trim();
             addModuleInformation[0] = moduleCode;
             addModuleInformation[1] = semester;
@@ -196,5 +201,20 @@ public class Parser {
             return "";
         }
         return specItemsInformation;
+    }
+
+    public String parsePrereq() {
+        String moduleCode;
+        try {
+            moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();
+            if (!moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$")) {
+                throw new IllegalArgumentException("Invalid module code format.");
+            }
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
+            System.out.println("Error: Invalid input format. Please enter input in " +
+                    "the correct format (e.g., prereq CS2103T).");
+            return "";
+        }
+        return moduleCode;
     }
 }

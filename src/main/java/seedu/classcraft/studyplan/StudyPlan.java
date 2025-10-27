@@ -47,8 +47,16 @@ public class StudyPlan {
     public void addModule(String moduleCode, int semester) throws Exception {
         // Use ModuleHandler to fetch data and create the Module object
         Module newModule = moduleHandler.createModule(moduleCode);
-        addModule(newModule, semester);
 
+        try {
+            PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
+        } catch (StudyPlanException e) {
+            LOGGER.info("Prerequisite validation failed for " + moduleCode
+                    + " in semester " + semester + ": " + e.getMessage());
+            throw e;
+        }
+
+        addModule(newModule, semester);
         LOGGER.info("Added " + moduleCode + " to semester " + semester);
         // Removed old System.out.println that used fetcher.getModulePrerequisites(moduleCode)
     }
