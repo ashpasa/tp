@@ -1,15 +1,25 @@
 package seedu.classcraft.command;
 
+import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
+/**
+ * HelpCommand class representing the command to display help information.
+ */
 public class HelpCommand extends Command {
-    public HelpCommand() {
-        super();
-    }
 
+    /**
+     * Method from Command parent class.
+     * Prints a help message to the user, indicating available commands
+     * and their required formats.
+     *
+     * @param studyPlan The current study plan ,including data restored from storage
+     * @param ui The user interface to interact with the user
+     * @param storage The storage handler to read/write data
+     */
     @Override
-    public void executeCommand(StudyPlan studyPlan, Ui ui) {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         String userHelp = "Hi there, do you require help?\n"
                 + "Here are the list of commands you can use:\n"
                 + "1. add - Adds a Module.\n   Format: add n/{MODULE_CODE} s/{SEMESTER} (SEMESTER: 1 to 8)\n\n"
@@ -21,6 +31,6 @@ public class HelpCommand extends Command {
                 + "5. prereq - View Pre-Requisites for the given module.\n   Format: prereq {MODULE_CODE}\n\n"
                 + "6. exit - Exit the program\n\n"
                 + "7. help - View this message again";
-        System.out.println(userHelp);
+        ui.printMessage(userHelp);
     }
 }
