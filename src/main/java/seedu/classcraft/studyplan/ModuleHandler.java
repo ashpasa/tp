@@ -89,7 +89,6 @@ public class ModuleHandler {
         modules.putIfAbsent(module.getModCode(), module);
     }
 
-    // (来自队友) 这是一个被队友修改过的版本
     private boolean isValidModuleCode(String code) {
         if (code == null || code.trim().isEmpty()) {
             return false;
