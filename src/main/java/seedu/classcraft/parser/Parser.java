@@ -14,73 +14,132 @@ import seedu.classcraft.command.SpecCommand;
 import seedu.classcraft.command.ViewSamplePlanCommand;
 import seedu.classcraft.command.ViewGradReqCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
-import seedu.classcraft.studyplan.StudyPlan;
+import seedu.classcraft.exceptions.EmptyInstruction;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Parser class to parse user input into commands.
+ * A parser object is instantiated with the user input string,
+ * and it extracts the command type and instructions.
+ */
 
 public class Parser {
-    public String commandType;
-    public String userInputString;
-    public String userInstructions;
-    public StudyPlan studyPlan;
+    private static Logger logger = Logger.getLogger(Parser.class.getName());
+    private String commandType;
+    private String userInputString;
+    private String userInstructions;
+
+    /**
+     * Constructor for Parser class.
+     * Initializes the parser with the user input string and
+     * calls parseInstructions to extract command type and instructions.
+     *
+     * @return Command object corresponding to the user input.
+     */
+
 
     public Parser(String userInput) {
+        assert userInput != null : "User input must not be null";
         this.userInputString = userInput;
-        // this.studyPlan = studyPlan;
+        logger.log(Level.INFO,"Received user input: " + userInputString);
         parseInstructions();
     }
 
+    public String getUserInstructions() {
+        return userInstructions;
+    }
+
+    public String getUserInputString() {
+        return userInputString;
+    }
+
+    public String getCommandType() {
+        return commandType;
+    }
+
+    public void setCommandType(String commandType) {
+        this.commandType = commandType;
+    }
+
+    public void setUserInputString(String userInputString) {
+        this.userInputString = userInputString;
+    }
+
+    public void setUserInstructions(String userInstructions) {
+        this.userInstructions = userInstructions;
+    }
+
+
+
+    /**
+     * Parses the user input into a command object.
+     * Using the commandType and userInstructions parsed earlier,
+     * it creates the corresponding Command object based on the command type.
+     * Catches EmptyInstruction exceptions and returns an InvalidCommand
+     * if any required instructions/its components are missing.
+     *
+     * @return Command object corresponding to the user input.
+     */
     public Command parseInput() {
-        switch (commandType) {
-        case "help":
-            return new HelpCommand();
-        case "add":
-            String[] addModuleInfo = parseAdd();
-            // return new InvalidCommand();
-            return new AddCommand(addModuleInfo);
-        case "delete":
-            String deleteModuleCode = parseDelete();
-            // return new InvalidCommand();
-            return new DeleteCommand(deleteModuleCode);
-        case "confirm":
-            return new InvalidCommand();
-        //return new ConfirmCommand();
-        case "mc":
-            int semester = parseMC();
-            return new CalcCreditsCommand(semester - 1);
-        case "view":
-            String viewItems = parseView();
-            switch (viewItems) {
-            case "sample":
-                return new ViewSamplePlanCommand();
-            case "grad":
-                return new ViewGradReqCommand();
-            case "plan":
-                return new ViewCurrentPlanCommand();
-            // return new InvalidCommand();
+        logger.log(Level.INFO,"Parsing input, detected commandType: " + commandType);
+        try {
+            switch (commandType) {
+            case "help":
+                return new HelpCommand();
+            case "add":
+                String[] addModuleInfo = parseAdd();
+                return new AddCommand(addModuleInfo);
+            case "delete":
+                String deleteModuleCode = parseDelete();
+                return new DeleteCommand(deleteModuleCode);
+            case "mc":
+                int semester = parseMC();
+                return new CalcCreditsCommand(semester - 1);
+            case "view":
+                String viewItems = parseView();
+                switch (viewItems) {
+                case "sample":
+                    return new ViewSamplePlanCommand();
+                case "grad":
+                    return new ViewGradReqCommand();
+                case "plan":
+                    return new ViewCurrentPlanCommand();
+                default:
+                    return new InvalidCommand();
+                }
+            case "spec":
+                String specItems = parseSpec();
+                return new SpecCommand(specItems);
+            case "exit":
+                return new ExitCommand();
+            case "prereq":
+                String prereqModuleCode = parsePrereq();
+                return new PrereqCommand(prereqModuleCode);
+            case "balance":
+                return new BalanceCommand();
             default:
                 return new InvalidCommand();
             }
-        case "exit":
-            return new ExitCommand();
-        case "spec":
-            String specItems = parseSpec();
-            return new SpecCommand(specItems);
-        case "prereq":
-            String prereqModuleCode = parsePrereq();
-            return new PrereqCommand(prereqModuleCode);
-        case "balance":
-            return new BalanceCommand();
-        default:
-            return new InvalidCommand();
+        } catch (EmptyInstruction e) {
+            logger.log(Level.SEVERE,"Error parsing input into command: " + e.getMessage());
         }
+        return new InvalidCommand();
     }
 
-    //parses the user input into command type and instructions
-    //returns invalid command if command type is not found
+    /**
+     * Parses the user input string to extract command type and instructions.
+     * Splits the input string into command and instructions based on the first space,
+     * handles single and dual instruction cases using helper methods.
+     * Catches EmptyInstruction exceptions and sets commandType to "invalid"
+     * if any required instructions/its components are missing.
+     */
     public void parseInstructions() {
         String[] instructions = userInputString.split(" ", 2);
+        assert instructions.length > 0 : "Instructions must have at least one element";
 
-        if (!CommandList.isFound(instructions[0])) {
+        if (!isCommandFound(instructions)) {
             this.commandType = "invalid";
             return;
         }
@@ -93,77 +152,150 @@ public class Parser {
                             instructions[0] + " cannot be empty.");
                 }
                 this.commandType = instructions[0];
+                handleSingleInstruction(instructions);
             } else if (instructions.length == 2) {
-                if (instructions[1].isEmpty()) {
-                    throw new IllegalArgumentException("OOPS!!! The description of a " +
-                            instructions[0] + " cannot be empty.");
-                }
-                this.commandType = instructions[0];
-                this.userInstructions = instructions[1];
+                handleDualInstruction(instructions);
             }
-        } catch (IllegalArgumentException e) {
+        } catch (EmptyInstruction e) {
             System.out.println(e.getMessage());
             this.commandType = "invalid";
         }
     }
 
-    //parses the user input for add command
-    //returns an array of module code and semester
-    public String[] parseAdd() {
+    /**
+     * Checks if the command is found in the CommandList enum.
+     *
+     * @param instructions Array of strings containing command and instructions,
+     *                     which checks the first element of the array.
+     *
+     *  @return boolean indicating if the command is found.
+     */
+    private boolean isCommandFound(String[] instructions) {
+        return CommandList.isCommandFound(instructions[0]);
+    }
+
+    /**
+     * Handles single instruction commands.
+     * Validates that the command is one of the allowed single instruction commands
+     * (help, exit, confirm) and sets the commandType accordingly.
+     * Throws EmptyInstruction if the command is not valid.
+     */
+    private void handleSingleInstruction(String[] instructions) throws  EmptyInstruction{
+        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("confirm"))) {
+            logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
+            throw new EmptyInstruction(instructions[0]);
+        }
+        this.commandType = instructions[0];
+
+    }
+
+    /**
+     * Handles dual instruction commands.
+     * Validates that the second part of the array is not empty,
+     * sets the commandType and userInstructions accordingly.
+     * Throws EmptyInstruction if the second part of array is empty.
+     *
+     * @param instructions Array of strings containing command and instructions.
+     */
+    private void handleDualInstruction(String[] instructions) throws EmptyInstruction {
+        if (instructions[1].isEmpty()) {
+            logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
+            throw new EmptyInstruction(instructions[0]);
+        }
+        this.commandType = instructions[0];
+        this.userInstructions = instructions[1];
+
+    }
+
+    /**
+     * Parses the user input for add command.
+     * Extracts module code and semester information from the userInstructions,
+     * and splits them based on the expected format to obtain module code and semester.
+     * Throws EmptyInstruction if any required components are missing or empty.
+     * Catches ArrayIndexOutOfBoundsException and NullPointerException.
+     *
+     * @return String array containing module code and semester information.
+     */
+    public String[] parseAdd() throws EmptyInstruction {
         String[] addModuleInformation = new String[2];
         try {
+
             String[] addInstructions = userInstructions.split("s/", 2);
-            String moduleCode = addInstructions[0].split("n/", 2)[1].trim().toUpperCase();
+
+            if (addInstructions.length < 2) {
+                throw new EmptyInstruction("add");
+            }
+            String[] moduleSplit = addInstructions[0].split("n/", 2);
+            if (moduleSplit.length < 2) {
+                throw new EmptyInstruction("add");
+            }
+            String moduleCode = moduleSplit[1].trim().toUpperCase();;
             String semester = addInstructions[1].trim();
+
+            if (moduleCode.isEmpty() || semester.isEmpty()) {
+                throw new EmptyInstruction("add");
+            }
+
             addModuleInformation[0] = moduleCode;
             addModuleInformation[1] = semester;
+
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
-            System.out.println("Error: Invalid input format. Please enter input in " +
-                    "the correct format (e.g.add n/CG2111A s/2). ");
-            return new String[0];
+            logger.log(Level.WARNING,"Error parsing add command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("add");
         }
         return addModuleInformation;
-
     }
 
-    //parses the user input for delete command
-    //returns the module code to be deleted
-    public String parseDelete() {
-        String deleteModuleInformation;
+    /**
+     * Parses the user input for delete command.
+     * Extracts module code from the userInstructions and splits it based
+     * on the expected format to get module code.
+     * Throws EmptyInstruction if module code is missing or empty.
+     * Catches ArrayIndexOutOfBoundsException and NullPointerException.
+     *
+     * @return String containing module code to be deleted.
+     */
+    public String parseDelete() throws EmptyInstruction {
         try {
             String moduleCode = userInstructions.split(" ", 2)[0].trim();
-            deleteModuleInformation = moduleCode;
+            if (moduleCode.isEmpty()) {
+                throw new EmptyInstruction("delete");
+            }
+            return moduleCode;
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
-            System.out.println("Error: Invalid input format. Please enter " +
-                    "input in the correct format (e.g.delete CG2111A).");
-            return "";
+            logger.log(Level.WARNING, "Error parsing delete command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("delete");
         }
-        return deleteModuleInformation;
     }
 
-    //parses the user input for view command
-    //returns the information to be viewed (plan, grad or sample)
-    public String parseView() {
-        String viewItemsInformation;
+    /**
+     * Parses the user input for view command.
+     * Extracts the item to view from the userInstructions and splits it
+     * based on the expected format to get the view item.
+     * Validates that the view item is one of the allowed options (plan, grad, sample).
+     * Throws EmptyInstruction if view item is missing, empty, or invalid.
+     * Catches ArrayIndexOutOfBoundsException, NullPointerException, and IllegalArgumentException
+     *
+     * @return String containing the item to view.
+     */
+    public String parseView() throws EmptyInstruction {
         try {
+
             String viewInstructions = userInstructions.split(" ", 2)[0].trim().toLowerCase();
 
-            if (viewInstructions.equals("plan")) {
-                viewItemsInformation = "plan";
-            } else if (viewInstructions.equals("grad")) {
-                viewItemsInformation = "grad";
-            } else if (viewInstructions.equals("sample")) {
-                viewItemsInformation = "sample";
+            if (viewInstructions.equals("plan") || viewInstructions.equals("grad")
+                    || viewInstructions.equals("sample")) {
+                logger.log(Level.INFO, "Parsed view command successfully, item to view: " + viewInstructions);
+                return viewInstructions;
             } else {
-                throw new IllegalArgumentException("OOPS!!! The description of a view " +
-                        "command must be either plan, grad or sample.");
+                throw new EmptyInstruction("view");
             }
         } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
-            System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
-            return "";
+            logger.log(Level.WARNING, "Error parsing view command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("view");
         }
-        return viewItemsInformation;
     }
+
 
     private int parseMC() {
         int semester = -1;
