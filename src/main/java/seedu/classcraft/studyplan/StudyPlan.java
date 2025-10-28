@@ -1,6 +1,7 @@
 package seedu.classcraft.studyplan;
 
 import seedu.classcraft.exceptions.StudyPlanException;
+import seedu.classcraft.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +18,6 @@ public class StudyPlan {
     ArrayList<ArrayList<Module>> studyPlan = new ArrayList<>();
     HashMap<String, Integer> modules; // stores moduleCode: semester
     private ModuleHandler moduleHandler;
-
 
     public StudyPlan(int totalSemesters) {
         for (int i = 0; i < totalSemesters; i++) {
@@ -44,10 +44,13 @@ public class StudyPlan {
                 "Module code should be in the modules map after adding.";
     }
 
-    public void addModule(String moduleCode, int semester) throws Exception {
+    public void addModule(String moduleCode, int semester, Storage storage, boolean isRestored) throws Exception {
         // Use ModuleHandler to fetch data and create the Module object
+        int previousSemester = modules.get(moduleCode);
+        boolean isModAddedPrev = modules.containsKey(moduleCode);
+      
         Module newModule = moduleHandler.createModule(moduleCode);
-
+      
         try {
             PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
         } catch (StudyPlanException e) {
@@ -55,14 +58,23 @@ public class StudyPlan {
                     + " in semester " + semester + ": " + e.getMessage());
             throw e;
         }
-
+      
+        if (isModAddedPrev) {
+            storage.deleteModule(moduleCode, previousSemester);
+        }
+      
         addModule(newModule, semester);
+      
+        if (!isRestored) {
+            storage.appendToFile(moduleCode,semester);
+        }
+
         LOGGER.info("Added " + moduleCode + " to semester " + semester);
         // Removed old System.out.println that used fetcher.getModulePrerequisites(moduleCode)
     }
 
 
-    public void removeModule(String moduleString) {
+    public void removeModule(String moduleString, Storage storage) {
         try {
             if (!modules.containsKey(moduleString)) {
                 LOGGER.warning("Module " + moduleString + " does not exist");
@@ -77,6 +89,7 @@ public class StudyPlan {
             }
 
             modules.remove(moduleString);
+            storage.deleteModule(moduleString, sem);
 
             LOGGER.info("Removed " + moduleString);
         } catch (StudyPlanException e) {

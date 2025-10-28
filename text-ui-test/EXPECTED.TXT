@@ -1,4 +1,7 @@
-Hello from
-Classcraft
+Hello from ClassCraft
 Input your command! Type 'help' if you need assistance.
-I'm sorry, but I don't know what that means :-(
+Parent directory created successfully.
+Yay! A file created successfully.
+_____________________________________________________
+I'm sorry, but I don't know what that means :-(. Please type 'help' to see the list of available commands.
+_____________________________________________________
