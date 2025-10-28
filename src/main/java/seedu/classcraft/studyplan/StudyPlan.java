@@ -46,13 +46,25 @@ public class StudyPlan {
 
     public void addModule(String moduleCode, int semester, Storage storage, boolean isRestored) throws Exception {
         // Use ModuleHandler to fetch data and create the Module object
-        if (modules.containsKey(moduleCode)) {
-            int previousSemester = modules.get(moduleCode);
+        int previousSemester = modules.get(moduleCode);
+        boolean isModAddedPrev = modules.containsKey(moduleCode);
+      
+        Module newModule = moduleHandler.createModule(moduleCode);
+      
+        try {
+            PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
+        } catch (StudyPlanException e) {
+            LOGGER.info("Prerequisite validation failed for " + moduleCode
+                    + " in semester " + semester + ": " + e.getMessage());
+            throw e;
+        }
+      
+        if (isModAddedPrev) {
             storage.deleteModule(moduleCode, previousSemester);
         }
-        Module newModule = moduleHandler.createModule(moduleCode);
+      
         addModule(newModule, semester);
-
+      
         if (!isRestored) {
             storage.appendToFile(moduleCode,semester);
         }

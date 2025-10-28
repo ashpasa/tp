@@ -3,12 +3,14 @@ package seedu.classcraft.command;
 import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
+import seedu.classcraft.exceptions.StudyPlanException;
 
 /**
  * AddCommand class representing the command to add a module to the study plan.
  * Extends the Command abstract class and implements the executeCommand method.
  */
 public class AddCommand extends Command{
+
     public String[] moduleAddInfo;
 
     /**
@@ -35,9 +37,20 @@ public class AddCommand extends Command{
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         try {
+
             studyPlan.addModule(moduleAddInfo[0], Integer.parseInt(moduleAddInfo[1]), storage, false);
+         
+            ui.showMessage("Successfully added " + moduleAddInfo[0]
+                    + " to semester " + moduleAddInfo[1]);
+        } catch (StudyPlanException e) {
+            // Handle prerequisite validation errors
+            ui.showError("Prerequisite Error:\n" + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            // Handle invalid semester errors
+            ui.showError("Invalid semester: " + e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            // Handle other errors (API failures, etc.)
+            ui.showError("Error adding module: " + e.getMessage());
         }
     }
 }

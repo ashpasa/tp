@@ -8,6 +8,7 @@ import seedu.classcraft.command.CommandList;
 import seedu.classcraft.command.ExitCommand;
 import seedu.classcraft.command.HelpCommand;
 import seedu.classcraft.command.InvalidCommand;
+import seedu.classcraft.command.PrereqCommand;
 import seedu.classcraft.command.SpecCommand;
 import seedu.classcraft.command.ViewSamplePlanCommand;
 import seedu.classcraft.command.ViewGradReqCommand;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
  * A parser object is instantiated with the user input string,
  * and it extracts the command type and instructions.
  */
+
 public class Parser {
     private static Logger logger = Logger.getLogger(Parser.class.getName());
     private String commandType;
@@ -111,12 +113,14 @@ public class Parser {
                 return new SpecCommand(specItems);
             case "exit":
                 return new ExitCommand();
+            case "prereq":
+                String prereqModuleCode = parsePrereq();
+                return new PrereqCommand(prereqModuleCode); 
             default:
                 return new InvalidCommand();
             }
         } catch (EmptyInstruction e) {
             logger.log(Level.SEVERE,"Error parsing input into command: " + e.getMessage());
-            return new InvalidCommand();
         }
 
     }
@@ -208,6 +212,7 @@ public class Parser {
         try {
 
             String[] addInstructions = userInstructions.split("s/", 2);
+
             if (addInstructions.length < 2) {
                 throw new EmptyInstruction("add");
             }
@@ -322,5 +327,20 @@ public class Parser {
             return "";
         }
         return specItemsInformation;
+    }
+
+    public String parsePrereq() {
+        String moduleCode;
+        try {
+            moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();
+            if (!moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$")) {
+                throw new IllegalArgumentException("Invalid module code format.");
+            }
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
+            System.out.println("Error: Invalid input format. Please enter input in " +
+                    "the correct format (e.g., prereq CS2103T).");
+            return "";
+        }
+        return moduleCode;
     }
 }
