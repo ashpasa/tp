@@ -46,3 +46,4 @@ public class AddCompletedCommand extends Command {
         }
     }
 }
+
