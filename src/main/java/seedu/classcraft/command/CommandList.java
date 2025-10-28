@@ -4,18 +4,23 @@ package seedu.classcraft.command;
  * CommandList enum contains all valid commands for the ClassCraft application.
  */
 public enum CommandList {
-    help, add, delete, view, mc, spec, exit, prereq, balance;
+    help, add, delete, view, exit, confirm,
+    progress, add_completed, add_exempted, mc, spec, prereq, balance;
 
     /**
-     * Checks if the user-inputted command exists in the CommandList enum.
-     * Returns true if it exists, false otherwise.
+     * Checks if a given string matches any of the enum command names.
+     * This method is modified to support user input with hyphens
+     * (e.g., "add-completed") by mapping them to enum names
+     * with underscores (e.g., "add_completed").
      *
-     * @param command The user-inputted command as a String.
-     * @return boolean indicating if the command exists in CommandList.
+     * @param test The command word from user input.
+     * @return true if a matching command is found, false otherwise.
      */
-    public static boolean isCommandFound(String command) {
+    public static boolean isCommandFound(String test) {
+        String testWithUnderscore = test.replace('-', '_');
+
         for (CommandList c : CommandList.values()) {
-            if (c.name().equalsIgnoreCase(command)) {
+            if (c.name().equalsIgnoreCase(testWithUnderscore)) {
                 return true;
             }
         }
@@ -23,3 +28,4 @@ public enum CommandList {
     }
 
 }
+
