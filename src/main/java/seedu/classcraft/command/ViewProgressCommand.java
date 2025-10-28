@@ -35,3 +35,4 @@ public class ViewProgressCommand extends Command {
         ui.printMessage(message);
     }
 }
+
