@@ -3,12 +3,19 @@ package seedu.classcraft.ui;
 import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.studyplan.Module;
+
 import java.util.ArrayList;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class Ui {
+    private static final Logger logger = Logger.getLogger(Ui.class.getName());
     private String line = "_____________________________________________________" + System.lineSeparator();
 
     public void printMessage(String message) {
+        assert message != null : "Message cannot be null";
+        logger.log(Level.FINE, "Printing message: {0}", message);
+
         System.out.print(line);
         System.out.println(message);
         System.out.print(line);
@@ -16,7 +23,8 @@ public class Ui {
 
     /**
      * Prints the contents of a study plan, showing modules by semester.
-     * @param plan The study plan data (either current or sample).
+     *
+     * @param plan  The study plan data (either current or sample).
      * @param title The title to display (e.g., "CEG Sample Study Plan").
      */
     private void displayStudyPlan(StudyPlan plan, String title) {
@@ -54,7 +62,7 @@ public class Ui {
 
     /**
      * @param semesterIndex The index of the semester in the ArrayList, with -1 representing overall total
-     * @param totalCredits The number of module credits for the corresponding semester, or overall
+     * @param totalCredits  The number of module credits for the corresponding semester, or overall
      */
     public void displayTotalCredits(int semesterIndex, int totalCredits) {
         String semesterString = "";
@@ -74,6 +82,9 @@ public class Ui {
     }
 
     public void showError(String errorMessage) {
+        assert errorMessage != null : "Error message cannot be null";
+        logger.log(Level.WARNING, "Displaying error: {0}", errorMessage);
+
         System.out.println("============================================================");
         System.out.println("ERROR: " + errorMessage);
         System.out.println("============================================================");
@@ -86,6 +97,9 @@ public class Ui {
     }
 
     public void displayPrerequisites(String moduleCode, String moduleTitle, JsonNode prereqTree) {
+        assert moduleCode != null : "Module code cannot be null";
+        logger.log(Level.INFO, "Displaying prerequisites for: {0}", moduleCode);
+
         System.out.print(line);
         System.out.println("Module: " + moduleCode + " - " + moduleTitle);
         System.out.print(line);
@@ -94,6 +108,7 @@ public class Ui {
             System.out.println("Prerequisites: None");
             System.out.println();
             System.out.println("This module has no prerequisites. You can take it in any semester!");
+            logger.log(Level.FINE, "No prerequisites for module: {0}", moduleCode);
         } else {
             String prereqString = prettifyPrereqTree(prereqTree);
             System.out.println("Prerequisites: " + prereqString);
@@ -108,6 +123,9 @@ public class Ui {
      * Displays an error message for prerequisite lookup
      */
     public void displayPrereqError(String moduleCode) {
+        assert moduleCode != null : "Module code cannot be null";
+        logger.log(Level.WARNING, "Could not fetch prerequisites for module: {0}", moduleCode);
+
         System.out.print(line);
         System.out.println("Error: Could not fetch prerequisites for " + moduleCode);
         System.out.println("Please check that the module code is valid.");
@@ -166,7 +184,6 @@ public class Ui {
             }
         }
 
-        // Handle text nodes (module codes with grades)
         if (node.isTextual()) {
             String code = stripGradeRequirement(node.asText());
             if (isValidModuleCode(code) && !isBridgingModule(code)) {
@@ -175,7 +192,6 @@ public class Ui {
             return "";
         }
 
-        // Handle objects with moduleCode field
         if (node.has("moduleCode")) {
             String code = stripGradeRequirement(node.get("moduleCode").asText());
             if (isValidModuleCode(code) && !isBridgingModule(code)) {

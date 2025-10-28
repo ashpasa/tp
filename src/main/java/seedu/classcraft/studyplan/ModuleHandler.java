@@ -58,7 +58,7 @@ public class ModuleHandler {
                         .map(code -> stripGradeRequirement(code))
                         .filter(code -> isValidModuleCode(code))
                         .filter(code -> !isBridgingModule(code))
-                        .distinct() // Remove duplicates
+                        .distinct()
                         .collect(Collectors.toList());
 
                 LOGGER.info("Module " + moduleCode + " has " + prerequisites.size()
