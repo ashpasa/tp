@@ -3,6 +3,7 @@ package seedu.classcraft.command;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.studyplan.ModuleStatus;
 import seedu.classcraft.ui.Ui;
+import seedu.classcraft.storage.Storage;
 
 /**
  * @@author  lingru
@@ -33,9 +34,10 @@ public class AddCompletedCommand extends Command {
      *
      * @param studyPlan The study plan to modify.
      * @param ui The UI to display messages to the user.
+     * @param storage The storage handler
      */
     @Override
-    public void executeCommand(StudyPlan studyPlan, Ui ui) {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws Exception {
         try {
             studyPlan.addCompletedModule(moduleCode, status);
             ui.printMessage("Successfully added " + moduleCode + " as " + status.toString());
@@ -44,4 +46,3 @@ public class AddCompletedCommand extends Command {
         }
     }
 }
-

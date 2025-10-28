@@ -2,6 +2,7 @@ package seedu.classcraft.command;
 
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
+import seedu.classcraft.storage.Storage;
 
 /**
  * @@author lingru
@@ -20,9 +21,10 @@ public class ViewProgressCommand extends Command {
      *
      * @param studyPlan The study plan to get data from.
      * @param ui The UI to display the result.
+     * @param storage The storage handler
      */
     @Override
-    public void executeCommand(StudyPlan studyPlan, Ui ui) {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws Exception {
         double percentage = studyPlan.getDegreeProgressPercentage();
         int securedMCs = studyPlan.getTotalSecuredMCs();
         int totalMCs = studyPlan.getTotalMcsForGraduation();
@@ -33,4 +35,3 @@ public class ViewProgressCommand extends Command {
         ui.printMessage(message);
     }
 }
-

@@ -1,6 +1,7 @@
 package seedu.classcraft.studyplan;
 
 import seedu.classcraft.exceptions.StudyPlanException;
+import seedu.classcraft.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,6 @@ public class StudyPlan {
     private static final int TOTAL_MCS_FOR_GRADUATION = 160;
 
     // --- Fields for PLANNED modules ---
-    // @@author
     /**
      * Stores modules that are PLANNED for future semesters.
      */
@@ -41,7 +41,6 @@ public class StudyPlan {
     // @@author
 
     private ModuleHandler moduleHandler;
-
 
     public StudyPlan(int totalSemesters) {
         for (int i = 0; i < totalSemesters; i++) {
@@ -86,26 +85,44 @@ public class StudyPlan {
                 "Module code should be in the modules map after adding.";
     }
 
-    /**
-     * Fetches and adds a PLANNED module to a specific semester.
-     */
-    public void addModule(String moduleCode, int semester) throws Exception {
+    public void addModule(String moduleCode, int semester, Storage storage, boolean isRestored) throws Exception {
         // Use ModuleHandler to fetch data and create the Module object
+        boolean isModAddedPrev = modules.containsKey(moduleCode);
+        int previousSemester = 0;
+        if (isModAddedPrev) {
+            previousSemester = modules.get(moduleCode);
+        }
+
         Module newModule = moduleHandler.createModule(moduleCode);
+
+        try {
+            PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
+        } catch (StudyPlanException e) {
+            LOGGER.info("Prerequisite validation failed for " + moduleCode
+                    + " in semester " + semester + ": " + e.getMessage());
+            throw e;
+        }
+
+        if (isModAddedPrev) {
+            storage.deleteModule(moduleCode, previousSemester);
+        }
+
         addModule(newModule, semester);
+
+        if (!isRestored) {
+            storage.appendToFile(moduleCode, semester);
+        }
 
         LOGGER.info("Added " + moduleCode + " to semester " + semester);
     }
 
-
-    public void removeModule(String moduleString) {
+    public void removeModule(String moduleString, Storage storage) {
         try {
             if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
                 LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
                 throw new StudyPlanException("Module " + moduleString + " does not exist");
             }
 
-            // If it's a PLANNED module
             if (modules.containsKey(moduleString)) {
                 Integer sem = modules.get(moduleString);
                 for (int i = 0; i < studyPlan.get(sem - 1).size(); i++) {
@@ -115,16 +132,15 @@ public class StudyPlan {
                     }
                 }
                 modules.remove(moduleString);
+                storage.deleteModule(moduleString, sem);
                 LOGGER.info("Removed " + moduleString + " from semester " + sem);
 
-                // If it's a COMPLETED/EXEMPTED module
             } else if (completedModulesMap.containsKey(moduleString)) {
                 Module modToRemove = completedModulesMap.get(moduleString);
                 completedModulesList.remove(modToRemove);
                 completedModulesMap.remove(moduleString);
                 LOGGER.info("Removed " + moduleString + " from completed modules list.");
             }
-            // @@author
 
         } catch (StudyPlanException e) {
             LOGGER.log(Level.SEVERE, "Error occurred when removing " + moduleString, e);
@@ -191,12 +207,13 @@ public class StudyPlan {
     /**
      * @@author lingru
      * Gets the total number of secured MCs (from completed/exempted modules).
+     *
      * @return Total secured MCs.
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
         for (Module mod : completedModulesList) {
-            totalSecuredMCs += mod.getModuleCredit();
+            totalSecuredMCs += mod.getModCreds();
         }
         return totalSecuredMCs;
     }
@@ -204,6 +221,7 @@ public class StudyPlan {
     /**
      * @@author lingru
      * Gets the total MCs required for graduation.
+     *
      * @return Total required MCs.
      */
     public int getTotalMcsForGraduation() {
@@ -213,7 +231,6 @@ public class StudyPlan {
     /**
      * @@author lingru
      * Helper method to check if a module exists anywhere in the plan (planned or completed).
-     * Useful for prerequisite checking (Sean's task).
      *
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
@@ -273,5 +290,42 @@ public class StudyPlan {
     public static StudyPlan getSampleStudyPlan() {
         return createSampleStudyPlan();
     }
-}
 
+    // @@author ashpasa
+
+    /**
+     * Calculates the total credits for a specific semester or for the entire study plan.
+     *
+     * @param semesterIndex Index of the semester (0-based), with -1 returning total credits for the entire study plan
+     * @return Total credits for the specified semester or entire study plan
+     */
+    public int calculateSemCredits(int semesterIndex) {
+        if (semesterIndex == -1) {
+            return calculateTotalCredits();
+        }
+
+        if (semesterIndex < 0 || semesterIndex >= studyPlan.size()) {
+            LOGGER.warning("Semester " + (semesterIndex + 1) + " is invalid.");
+            throw new IllegalArgumentException("Semester " + (semesterIndex + 1) + " is invalid.");
+        }
+
+        int semesterCredits = 0;
+        for (Module module : studyPlan.get(semesterIndex)) {
+            semesterCredits += module.getModCreds();
+        }
+        return semesterCredits;
+    }
+
+    /**
+     * @return Total credits for the entire study plan
+     */
+    private int calculateTotalCredits() {
+        int totalCredits = 0;
+        for (int i = 0; i < studyPlan.size(); i++) {
+            int semCreds = calculateSemCredits(i);
+            totalCredits += semCreds;
+        }
+        return totalCredits;
+    }
+    // @@author
+}

@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+
+import seedu.classcraft.exceptions.NUSmodsFetcherException;
 import seedu.classcraft.nusmodsfetcher.NUSmodsFetcher;
 
 import java.util.Iterator;
@@ -27,34 +30,41 @@ public class ModuleHandler {
 
     // Fetches module data from NUSMods and create a module object
     public Module createModule(String moduleCode) {
-        String modName = moduleCode;
-        String modDescription = "N/A (Details not fetched)";
+        String modName = "placeholder";
+        int modCreds = 0;
+        String modDescription = "placeholder";
+        JsonNode prereqTreeNode = null;
+
+        try {
+            modName = NUSmodsFetcher.getModuleTitle(moduleCode);
+            modCreds = NUSmodsFetcher.getModuleCredits(moduleCode);
+            modDescription = NUSmodsFetcher.getModuleDescription(moduleCode);
+        } catch (NUSmodsFetcherException e) {
+            LOGGER.warning("Could not fetch details for " + moduleCode
+                    + ". Using default values. Error: " + e.getMessage());
+        }
+
         List<String> prerequisites = new ArrayList<>();
 
-        // @@author lingru
-        // Default MCs to 0 if not found
-        int moduleCredit = 0;
-        // @@author
 
         try {
             JsonNode rootJson = NUSmodsFetcher.fetchModuleJson(moduleCode);
 
-            modName = rootJson.get("title").asText();
-            modDescription = rootJson.get("description").asText();
-
-            // @@author lingru
-            // Fetch moduleCredit (MCs)
-            if (rootJson.has("moduleCredit") && !rootJson.get("moduleCredit").isNull()) {
-                // Parse moduleCredit as an integer
-                moduleCredit = Integer.parseInt(rootJson.get("moduleCredit").asText());
-            } else {
-                LOGGER.warning("Could not fetch moduleCredit for " + moduleCode + ". Defaulting to 0 MCs.");
-            }
-            // @@author
-
             JsonNode prerequisiteNode = rootJson.get("prereqTree");
+
             if (prerequisiteNode != null && !prerequisiteNode.isNull()) {
+                prereqTreeNode = prerequisiteNode;
                 extractModuleCodes(prerequisiteNode, prerequisites);
+
+                prerequisites = prerequisites.stream()
+                        .map(code -> stripGradeRequirement(code))
+                        .filter(code -> isValidModuleCode(code))
+                        .filter(code -> !isBridgingModule(code))
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                LOGGER.info("Module " + moduleCode + " has " + prerequisites.size()
+                        + " prerequisites: " + prerequisites);
             }
 
         } catch (Exception e) {
@@ -62,8 +72,9 @@ public class ModuleHandler {
                     + ". Using default values. Error: " + e.getMessage());
         }
 
-        Module newModule = new Module(modName, moduleCode, modDescription, prerequisites, -1, -1, moduleCredit);
+        Module newModule = new Module(modName, moduleCode, modCreds, modDescription, prerequisites, -1, -1);
 
+        newModule.setPrereqTree(prereqTreeNode);
         addModule(newModule);
 
         assert modules.containsKey(moduleCode) : "New module must be added to modules map.";
@@ -78,25 +89,23 @@ public class ModuleHandler {
         modules.putIfAbsent(module.getModCode(), module);
     }
 
+    // (来自队友) 这是一个被队友修改过的版本
+    private boolean isValidModuleCode(String code) {
+        if (code == null || code.trim().isEmpty()) {
+            return false;
+        }
+        return code.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$");
+    }
+
     private void extractModuleCodes(JsonNode node, List<String> result) {
         if (node == null || node.isNull()) {
             return;
         }
 
-        if (node.isTextual()) {
-            String text = node.asText().trim();
-            if (text.contains(":") && !text.split(":")[0].trim().isEmpty()) {
-                String moduleCode = text.split(":")[0].trim();
-                result.add(moduleCode);
-            } else if (!text.isEmpty()) {
-                result.add(text);
-            }
-            return;
-        }
-
         if (node.isObject() && node.has("moduleCode")) {
-            String modCode = node.get("moduleCode").asText();
-            if (!modCode.trim().isEmpty()) {
+            String modCode = node.get("moduleCode").asText().trim();
+            if (!modCode.isEmpty()) {
+                modCode = stripGradeRequirement(modCode);
                 result.add(modCode);
             }
             return;
@@ -106,14 +115,46 @@ public class ModuleHandler {
             for (JsonNode subNode : node) {
                 extractModuleCodes(subNode, result);
             }
-        } else if (node.isObject()) {
+            return;
+        }
+
+        if (node.isObject()) {
             Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
             while (fields.hasNext()) {
                 Map.Entry<String, JsonNode> field = fields.next();
-                JsonNode value = field.getValue();
+                String fieldName = field.getKey();
+                if (fieldName.equals("and") || fieldName.equals("or")) {
+                    extractModuleCodes(field.getValue(), result);
+                }
+            }
+            return;
+        }
 
-                extractModuleCodes(value, result);
+        if (node.isTextual()) {
+            String text = node.asText().trim();
+
+            text = stripGradeRequirement(text);
+
+            if (text.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$")) {
+                result.add(text);
             }
         }
     }
+
+    private String stripGradeRequirement(String moduleCode) {
+        int colonIndex = moduleCode.indexOf(':');
+        if (colonIndex != -1) {
+            return moduleCode.substring(0, colonIndex);
+        }
+        return moduleCode;
+    }
+
+    private boolean isBridgingModule(String moduleCode) {
+
+        return moduleCode.equals("MA1301")
+                || moduleCode.equals("MA1301X")
+                || moduleCode.equals("MA1301FC")
+                || moduleCode.equals("PC1201");
+    }
+
 }

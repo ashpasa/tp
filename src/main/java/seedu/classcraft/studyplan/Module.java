@@ -1,5 +1,6 @@
 package seedu.classcraft.studyplan;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 
 /**
@@ -8,8 +9,10 @@ import java.util.List;
 public class Module {
     private String modName;
     private String modCode;
+    private int modCreds;
     private String modDescription;
     private List<String> prerequisites;
+    private JsonNode prereqTree;
     private int semesterTaught;
     private int defaultSemester;
     private int prerequisitesCount; // default 0, updates when added to ModuleHandler
@@ -20,19 +23,15 @@ public class Module {
      */
     private ModuleStatus status;
 
-    /**
-     * @@author lingru
-     * The number of Module Credits (MCs) this module is worth.
-     */
-    private int moduleCredit;
+    public Module(String modName, String modCode, int modCreds, String modDescription, List<String> prerequisites,
+                  int semesterTaught, int defaultSemester) {
 
-    public Module(String modName, String modCode, String modDescription, List<String> prerequisites,
-                  int semesterTaught, int defaultSemester, int moduleCredit
-    ) {
         this.modName = modName;
         this.modCode = modCode;
+        this.modCreds = modCreds;
         this.modDescription = modDescription;
         this.prerequisites = prerequisites;
+        this.prereqTree = null;
         this.semesterTaught = semesterTaught;
         this.defaultSemester = defaultSemester;
         this.prerequisitesCount = 0;
@@ -40,7 +39,7 @@ public class Module {
         // @@author lingru
         // By default, a newly created module is considered 'PLANNED'
         this.status = ModuleStatus.PLANNED;
-        this.moduleCredit = moduleCredit;
+
     }
 
     public int getPrerequisitesCount() {
@@ -65,6 +64,14 @@ public class Module {
 
     public void setModCode(String modCode) {
         this.modCode = modCode;
+    }
+
+    public void setModCreds(int modCreds) {
+        this.modCreds = modCreds;
+    }
+
+    public int getModCreds() {
+        return modCreds;
     }
 
     public String getModDescription() {
@@ -100,7 +107,6 @@ public class Module {
     }
 
     // @@author lingru
-
     /**
      * @@author lingru
      * Gets the current status of the module.
@@ -118,15 +124,15 @@ public class Module {
     public void setStatus(ModuleStatus status) {
         this.status = status;
     }
-
-    public int getModuleCredit() {
-        return moduleCredit;
-    }
-
-    public void setModuleCredit(int moduleCredit) {
-        this.moduleCredit = moduleCredit;
-    }
     // @@author
+
+    public JsonNode getPrereqTree() {
+        return prereqTree;
+    }
+
+    public void setPrereqTree(JsonNode prereqTree) {
+        this.prereqTree = prereqTree;
+    }
 
     public String getPrerequisitesDisplay() {
         List<String> prereqs = getPrerequisites();
