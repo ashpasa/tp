@@ -67,7 +67,7 @@ Displays current study plan, with modules chosen by the user, in their respectiv
 
 Format: `view plan`
 
-### 4) View Modules required for a specialisation.: `spec {Specialisation}`
+### View Modules required for a Specialisation: `spec {Specialisation}`
 
 Displays current study plan, with modules chosen by the user, in their respective semester.
 
@@ -85,7 +85,13 @@ where `{Specialisation}` can be the following:
 
 `st`: Space Technology
 
-### 6) Balance Study Plan: `balance`
+### View Pre-Requisites for a Module: `prereq {MODULE_CODE}`
+
+Displays a list of pre-requisites for the given module.
+
+Format: `prereq {MODULE_CODE}`
+
+### Balance Study Plan: `balance`
 
 Balances workload of study plan by detecting any semesters with unusually high workload
 
@@ -114,5 +120,6 @@ Format: `exit`
     | View Sample   | viewsample                      | Show a sample study plan          |
     | Specialisation| spec {SPEC}                     | Show specialisation information   |
     | Balance       | balance                         | Balance workload in study plan    |
+    | Pre-Requisite | prereq {MODULE_CODE}            | View Pre-Requisites               |
     | Help          | help                            | Show help information             |
     | Exit          | exit                            | Exit the application              |
