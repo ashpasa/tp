@@ -33,8 +33,9 @@ public class HelpCommand extends Command {
                 + "(SPECIALISATION: ae,4.0,iot,robotics,st)\n\n"
                 + "8. prereq - View Pre-Requisites for the given module.\n   Format: prereq {MODULE_CODE}\n\n"
                 + "9. mc - Calculate MCs for a semester or total.\n   Format: mc {SEMESTER} (SEMESTER: 1 to 8 or total)\n\n"
-                + "10. exit - Exit the program\n\n"
-                + "11. help - View this message again";
+                + "10. balance - Balances workload of study plan \n   Format: balance\n\n"
+                + "11. exit - Exit the program\n\n"
+                + "12. help - View this message again";
         ui.printMessage(userHelp);
     }
 }

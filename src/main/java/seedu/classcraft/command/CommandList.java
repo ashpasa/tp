@@ -5,8 +5,7 @@ package seedu.classcraft.command;
  */
 public enum CommandList {
     help, add, delete, view, exit, confirm,
-    progress, add_completed, add_exempted, mc, spec, prereq;
-
+    progress, add_completed, add_exempted, mc, spec, prereq, balance;
 
     /**
      * Checks if a given string matches any of the enum command names.
