@@ -2,7 +2,10 @@ package seedu.classcraft.studyplan;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.exceptions.StudyPlanException;
+
 import java.util.ArrayList;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,31 +16,41 @@ import java.util.Set;
  */
 public class PrerequisiteChecker {
 
+    private static final Logger logger = Logger.getLogger(PrerequisiteChecker.class.getName());
+
     /**
      * Validates if prerequisites are satisfied before adding module
      */
-    public static void validatePrerequisites(Module module, int targetSemester,
-                                             StudyPlan studyPlan) throws StudyPlanException {
+    public static void validatePrerequisites(Module module, int targetSemester, StudyPlan studyPlan)
+            throws StudyPlanException {
+        assert module != null : "Module cannot be null";
+        assert studyPlan != null : "StudyPlan cannot be null";
+        assert targetSemester > 0 : "Target semester must be positive";
+
+        logger.log(Level.INFO, "Validating prerequisites for module {0} in semester {1}",
+                new Object[]{module.getModCode(), targetSemester});
+
         JsonNode prereqTree = module.getPrereqTree();
 
-        // No prerequisites means module can be taken anytime
         if (prereqTree == null || prereqTree.isNull() || prereqTree.isMissingNode()) {
+            logger.log(Level.FINE, "Module {0} has no prerequisites", module.getModCode());
             return;
         }
 
-        // Get completed modules from previous semesters
         Set<String> completedModules = getCompletedModules(targetSemester, studyPlan);
+        logger.log(Level.FINE, "Completed modules before semester {0}: {1}",
+                new Object[]{targetSemester, completedModules});
 
-        // Evaluate the prerequisite tree
         boolean satisfied = evaluatePrereqTree(prereqTree, completedModules);
 
         if (!satisfied) {
-            String errorMessage = buildErrorMessage(module.getModCode(),
-                    targetSemester,
-                    prereqTree,
-                    completedModules);
+            String errorMessage = buildErrorMessage(module.getModCode(), targetSemester, prereqTree, completedModules);
+            logger.log(Level.WARNING, "Prerequisites not satisfied for module {0}: {1}",
+                    new Object[]{module.getModCode(), errorMessage});
             throw new StudyPlanException(errorMessage);
         }
+
+        logger.log(Level.INFO, "Prerequisites satisfied for module {0}", module.getModCode());
     }
 
     /**
@@ -45,18 +58,25 @@ public class PrerequisiteChecker {
      * Returns true if prerequisites are satisfied
      */
     private static boolean evaluatePrereqTree(JsonNode node, Set<String> completedModules) {
+        assert node != null : "JsonNode cannot be null";
+        assert completedModules != null : "Completed modules set cannot be null";
+
         if (node == null || node.isNull() || node.isMissingNode()) {
             return true;
         }
 
         if (node.isObject() && node.has("or")) {
-            return evaluateOrNode(node.get("or"), completedModules);
+            boolean result = evaluateOrNode(node.get("or"), completedModules);
+            logger.log(Level.FINER, "OR node evaluation result: {0}", result);
+            return result;
         }
 
         if (node.isObject() && node.has("and")) {
-            return evaluateAndNode(node.get("and"), completedModules);
+            boolean result = evaluateAndNode(node.get("and"), completedModules);
+            logger.log(Level.FINER, "AND node evaluation result: {0}", result);
+            return result;
         }
-        
+
         if (node.isTextual()) {
             return isModuleCompleted(node.asText(), completedModules);
         }
@@ -69,45 +89,60 @@ public class PrerequisiteChecker {
     }
 
     private static boolean evaluateOrNode(JsonNode orNode, Set<String> completedModules) {
+        assert orNode != null : "OR node cannot be null";
+        assert completedModules != null : "Completed modules set cannot be null";
+
         if (!orNode.isArray()) {
             return false;
         }
 
         for (JsonNode child : orNode) {
             if (evaluatePrereqTree(child, completedModules)) {
+                logger.log(Level.FINEST, "OR condition satisfied by child node");
                 return true;
             }
         }
+        logger.log(Level.FINEST, "OR condition not satisfied");
         return false;
     }
 
     private static boolean evaluateAndNode(JsonNode andNode, Set<String> completedModules) {
+        assert andNode != null : "AND node cannot be null";
+        assert completedModules != null : "Completed modules set cannot be null";
+
         if (!andNode.isArray()) {
             return true;
         }
 
         for (JsonNode child : andNode) {
             if (!evaluatePrereqTree(child, completedModules)) {
+                logger.log(Level.FINEST, "AND condition failed on child node");
                 return false;
             }
         }
+        logger.log(Level.FINEST, "AND condition satisfied");
         return true;
     }
 
     private static boolean isModuleCompleted(String moduleText, Set<String> completedModules) {
+        assert moduleText != null : "Module text cannot be null";
+        assert completedModules != null : "Completed modules set cannot be null";
+
         String moduleCode = stripGradeRequirement(moduleText);
 
-        // Guard clause: Ignore bridging modules
         if (isBridgingModule(moduleCode)) {
+            logger.log(Level.FINEST, "Ignoring bridging module: {0}", moduleCode);
             return true;
         }
 
-        // Guard clause: Ignore invalid module codes
         if (!isValidModuleCode(moduleCode)) {
+            logger.log(Level.WARNING, "Invalid module code format: {0}", moduleCode);
             return true;
         }
 
-        return completedModules.contains(moduleCode);
+        boolean completed = completedModules.contains(moduleCode);
+        logger.log(Level.FINEST, "Module {0} completion status: {1}", new Object[]{moduleCode, completed});
+        return completed;
     }
 
     private static boolean isValidModuleCode(String moduleCode) {
@@ -118,6 +153,9 @@ public class PrerequisiteChecker {
      * Gets all completed modules from previous semesters
      */
     private static Set<String> getCompletedModules(int targetSemester, StudyPlan studyPlan) {
+        assert studyPlan != null : "StudyPlan cannot be null";
+        assert targetSemester > 0 : "Target semester must be positive";
+
         Set<String> completedModules = new HashSet<>();
         ArrayList<ArrayList<Module>> plan = studyPlan.getStudyPlan();
 
@@ -138,6 +176,7 @@ public class PrerequisiteChecker {
         if (colonIndex != -1) {
             return moduleCode.substring(0, colonIndex);
         }
+
         return moduleCode;
     }
 
@@ -154,9 +193,11 @@ public class PrerequisiteChecker {
     /**
      * Builds user-friendly error message
      */
-    private static String buildErrorMessage(String moduleCode, int targetSemester,
-                                            JsonNode prereqTree,
+    private static String buildErrorMessage(String moduleCode, int targetSemester, JsonNode prereqTree,
                                             Set<String> completedModules) {
+        assert moduleCode != null : "Module code cannot be null";
+        assert prereqTree != null : "Prerequisite tree cannot be null";
+
         StringBuilder message = new StringBuilder();
         message.append("Cannot add ").append(moduleCode)
                 .append(" to semester ").append(targetSemester)
