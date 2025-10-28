@@ -1,5 +1,9 @@
 package seedu.classcraft.command;
 
+import seedu.classcraft.storage.Storage;
+import seedu.classcraft.studyplan.StudyPlan;
+import seedu.classcraft.ui.Ui;
+
 public class CalcCreditsCommand extends Command {
     private int calculatedSemIndex;
 
@@ -9,7 +13,7 @@ public class CalcCreditsCommand extends Command {
     }
 
     @Override
-    public void executeCommand(seedu.classcraft.studyplan.StudyPlan studyPlan, seedu.classcraft.ui.Ui ui) {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         int totalCredits = studyPlan.calculateSemCredits(calculatedSemIndex);
         ui.displayTotalCredits(calculatedSemIndex, totalCredits);
     }

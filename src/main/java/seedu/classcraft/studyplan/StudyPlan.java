@@ -1,6 +1,7 @@
 package seedu.classcraft.studyplan;
 
 import seedu.classcraft.exceptions.StudyPlanException;
+import seedu.classcraft.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +18,6 @@ public class StudyPlan {
     ArrayList<ArrayList<Module>> studyPlan = new ArrayList<>();
     HashMap<String, Integer> modules; // stores moduleCode: semester
     private ModuleHandler moduleHandler;
-
 
     public StudyPlan(int totalSemesters) {
         for (int i = 0; i < totalSemesters; i++) {
@@ -44,8 +44,14 @@ public class StudyPlan {
                 "Module code should be in the modules map after adding.";
     }
 
-    public void addModule(String moduleCode, int semester) throws Exception {
+    public void addModule(String moduleCode, int semester, Storage storage, boolean isRestored) throws Exception {
         // Use ModuleHandler to fetch data and create the Module object
+        boolean isModAddedPrev = modules.containsKey(moduleCode);
+        int previousSemester = 0;
+        if (isModAddedPrev) {
+            previousSemester = modules.get(moduleCode);
+        }
+
         Module newModule = moduleHandler.createModule(moduleCode);
 
         try {
@@ -56,13 +62,22 @@ public class StudyPlan {
             throw e;
         }
 
+        if (isModAddedPrev) {
+            storage.deleteModule(moduleCode, previousSemester);
+        }
+
         addModule(newModule, semester);
+
+        if (!isRestored) {
+            storage.appendToFile(moduleCode, semester);
+        }
+
         LOGGER.info("Added " + moduleCode + " to semester " + semester);
         // Removed old System.out.println that used fetcher.getModulePrerequisites(moduleCode)
     }
 
 
-    public void removeModule(String moduleString) {
+    public void removeModule(String moduleString, Storage storage) {
         try {
             if (!modules.containsKey(moduleString)) {
                 LOGGER.warning("Module " + moduleString + " does not exist");
@@ -77,6 +92,7 @@ public class StudyPlan {
             }
 
             modules.remove(moduleString);
+            storage.deleteModule(moduleString, sem);
 
             LOGGER.info("Removed " + moduleString);
         } catch (StudyPlanException e) {
@@ -128,8 +144,10 @@ public class StudyPlan {
     }
 
     // @@author ashpasa
+
     /**
      * Calculates the total credits for a specific semester or for the entire study plan.
+     *
      * @param semesterIndex Index of the semester (0-based), with -1 returning total credits for the entire study plan
      * @return Total credits for the specified semester or entire study plan
      */

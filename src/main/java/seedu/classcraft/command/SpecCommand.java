@@ -2,6 +2,7 @@ package seedu.classcraft.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
@@ -29,7 +30,7 @@ public class SpecCommand extends Command {
     }
 
     @Override
-    public void executeCommand(StudyPlan studyPlan, Ui ui) throws IOException {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws IOException {
         try {
             File specFile = new File(SPECDATA);
             JsonNode specNode = mapper.readTree(specFile);

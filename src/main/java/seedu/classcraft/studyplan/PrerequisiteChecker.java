@@ -2,7 +2,10 @@ package seedu.classcraft.studyplan;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.exceptions.StudyPlanException;
+
 import java.util.ArrayList;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,31 +16,41 @@ import java.util.Set;
  */
 public class PrerequisiteChecker {
 
+    private static final Logger logger = Logger.getLogger(PrerequisiteChecker.class.getName());
+
     /**
      * Validates if prerequisites are satisfied before adding module
      */
-    public static void validatePrerequisites(Module module, int targetSemester,
-                                             StudyPlan studyPlan) throws StudyPlanException {
+    public static void validatePrerequisites(Module module, int targetSemester, StudyPlan studyPlan)
+            throws StudyPlanException {
+        assert module != null : "Module cannot be null";
+        assert studyPlan != null : "StudyPlan cannot be null";
+        assert targetSemester > 0 : "Target semester must be positive";
+
+        logger.log(Level.INFO, "Validating prerequisites for module {0} in semester {1}",
+                new Object[]{module.getModCode(), targetSemester});
+
         JsonNode prereqTree = module.getPrereqTree();
 
-        // No prerequisites means module can be taken anytime
         if (prereqTree == null || prereqTree.isNull() || prereqTree.isMissingNode()) {
+            logger.log(Level.FINE, "Module {0} has no prerequisites", module.getModCode());
             return;
         }
 
-        // Get completed modules from previous semesters
         Set<String> completedModules = getCompletedModules(targetSemester, studyPlan);
+        logger.log(Level.FINE, "Completed modules before semester {0}: {1}",
+                new Object[]{targetSemester, completedModules});
 
-        // Evaluate the prerequisite tree
         boolean satisfied = evaluatePrereqTree(prereqTree, completedModules);
 
         if (!satisfied) {
-            String errorMessage = buildErrorMessage(module.getModCode(),
-                    targetSemester,
-                    prereqTree,
-                    completedModules);
+            String errorMessage = buildErrorMessage(module.getModCode(), targetSemester, prereqTree, completedModules);
+            logger.log(Level.WARNING, "Prerequisites not satisfied for module {0}: {1}",
+                    new Object[]{module.getModCode(), errorMessage});
             throw new StudyPlanException(errorMessage);
         }
+
+        logger.log(Level.INFO, "Prerequisites satisfied for module {0}", module.getModCode());
     }
 
     /**
@@ -45,76 +58,104 @@ public class PrerequisiteChecker {
      * Returns true if prerequisites are satisfied
      */
     private static boolean evaluatePrereqTree(JsonNode node, Set<String> completedModules) {
+        assert node != null : "JsonNode cannot be null";
+        assert completedModules != null : "Completed modules set cannot be null";
+
         if (node == null || node.isNull() || node.isMissingNode()) {
             return true;
         }
 
-        // Handle "or" node: ANY child must be satisfied
         if (node.isObject() && node.has("or")) {
-            JsonNode orNode = node.get("or");
-            if (orNode.isArray()) {
-                for (JsonNode child : orNode) {
-                    if (evaluatePrereqTree(child, completedModules)) {
-                        return true; // At least one is satisfied
-                    }
-                }
-            }
-            return false; // None are satisfied
+            boolean result = evaluateOrNode(node.get("or"), completedModules);
+            logger.log(Level.FINER, "OR node evaluation result: {0}", result);
+            return result;
         }
 
-        // Handle "and" node: ALL children must be satisfied
         if (node.isObject() && node.has("and")) {
-            JsonNode andNode = node.get("and");
-            if (andNode.isArray()) {
-                for (JsonNode child : andNode) {
-                    if (!evaluatePrereqTree(child, completedModules)) {
-                        return false; // At least one is not satisfied
-                    }
-                }
-            }
-            return true; // All are satisfied
+            boolean result = evaluateAndNode(node.get("and"), completedModules);
+            logger.log(Level.FINER, "AND node evaluation result: {0}", result);
+            return result;
         }
 
-        // Handle module code with grade requirement (e.g., "CS1010:B")
         if (node.isTextual()) {
-            String moduleCode = stripGradeRequirement(node.asText());
-
-            // Ignore bridging modules
-            if (isBridgingModule(moduleCode)) {
-                return true;
-            }
-
-            // Check if valid module code format
-            if (!moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$")) {
-                return true; // Ignore invalid codes
-            }
-
-            return completedModules.contains(moduleCode);
+            return isModuleCompleted(node.asText(), completedModules);
         }
 
-        // Handle object with "moduleCode" field
         if (node.isObject() && node.has("moduleCode")) {
-            String moduleCode = stripGradeRequirement(node.get("moduleCode").asText());
-
-            if (isBridgingModule(moduleCode)) {
-                return true;
-            }
-
-            if (!moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$")) {
-                return true;
-            }
-
-            return completedModules.contains(moduleCode);
+            return isModuleCompleted(node.get("moduleCode").asText(), completedModules);
         }
 
-        // Default: if we can't parse it, assume it's satisfied
         return true;
+    }
+
+    private static boolean evaluateOrNode(JsonNode orNode, Set<String> completedModules) {
+        assert orNode != null : "OR node cannot be null";
+        assert completedModules != null : "Completed modules set cannot be null";
+
+        if (!orNode.isArray()) {
+            return false;
+        }
+
+        for (JsonNode child : orNode) {
+            if (evaluatePrereqTree(child, completedModules)) {
+                logger.log(Level.FINEST, "OR condition satisfied by child node");
+                return true;
+            }
+        }
+        logger.log(Level.FINEST, "OR condition not satisfied");
+        return false;
+    }
+
+    private static boolean evaluateAndNode(JsonNode andNode, Set<String> completedModules) {
+        assert andNode != null : "AND node cannot be null";
+        assert completedModules != null : "Completed modules set cannot be null";
+
+        if (!andNode.isArray()) {
+            return true;
+        }
+
+        for (JsonNode child : andNode) {
+            if (!evaluatePrereqTree(child, completedModules)) {
+                logger.log(Level.FINEST, "AND condition failed on child node");
+                return false;
+            }
+        }
+        logger.log(Level.FINEST, "AND condition satisfied");
+        return true;
+    }
+
+    private static boolean isModuleCompleted(String moduleText, Set<String> completedModules) {
+        assert moduleText != null : "Module text cannot be null";
+        assert completedModules != null : "Completed modules set cannot be null";
+
+        String moduleCode = stripGradeRequirement(moduleText);
+
+        if (isBridgingModule(moduleCode)) {
+            logger.log(Level.FINEST, "Ignoring bridging module: {0}", moduleCode);
+            return true;
+        }
+
+        if (!isValidModuleCode(moduleCode)) {
+            logger.log(Level.WARNING, "Invalid module code format: {0}", moduleCode);
+            return true;
+        }
+
+        boolean completed = completedModules.contains(moduleCode);
+        logger.log(Level.FINEST, "Module {0} completion status: {1}", new Object[]{moduleCode, completed});
+        return completed;
+    }
+
+    private static boolean isValidModuleCode(String moduleCode) {
+        return moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$");
     }
 
     /**
      * Gets all completed modules from previous semesters
      */
     private static Set<String> getCompletedModules(int targetSemester, StudyPlan studyPlan) {
+        assert studyPlan != null : "StudyPlan cannot be null";
+        assert targetSemester > 0 : "Target semester must be positive";
+
         Set<String> completedModules = new HashSet<>();
         ArrayList<ArrayList<Module>> plan = studyPlan.getStudyPlan();
 
@@ -135,6 +176,7 @@ public class PrerequisiteChecker {
         if (colonIndex != -1) {
             return moduleCode.substring(0, colonIndex);
         }
+
         return moduleCode;
     }
 
@@ -151,9 +193,11 @@ public class PrerequisiteChecker {
     /**
      * Builds user-friendly error message
      */
-    private static String buildErrorMessage(String moduleCode, int targetSemester,
-                                            JsonNode prereqTree,
+    private static String buildErrorMessage(String moduleCode, int targetSemester, JsonNode prereqTree,
                                             Set<String> completedModules) {
+        assert moduleCode != null : "Module code cannot be null";
+        assert prereqTree != null : "Prerequisite tree cannot be null";
+
         StringBuilder message = new StringBuilder();
         message.append("Cannot add ").append(moduleCode)
                 .append(" to semester ").append(targetSemester)
@@ -185,49 +229,46 @@ public class PrerequisiteChecker {
         }
 
         if (node.has("or")) {
-            List<String> parts = new ArrayList<>();
-            JsonNode orNode = node.get("or");
-            if (orNode.isArray()) {
-                for (JsonNode child : orNode) {
-                    String part = prettifyPrereqTree(child);
-                    if (!part.isEmpty()) {
-                        parts.add(part);
-                    }
-                }
-            }
-            return "(" + String.join(" OR ", parts) + ")";
+            return prettifyLogicNode(node.get("or"), " OR ");
         }
 
         if (node.has("and")) {
-            List<String> parts = new ArrayList<>();
-            JsonNode andNode = node.get("and");
-            if (andNode.isArray()) {
-                for (JsonNode child : andNode) {
-                    String part = prettifyPrereqTree(child);
-                    if (!part.isEmpty()) {
-                        parts.add(part);
-                    }
-                }
-            }
-            return "(" + String.join(" AND ", parts) + ")";
+            return prettifyLogicNode(node.get("and"), " AND ");
         }
 
         if (node.isTextual()) {
-            String code = stripGradeRequirement(node.asText());
-            if (!isBridgingModule(code) && code.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$")) {
-                return code;
-            }
-            return "";
+            return prettifyModuleCode(node.asText());
         }
 
         if (node.has("moduleCode")) {
-            String code = stripGradeRequirement(node.get("moduleCode").asText());
-            if (!isBridgingModule(code) && code.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$")) {
-                return code;
-            }
+            return prettifyModuleCode(node.get("moduleCode").asText());
+        }
+
+        return "";
+    }
+
+    private static String prettifyLogicNode(JsonNode logicNode, String separator) {
+        if (!logicNode.isArray()) {
             return "";
         }
 
+        List<String> parts = new ArrayList<>();
+        for (JsonNode child : logicNode) {
+            String part = prettifyPrereqTree(child);
+            if (!part.isEmpty()) {
+                parts.add(part);
+            }
+        }
+
+        return parts.isEmpty() ? "" : "(" + String.join(separator, parts) + ")";
+    }
+
+    private static String prettifyModuleCode(String moduleText) {
+        String code = stripGradeRequirement(moduleText);
+
+        if (!isBridgingModule(code) && isValidModuleCode(code)) {
+            return code;
+        }
         return "";
     }
 }
