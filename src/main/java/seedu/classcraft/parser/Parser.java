@@ -98,13 +98,13 @@ public class Parser {
                 return new CalcCreditsCommand(semester - 1);
 
             // @@author lingru (Start of changes for new commands)
-            /**
+            /*
              * e.g. : add-completed CS1010
              */
             case "add-completed":
                 return parseAddWithStatus(ModuleStatus.COMPLETED, "add-completed");
 
-            /**
+            /*
              * e.g. : add-exempted CS1231
              */
             case "add-exempted":
@@ -186,7 +186,7 @@ public class Parser {
      * Checks if the command is found in the CommandList enum.
      *
      * @param instructions Array of strings containing command and instructions,
-     * which checks the first element of the array.
+     *     which checks the first element of the array.
      * @return boolean indicating if the command is found.
      */
     private boolean isCommandFound(String[] instructions) {
