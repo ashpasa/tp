@@ -49,11 +49,11 @@ public class StudyPlan {
         boolean isModAddedPrev = modules.containsKey(moduleCode);
         int previousSemester = 0;
         if (isModAddedPrev) {
-                previousSemester = modules.get(moduleCode);
+            previousSemester = modules.get(moduleCode);
         }
-      
+
         Module newModule = moduleHandler.createModule(moduleCode);
-      
+
         try {
             PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
         } catch (StudyPlanException e) {
@@ -61,15 +61,15 @@ public class StudyPlan {
                     + " in semester " + semester + ": " + e.getMessage());
             throw e;
         }
-      
+
         if (isModAddedPrev) {
             storage.deleteModule(moduleCode, previousSemester);
         }
-      
+
         addModule(newModule, semester);
-      
+
         if (!isRestored) {
-            storage.appendToFile(moduleCode,semester);
+            storage.appendToFile(moduleCode, semester);
         }
 
         LOGGER.info("Added " + moduleCode + " to semester " + semester);
@@ -144,8 +144,10 @@ public class StudyPlan {
     }
 
     // @@author ashpasa
+
     /**
      * Calculates the total credits for a specific semester or for the entire study plan.
+     *
      * @param semesterIndex Index of the semester (0-based), with -1 returning total credits for the entire study plan
      * @return Total credits for the specified semester or entire study plan
      */
