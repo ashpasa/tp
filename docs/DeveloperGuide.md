@@ -7,6 +7,37 @@
 
 ### Design & implementation
 
+#### **Parsing user input to commands**
+
+User inputs are parsed into commands by the **`Parser`** class.
+
+* **Implementation:** A new parser object is instantiated in `ClassCraft.java` to handle user inputs, 
+  which calls the parser constructor in `Parser.java`, passing the raw user input string to parseInstructions().
+
+* **Key Method: `parseInstructions(String userInput)`**
+    * This method splits the user input into the command word and arguments.
+    * It handles the instruction based on if it is a single word or a double word command.
+    * The command word is extracted and saved to commandType variable.
+  
+* **Key Method: `parseInput()`**
+    * This method uses a switch-case structure to map command words to their respective
+      command classes (e.g., `AddCommand`, `DeleteCommand`, `ViewCommand`, etc).
+    * It returns an instance of the appropriate command class based on the parsed command word.
+    * If the command word does not match any known commands, it returns an `InvalidCommand` instance.
+    * Command classes are extended from the abstract `Command` class, which defines a common interface for all commands.
+      and each command class implements the `execute(StudyPlan studyPlan, Ui ui, Storage storage)` method.
+  
+* **Helper Methods**
+    * `parseAdd()`: Parses arguments for the `AddCommand`, extracting the module code and semester.
+    * `parseDelete()`: Parses arguments for the `DeleteCommand`, extracting the module code.
+    * `parseView()`: Parses arguments for the `ViewCommand`, determining whether to view the sample plan 
+       or graduation requirements.
+    * `parseMC()` : Parses arguments for the `CalcCreditsCommand`, extracting the semester.
+    * `parseSpec()` : Parses arguments for the `SpecCommand`, extracting the specialization.
+    * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
+
+
+
 My primary contribution is in **DM3**, which involves creating and
 storing the **sample study plan** and the **CEG default graduation
 requirements**. This is primarily handled by the `StudyPlan`

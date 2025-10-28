@@ -234,7 +234,7 @@ public class Parser {
      */
     public String parseDelete() throws EmptyInstruction {
         try {
-            String moduleCode = userInstructions.split(" ", 2)[0].trim();
+            String moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();;
             if (moduleCode.isEmpty()) {
                 throw new EmptyInstruction("delete");
             }
