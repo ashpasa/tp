@@ -31,11 +31,26 @@ public class ModuleHandler {
         String modDescription = "N/A (Details not fetched)";
         List<String> prerequisites = new ArrayList<>();
 
+        // @@author lingru
+        // Default MCs to 0 if not found
+        int moduleCredit = 0;
+        // @@author
+
         try {
             JsonNode rootJson = NUSmodsFetcher.fetchModuleJson(moduleCode);
 
             modName = rootJson.get("title").asText();
             modDescription = rootJson.get("description").asText();
+
+            // @@author lingru
+            // Fetch moduleCredit (MCs)
+            if (rootJson.has("moduleCredit") && !rootJson.get("moduleCredit").isNull()) {
+                // Parse moduleCredit as an integer
+                moduleCredit = Integer.parseInt(rootJson.get("moduleCredit").asText());
+            } else {
+                LOGGER.warning("Could not fetch moduleCredit for " + moduleCode + ". Defaulting to 0 MCs.");
+            }
+            // @@author
 
             JsonNode prerequisiteNode = rootJson.get("prereqTree");
             if (prerequisiteNode != null && !prerequisiteNode.isNull()) {
@@ -46,7 +61,8 @@ public class ModuleHandler {
             LOGGER.warning("Could not fetch details for " + moduleCode
                     + ". Using default values. Error: " + e.getMessage());
         }
-        Module newModule = new Module(modName, moduleCode, modDescription, prerequisites, -1, -1);
+
+        Module newModule = new Module(modName, moduleCode, modDescription, prerequisites, -1, -1, moduleCredit);
 
         addModule(newModule);
 
@@ -101,4 +117,3 @@ public class ModuleHandler {
         }
     }
 }
-

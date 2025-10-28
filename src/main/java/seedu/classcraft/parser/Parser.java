@@ -12,6 +12,11 @@ import seedu.classcraft.command.ViewGradReqCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
 import seedu.classcraft.studyplan.StudyPlan;
 
+import seedu.classcraft.command.AddCompletedCommand;
+import seedu.classcraft.command.ViewProgressCommand;
+import seedu.classcraft.studyplan.ModuleStatus;
+
+
 public class Parser {
     public String commandType;
     public String userInputString;
@@ -35,9 +40,52 @@ public class Parser {
             String deleteModuleCode = parseDelete();
             // return new InvalidCommand();
             return new DeleteCommand(deleteModuleCode);
+
+        // @@author lingru (Start of changes for new commands)
+        /**
+         * e.g. : add-completed CS1010
+         */
+        case "add-completed": {
+            try {
+                String moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();
+                if (moduleCode.isEmpty()) {
+                    System.out.println("Error: Missing module code for 'add-completed'.");
+                    return new InvalidCommand();
+                }
+                return new AddCompletedCommand(moduleCode, ModuleStatus.COMPLETED);
+            } catch (Exception e) {
+                System.out.println("Error: Invalid input format for 'add-completed' (e.g. add-completed CS1010).");
+                return new InvalidCommand();
+            }
+        }
+
+        /**
+         * e.g. : add-exempted CS1231
+         */
+        case "add-exempted": {
+            try {
+                String moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();
+                if (moduleCode.isEmpty()) {
+                    System.out.println("Error: Missing module code for 'add-exempted'.");
+                    return new InvalidCommand();
+                }
+                return new AddCompletedCommand(moduleCode, ModuleStatus.EXEMPTED);
+            } catch (Exception e) {
+                System.out.println("Error: Invalid input format for 'add-exempted' (e.g. add-exempted CS1231).");
+                return new InvalidCommand();
+            }
+        }
+
+        /**
+         * e.g. : progress
+         */
+        case "progress":
+            return new ViewProgressCommand();
+        // @@author lingru (End of changes)
+
         case "confirm":
             return new InvalidCommand();
-            //return new ConfirmCommand();
+        //return new ConfirmCommand();
         case "view":
             String viewItems = parseView();
             switch (viewItems) {
@@ -47,7 +95,7 @@ public class Parser {
                 return new ViewGradReqCommand();
             case "plan":
                 return new ViewCurrentPlanCommand();
-                // return new InvalidCommand();
+            // return new InvalidCommand();
             default:
                 return new InvalidCommand();
             }
@@ -71,7 +119,7 @@ public class Parser {
         try {
             if (instructions.length == 1) {
                 if (!(instructions[0].equals("help") || instructions[0].equals("exit")
-                        || instructions[0].equals("confirm"))) {
+                        || instructions[0].equals("confirm") || instructions[0].equals("progress"))) {
                     throw new IllegalArgumentException("OOPS!!! The description of a " +
                             instructions[0] + " cannot be empty.");
                 }
