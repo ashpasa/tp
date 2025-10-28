@@ -1,12 +1,23 @@
 package seedu.classcraft.parser;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seedu.classcraft.command.*;
+import seedu.classcraft.command.AddCommand;
+import seedu.classcraft.command.CalcCreditsCommand;
+import seedu.classcraft.command.DeleteCommand;
+import seedu.classcraft.command.ExitCommand;
+import seedu.classcraft.command.HelpCommand;
+import seedu.classcraft.command.InvalidCommand;
+import seedu.classcraft.command.PrereqCommand;
+import seedu.classcraft.command.SpecCommand;
+import seedu.classcraft.command.ViewCurrentPlanCommand;
+import seedu.classcraft.command.ViewGradReqCommand;
+import seedu.classcraft.command.ViewSamplePlanCommand;
 import seedu.classcraft.exceptions.EmptyInstruction;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 class ParserTest {
 
