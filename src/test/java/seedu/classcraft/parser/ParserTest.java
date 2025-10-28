@@ -2,11 +2,10 @@ package seedu.classcraft.parser;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import seedu.classcraft.command.*;
 import seedu.classcraft.exceptions.EmptyInstruction;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class ParserTest {
@@ -14,100 +13,176 @@ class ParserTest {
     private Parser parser;
     private String userInput = "null";
 
-    @BeforeEach
-    void setUp() {
-        parser = new Parser( userInput);
-    }
 
     @Test
     void parseInstructions_validInput() {
-        parser.setUserInputString("help");
-        parser.parseInstructions();
+        Parser parser;
+
+        parser = new Parser("help");
         assertEquals("help", parser.getCommandType());
-        assertNull(parser.getUserInstructions(),
-                "userInstructions should be " +
-                        "null for input 'help'.");
+        assertNull(parser.getUserInstructions(), "userInstructions should be null for input 'help'.");
 
-        parser.setUserInputString("exit");
-        parser.parseInstructions();
+        parser = new Parser("exit");
         assertEquals("exit", parser.getCommandType());
-        assertNull(parser.getUserInstructions(),
-                "userInstructions should be " +
-                        "null for input 'exit'.");
+        assertNull(parser.getUserInstructions(), "userInstructions should be null for input 'exit'.");
 
-        parser.setUserInputString("delete CS2113");
-        parser.parseInstructions();
+        parser = new Parser("delete CS2113");
         assertEquals("delete", parser.getCommandType());
         assertEquals("CS2113", parser.getUserInstructions());
 
-        parser.setUserInputString("unknown arg");
-        parser.parseInstructions();
+        parser = new Parser("unknown arg");
         assertEquals("invalid", parser.getCommandType());
 
-        parser.setUserInputString("");
-        parser.parseInstructions();
-        assertEquals("invalid", parser.getCommandType(),
-                "The commandType " +
-                        "should be 'invalid' for empty input.");
-
+        parser = new Parser("");
+        assertEquals("invalid", parser.getCommandType(), "The commandType should be 'invalid' for empty input.");
     }
+
 
     @Test
     void parseView_validInstructions() throws EmptyInstruction {
-        parser.setUserInstructions("plan");
+        parser = new Parser("view plan");
         assertEquals("plan", parser.parseView());
 
-        parser.setUserInstructions("grad");
+        parser = new Parser("view grad");
         assertEquals("grad", parser.parseView());
 
-        parser.setUserInstructions("sample extra arguments");
+        parser = new Parser("view sample");
         assertEquals("sample", parser.parseView());
 
-        parser.setUserInstructions("invalidCommand");
+        parser = new Parser("view ");
         assertThrows(EmptyInstruction.class, () -> parser.parseView());
 
     }
 
     @Test
     void parseDelete_validModuleCode() throws EmptyInstruction {
-        parser.setUserInstructions("CG2111A extra arguments");
+        userInput = "delete CG2111A extra arguments";
+        parser = new Parser(userInput);
         assertEquals("CG2111A", parser.parseDelete());
 
-        parser.setUserInstructions(null);
+        parser = new Parser("delete ");
         assertThrows(EmptyInstruction.class, () -> parser.parseDelete(),
                 "An EmptyInstruction exception " +
                 "should be thrown for null input.");
-
-        parser.setUserInstructions("");
-        assertThrows(EmptyInstruction.class, () -> parser.parseDelete(),
-                "An EmptyInstruction exception " +
-                "should be thrown for empty input.");
 
     }
 
     @Test
     void parseAdd_validInput() throws EmptyInstruction {
-        parser.setUserInstructions("n/CG2111A s/2");
+        userInput = "add n/CG2111A s/2";
+        parser = new Parser(userInput);
         String[] result = parser.parseAdd();
         assertEquals(2, result.length);
         assertEquals("CG2111A", result[0]);
         assertEquals("2", result[1]);
 
-        parser.setUserInstructions("n/CG2111A");
+        userInput = "n/CG2111A";
+        parser = new Parser(userInput);
         assertThrows(EmptyInstruction.class, () -> parser.parseAdd(),
                 "An EmptyInstruction exception " +
                         "should be thrown for null input.");
 
-        parser.setUserInstructions("s/2");
+        userInput = "s/2";
+        parser = new Parser(userInput);
         assertThrows(EmptyInstruction.class, () -> parser.parseAdd(),
                 "An EmptyInstruction exception " +
                         "should be thrown for null input.");
 
-        parser.setUserInstructions(null);
+        userInput = "";
+        parser = new Parser(userInput);
         assertThrows(EmptyInstruction.class, () -> parser.parseAdd(),
                 "An EmptyInstruction exception " +
                 "should be thrown for null input.");
 
     }
+
+    @Test
+    void parseInput_variousCommands() {
+        Parser parser = new Parser("help");
+        assertInstanceOf(HelpCommand.class, parser.parseInput());
+
+        parser = new Parser("add n/CS1010 s/1");
+        assertInstanceOf(AddCommand.class, parser.parseInput());
+
+        parser = new Parser("delete CS2113");
+        assertInstanceOf(DeleteCommand.class, parser.parseInput());
+
+        parser = new Parser("mc 2");
+        assertInstanceOf(CalcCreditsCommand.class, parser.parseInput());
+
+        parser = new Parser("view plan");
+        assertInstanceOf(ViewCurrentPlanCommand.class, parser.parseInput());
+
+        parser = new Parser("view grad");
+        assertInstanceOf(ViewGradReqCommand.class, parser.parseInput());
+
+        parser = new Parser("view sample");
+        assertInstanceOf(ViewSamplePlanCommand.class, parser.parseInput());
+
+        parser = new Parser("view unknown");
+        assertInstanceOf(InvalidCommand.class, parser.parseInput());
+
+        parser = new Parser("spec ae");
+        assertInstanceOf(SpecCommand.class, parser.parseInput());
+
+        parser = new Parser("exit");
+        assertInstanceOf(ExitCommand.class, parser.parseInput());
+
+        parser = new Parser("prereq CS2103T");
+        assertInstanceOf(PrereqCommand.class, parser.parseInput());
+
+        parser = new Parser("unknowncmd");
+        assertInstanceOf(InvalidCommand.class, parser.parseInput());
+
+        parser = new Parser("");
+        assertInstanceOf(InvalidCommand.class, parser.parseInput());
+    }
+
+    @Test
+    void testParseSpec() {
+        Parser parser = new Parser("spec ae");
+        assertEquals("ae", parser.parseSpec());
+
+        parser = new Parser("spec 4.0");
+        assertEquals("4.0", parser.parseSpec());
+
+        parser = new Parser("spec iot");
+        assertEquals("iot", parser.parseSpec());
+
+        parser = new Parser("spec robotics");
+        assertEquals("robotics", parser.parseSpec());
+
+        parser = new Parser("spec st");
+        assertEquals("st", parser.parseSpec());
+
+        parser = new Parser("spec unknown");
+        assertEquals("", parser.parseSpec());
+
+        parser = new Parser("spec");
+        assertEquals("", parser.parseSpec());
+
+        parser = new Parser("");
+        assertEquals("", parser.parseSpec());
+    }
+
+    @Test
+    void testParsePrereq() {
+        Parser parser = new Parser("prereq CS2103T extra");
+        assertEquals("CS2103T", parser.parsePrereq());
+
+        parser = new Parser("prereq CS2103");
+        assertEquals("CS2103", parser.parsePrereq());
+
+        parser = new Parser("prereq invalid_code");
+        assertEquals("", parser.parsePrereq());
+
+        parser = new Parser("prereq");
+        assertEquals("", parser.parsePrereq());
+
+        parser = new Parser("");
+        assertEquals("", parser.parsePrereq());
+    }
+
+
 
 }

@@ -50,25 +50,11 @@ public class Parser {
         return userInstructions;
     }
 
-    public String getUserInputString() {
-        return userInputString;
-    }
 
     public String getCommandType() {
         return commandType;
     }
 
-    public void setCommandType(String commandType) {
-        this.commandType = commandType;
-    }
-
-    public void setUserInputString(String userInputString) {
-        this.userInputString = userInputString;
-    }
-
-    public void setUserInstructions(String userInstructions) {
-        this.userInstructions = userInstructions;
-    }
 
 
 
@@ -132,7 +118,7 @@ public class Parser {
      * Catches EmptyInstruction exceptions and sets commandType to "invalid"
      * if any required instructions/its components are missing.
      */
-    public void parseInstructions() {
+    private void parseInstructions() {
         String[] instructions = userInputString.split(" ", 2);
         assert instructions.length > 0 : "Instructions must have at least one element";
 
