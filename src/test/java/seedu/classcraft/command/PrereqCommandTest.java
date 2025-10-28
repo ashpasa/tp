@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import seedu.classcraft.studyplan.StudyPlan;
+import seedu.classcraft.storage.Storage;
 import seedu.classcraft.ui.Ui;
 
 import java.io.ByteArrayOutputStream;
@@ -21,6 +22,7 @@ class PrereqCommandTest {
 
     private Ui ui;
     private StudyPlan studyPlan;
+    private Storage storage;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
 
@@ -70,7 +72,7 @@ class PrereqCommandTest {
     void testExecuteCommandNoException() {
         PrereqCommand command = new PrereqCommand("CS2103T");
 
-        assertDoesNotThrow(() -> command.executeCommand(studyPlan, ui));
+        assertDoesNotThrow(() -> command.executeCommand(studyPlan, ui, storage));
     }
 
     @Test
@@ -78,7 +80,7 @@ class PrereqCommandTest {
     void testExecuteCommandInvalidModule() {
         PrereqCommand command = new PrereqCommand("INVALID999");
 
-        command.executeCommand(studyPlan, ui);
+        command.executeCommand(studyPlan, ui, storage);
 
         String output = outContent.toString();
         assertTrue(output.contains("Error: Could not fetch prerequisites for"));
@@ -90,7 +92,7 @@ class PrereqCommandTest {
         PrereqCommand command = new PrereqCommand("CS2103T");
 
         assertThrows(AssertionError.class,
-                () -> command.executeCommand(studyPlan, null));
+                () -> command.executeCommand(studyPlan, null, storage));
     }
 
     @Test
@@ -99,7 +101,7 @@ class PrereqCommandTest {
         PrereqCommand command = new PrereqCommand("CS2103T");
 
         assertThrows(AssertionError.class,
-                () -> command.executeCommand(null, ui));
+                () -> command.executeCommand(null, ui, storage));
     }
 
     //Edge Cases Tests
@@ -108,7 +110,7 @@ class PrereqCommandTest {
     void testExecuteCommandEmptyModuleCode() {
         PrereqCommand command = new PrereqCommand("");
 
-        command.executeCommand(studyPlan, ui);
+        command.executeCommand(studyPlan, ui, storage);
 
         String output = outContent.toString();
         assertTrue(output.contains("Error: Could not fetch prerequisites for"));
@@ -119,7 +121,7 @@ class PrereqCommandTest {
     void testExecuteCommandSpecialCharacters() {
         PrereqCommand command = new PrereqCommand("CS@#$%");
 
-        command.executeCommand(studyPlan, ui);
+        command.executeCommand(studyPlan, ui, storage);
 
         String output = outContent.toString();
         assertTrue(output.contains("Error: Could not fetch prerequisites for"));
@@ -130,7 +132,7 @@ class PrereqCommandTest {
     void testExecuteCommandLongModuleCode() {
         PrereqCommand command = new PrereqCommand("VERYLONGMODULECODE123456789");
 
-        command.executeCommand(studyPlan, ui);
+        command.executeCommand(studyPlan, ui, storage);
 
         String output = outContent.toString();
         assertTrue(output.contains("Error: Could not fetch prerequisites for"));
@@ -142,7 +144,7 @@ class PrereqCommandTest {
     void testExecuteCommandDisplaysPrerequisites() {
         PrereqCommand command = new PrereqCommand("CS2103T");
 
-        command.executeCommand(studyPlan, ui);
+        command.executeCommand(studyPlan, ui, storage);
 
         String output = outContent.toString();
         assertFalse(output.isEmpty());
@@ -154,7 +156,7 @@ class PrereqCommandTest {
     void testExecuteCommandNoPrerequisites() {
         PrereqCommand command = new PrereqCommand("CS1010");
 
-        command.executeCommand(studyPlan, ui);
+        command.executeCommand(studyPlan, ui, storage);
 
         String output = outContent.toString();
         assertFalse(output.isEmpty());
@@ -166,9 +168,9 @@ class PrereqCommandTest {
         PrereqCommand command = new PrereqCommand("CS2103T");
 
         assertDoesNotThrow(() -> {
-            command.executeCommand(studyPlan, ui);
-            command.executeCommand(studyPlan, ui);
-            command.executeCommand(studyPlan, ui);
+            command.executeCommand(studyPlan, ui, storage);
+            command.executeCommand(studyPlan, ui, storage);
+            command.executeCommand(studyPlan, ui, storage);
         });
 
         String output = outContent.toString();
@@ -181,7 +183,7 @@ class PrereqCommandTest {
     void testExecuteCommandHandlesException() {
         PrereqCommand command = new PrereqCommand("INVALID");
 
-        assertDoesNotThrow(() -> command.executeCommand(studyPlan, ui));
+        assertDoesNotThrow(() -> command.executeCommand(studyPlan, ui, storage));
 
         String output = outContent.toString();
         assertTrue(output.contains("Error: Could not fetch prerequisites for"));
@@ -193,7 +195,7 @@ class PrereqCommandTest {
         String moduleCode = "INVALID999";
         PrereqCommand command = new PrereqCommand(moduleCode);
 
-        command.executeCommand(studyPlan, ui);
+        command.executeCommand(studyPlan, ui, storage);
 
         String output = outContent.toString();
         assertTrue(output.contains(moduleCode));
@@ -204,7 +206,7 @@ class PrereqCommandTest {
     void testExecuteCommandNullPrereqTree() {
         PrereqCommand command = new PrereqCommand("CS1010");
 
-        assertDoesNotThrow(() -> command.executeCommand(studyPlan, ui));
+        assertDoesNotThrow(() -> command.executeCommand(studyPlan, ui, storage));
 
         String output = outContent.toString();
         assertFalse(output.isEmpty());

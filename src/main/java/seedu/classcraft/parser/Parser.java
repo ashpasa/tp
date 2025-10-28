@@ -122,7 +122,7 @@ public class Parser {
         } catch (EmptyInstruction e) {
             logger.log(Level.SEVERE,"Error parsing input into command: " + e.getMessage());
         }
-
+        return new InvalidCommand();
     }
 
     /**
@@ -220,7 +220,7 @@ public class Parser {
             if (moduleSplit.length < 2) {
                 throw new EmptyInstruction("add");
             }
-            String moduleCode = moduleSplit[1].trim();
+            String moduleCode = moduleSplit[1].trim().toUpperCase();;
             String semester = addInstructions[1].trim();
 
             if (moduleCode.isEmpty() || semester.isEmpty()) {

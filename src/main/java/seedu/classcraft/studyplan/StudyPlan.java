@@ -46,8 +46,11 @@ public class StudyPlan {
 
     public void addModule(String moduleCode, int semester, Storage storage, boolean isRestored) throws Exception {
         // Use ModuleHandler to fetch data and create the Module object
-        int previousSemester = modules.get(moduleCode);
         boolean isModAddedPrev = modules.containsKey(moduleCode);
+        int previousSemester = 0;
+        if (isModAddedPrev) {
+                previousSemester = modules.get(moduleCode);
+        }
       
         Module newModule = moduleHandler.createModule(moduleCode);
       

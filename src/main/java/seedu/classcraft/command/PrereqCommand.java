@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.nusmodsfetcher.NUSmodsFetcher;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
+import seedu.classcraft.storage.Storage;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -21,7 +22,7 @@ public class PrereqCommand extends Command {
     }
 
     @Override
-    public void executeCommand(StudyPlan studyPlan, Ui ui) {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         assert studyPlan != null : "StudyPlan cannot be null";
         assert ui != null : "Ui cannot be null";
 
