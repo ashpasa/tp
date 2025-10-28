@@ -162,7 +162,8 @@ public class StudyPlan {
 
         // Check if already exists in PLANNED modules
         if (modules.containsKey(moduleCode)) {
-            throw new StudyPlanException("Module " + moduleCode + " is already PLANNED in Semester " + modules.get(moduleCode));
+            throw new StudyPlanException("Module " + moduleCode 
+                                         + " is already PLANNED in Semester " + modules.get(moduleCode));
         }
 
         // Check if already exists in COMPLETED/EXEMPTED modules
