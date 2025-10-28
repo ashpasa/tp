@@ -9,7 +9,9 @@
 
 ### Architecture
 
-The programme is broken down to various packages within the classcraft folder, each handling a different domain of the programme. This section will provide an overview of each package and its role and functionality.
+![UML diagram of the high-level architecture of ClassCraft](/docs/UMLdiagrams/Architecture_Diagram.png)
+
+Above shows the high-level architecture of ClassCraft. The programme is broken down to various packages within the classcraft folder, each handling a different domain of the programme. This section will provide an overview of each package and its role and functionality.
 
 **Main components of the architecture**
 
