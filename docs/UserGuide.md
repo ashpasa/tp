@@ -85,6 +85,12 @@ where `{Specialisation}` can be the following:
 
 `st`: Space Technology
 
+### 6) Balance Study Plan: `balance`
+
+Balances workload of study plan by detecting any semesters with unusually high workload
+
+Format: `balance`
+
 ### Help: `help`
 
 Shows a list of available commands and their usage.
@@ -107,5 +113,6 @@ Format: `exit`
     | View Grad req | viewgrad                        | Show graduation requirements      |
     | View Sample   | viewsample                      | Show a sample study plan          |
     | Specialisation| spec {SPEC}                     | Show specialisation information   |
+    | Balance       | balance                         | Balance workload in study plan    |
     | Help          | help                            | Show help information             |
     | Exit          | exit                            | Exit the application              |
