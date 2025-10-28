@@ -29,8 +29,9 @@ public class HelpCommand extends Command {
                 + "4. spec - View Modules required for a specialisation.\n   Format: spec {SPECIALISATION} "
                 + "(SPECIALISATION: ae,4.0,iot,robotics,st)\n\n"
                 + "5. prereq - View Pre-Requisites for the given module.\n   Format: prereq {MODULE_CODE}\n\n"
-                + "6. exit - Exit the program\n\n"
-                + "7. help - View this message again";
+                + "6. balance - Balances workload of study plan \n   Format: balance\n\n"
+                + "7. exit - Exit the program\n\n"
+                + "8. help - View this message again";
         ui.printMessage(userHelp);
     }
 }

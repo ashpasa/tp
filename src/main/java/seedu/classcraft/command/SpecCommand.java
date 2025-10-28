@@ -9,6 +9,7 @@ import seedu.classcraft.ui.Ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class SpecCommand extends Command {
     public SpecCommand(String specName) {
         super();
         this.specToQuery = specName;
+        assert specName != null;
+        List<String> allowedValues = Arrays.asList("ae", "4.0", "iot", "robotics", "st");
+        assert allowedValues.contains(specToQuery);
     }
 
     @Override
