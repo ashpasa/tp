@@ -34,6 +34,13 @@ The bulk of ClassCraft's functionality is handled by the following components:
 
 ### NUSModsFetcher component
 
+![Class diagram for the NUSmodsFetcher class](/docs/UMLdiagrams/NUSmodsFetcher_Diagram.png)
+
+`NUSmodsFetcher.java` is responsible for fetching the endpoints of the NUSMods API, which stores module information as `.json` files, in order to obtain information about modules.
+
+`NUSmodsFetcher` first retrieves the `.json` file containing information on a given module from the NUSMods API as a `JsonNode`.
+The various methods then return the respective parts of the the `.json` file as required by the user.
+
 ### Parser component
 
 ### Storage component
