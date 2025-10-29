@@ -4,6 +4,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
+
 import seedu.classcraft.exceptions.NUSmodsFetcherException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,6 +17,7 @@ public abstract class NUSmodsFetcher {
 
     /**
      * Fetches the module JSON data from NUSMods API for the given module code
+     *
      * @param moduleCode The module code to fetch data for, as displayed on NUSMods
      * @return JsonNode representing the module data
      */
@@ -34,7 +36,8 @@ public abstract class NUSmodsFetcher {
 
     /**
      * Helper method to extract a specific field from the JSON root
-     * @param root The root JsonNode, obtained from fetchModuleJson
+     *
+     * @param root      The root JsonNode, obtained from fetchModuleJson
      * @param fieldName The field name to extract
      * @return The text stored in the .json file under fieldName, as a string
      */
