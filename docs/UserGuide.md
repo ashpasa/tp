@@ -91,11 +91,25 @@ Displays a list of pre-requisites for the given module.
 
 Format: `prereq {MODULE_CODE}`
 
+### Calculate module credits: `mc`
+
+Calculates the number of module credits taken in a specific semester. Trying to calculate for semester 0 will instead return the total number of module credits in the entire study plan.
+
+Format: `mc {SEMESTER}`, where {SEMESTER} is an integer from 0 to 8
+
+Example: `mc 4`
+
 ### Balance Study Plan: `balance`
 
 Balances workload of study plan by detecting any semesters with unusually high workload
 
 Format: `balance`
+
+### View degree progression: `progress`
+
+Calculates and displays the user's current degree progress as a percentage value.
+
+Format: `progress`
 
 ### Help: `help`
 
@@ -119,7 +133,9 @@ Format: `exit`
     | View Grad req | viewgrad                        | Show graduation requirements      |
     | View Sample   | viewsample                      | Show a sample study plan          |
     | Specialisation| spec {SPEC}                     | Show specialisation information   |
+    | Calculate MCs | mc {SEMESTER}                   | Calculate module credits          |
     | Balance       | balance                         | Balance workload in study plan    |
+    | Progress      | progress                        | View degree progress in %         |
     | Pre-Requisite | prereq {MODULE_CODE}            | View Pre-Requisites               |
     | Help          | help                            | Show help information             |
     | Exit          | exit                            | Exit the application              |
