@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+
 import seedu.classcraft.exceptions.NUSmodsFetcherException;
 import seedu.classcraft.nusmodsfetcher.NUSmodsFetcher;
 
@@ -45,14 +46,15 @@ public class ModuleHandler {
 
         List<String> prerequisites = new ArrayList<>();
 
+
         try {
             JsonNode rootJson = NUSmodsFetcher.fetchModuleJson(moduleCode);
+
             JsonNode prerequisiteNode = rootJson.get("prereqTree");
 
             if (prerequisiteNode != null && !prerequisiteNode.isNull()) {
                 prereqTreeNode = prerequisiteNode;
                 extractModuleCodes(prerequisiteNode, prerequisites);
-
 
                 prerequisites = prerequisites.stream()
                         .map(code -> stripGradeRequirement(code))
@@ -69,6 +71,7 @@ public class ModuleHandler {
             LOGGER.warning("Could not fetch details for " + moduleCode
                     + ". Using default values. Error: " + e.getMessage());
         }
+
         Module newModule = new Module(modName, moduleCode, modCreds, modDescription, prerequisites, -1, -1);
 
         newModule.setPrereqTree(prereqTreeNode);

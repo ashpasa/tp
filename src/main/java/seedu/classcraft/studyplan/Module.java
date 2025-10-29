@@ -18,8 +18,15 @@ public class Module {
     private int defaultSemester;
     private int prerequisitesCount; // default 0, updates when added to ModuleHandler
 
+    /**
+     * @@author lingru
+     * The status of the module (e.g., PLANNED, COMPLETED, EXEMPTED).
+     */
+    private ModuleStatus status;
+
     public Module(String modName, String modCode, int modCreds, String modDescription, List<String> prerequisites,
                   int semesterTaught, int defaultSemester) {
+
         this.modName = modName;
         this.modCode = modCode;
         this.modCreds = modCreds;
@@ -29,6 +36,11 @@ public class Module {
         this.semesterTaught = semesterTaught;
         this.defaultSemester = defaultSemester;
         this.prerequisitesCount = 0;
+
+        // @@author lingru
+        // By default, a newly created module is considered 'PLANNED'
+        this.status = ModuleStatus.PLANNED;
+
     }
 
     public int getPrerequisitesCount() {
@@ -94,6 +106,26 @@ public class Module {
     public void setDefaultSemester(int defaultSemester) {
         this.defaultSemester = defaultSemester;
     }
+
+    // @@author lingru
+    /**
+     * @@author lingru
+     * Gets the current status of the module.
+     * @return The ModuleStatus (PLANNED, COMPLETED, or EXEMPTED).
+     */
+    public ModuleStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * @@author lingru
+     * Sets the status of the module.
+     * @param status The new status to set.
+     */
+    public void setStatus(ModuleStatus status) {
+        this.status = status;
+    }
+    // @@author
 
     public JsonNode getPrereqTree() {
         return prereqTree;
