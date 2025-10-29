@@ -169,11 +169,7 @@ class ParserTest {
         parser = new Parser("spec unknown");
         assertEquals("", parser.parseSpec());
 
-        parser = new Parser("spec");
-        assertEquals("", parser.parseSpec());
-
-        parser = new Parser("");
-        assertEquals("", parser.parseSpec());
+        assertThrows(IllegalArgumentException.class, () -> new Parser("spec"));
     }
 
     @Test
@@ -187,11 +183,8 @@ class ParserTest {
         parser = new Parser("prereq invalid_code");
         assertEquals("", parser.parsePrereq());
 
-        parser = new Parser("prereq");
-        assertEquals("", parser.parsePrereq());
+        assertThrows(IllegalArgumentException.class, () -> new Parser("prereq"));
 
-        parser = new Parser("");
-        assertEquals("", parser.parsePrereq());
     }
 
 
