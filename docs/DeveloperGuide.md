@@ -1,18 +1,62 @@
-## Developer Guide
+# Developer Guide for ***ClassCraft***
 
-### Acknowledgements
+## Acknowledgements
 {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
 
 ---
 
-### Design & implementation
+## Design
+
+### Architecture
+
+![UML diagram of the high-level architecture of ClassCraft](/docs/UMLdiagrams/Architecture_Diagram.png)
+
+Above shows the high-level architecture of ClassCraft. The programme is broken down to various packages within the classcraft folder, each handling a different domain of the programme. This section will provide an overview of each package and its role and functionality.
+
+**Main components of the architecture**
+
+`ClassCraft.java` (containing only the `ClassCraft` class) is the main entry point into the programme. It handles startup and is responsible for cleanup after the programme is exited.
+
+The bulk of ClassCraft's functionality is handled by the following components:
+
++ `command`: Contains all the commands that can be carried out by the user.
++ `data`: Stores data on the modules required for specific CEG specialisations, alongside their prerequisites.
++ `exceptions`: Contains all exception classes.
++ `nusmodsfetcher`: Fetches data from the NUSMods API to get information on modules.
++ `parser`: Decodes the user's input to an appropriate command.
++ `storage`: Responsible for saving the user's study plan.
++ `studyplan`: Handles actions relating to the study plan.
++ `ui`: The UI of the programme, and the only point of interaction with the user.
+
+### How the architecture components interact with each other
+
+### Command component
+
+### NUSModsFetcher component
+
+![Class diagram for the NUSmodsFetcher class](/docs/UMLdiagrams/NUSmodsFetcher_Diagram.png)
+
+`NUSmodsFetcher.java` is responsible for fetching the endpoints of the NUSMods API, which stores module information as `.json` files, in order to obtain information about modules.
+
+`NUSmodsFetcher` first retrieves the `.json` file containing information on a given module from the NUSMods API as a `JsonNode`.
+The various methods then return the respective parts of the the `.json` file as required by the user.
+
+### Parser component
+
+### Storage component
+
+### Studyplan component
+
+### UI component
+
+## Implementation
 
 My primary contribution is in **DM3**, which involves creating and
 storing the **sample study plan** and the **CEG default graduation
 requirements**. This is primarily handled by the `StudyPlan`
 and `Grad` classes within the `seedu.classcraft.studyplan` package.
 
-#### **Storing and Displaying Graduation Requirements**
+### **Storing and Displaying Graduation Requirements**
 
 The **`Grad`** class is responsible for holding the fixed, default CEG core modules.
 
@@ -25,7 +69,7 @@ The **`Grad`** class is responsible for holding the fixed, default CEG core modu
       which fetches details like the full module name and prerequisites. This design decouples the
       static list of required codes from the process of fetching dynamic details.
 
-#### **Generating the Sample Study Plan**
+### **Generating the Sample Study Plan**
 
 The **`StudyPlan`** class manages the user's study plan (a list of modules across semesters)
 and includes a factory method to generate a pre-set sample plan.
@@ -43,15 +87,15 @@ and includes a factory method to generate a pre-set sample plan.
 
 ---
 
-### Product scope
+## Product scope
 
-#### Target user profile
+### Target user profile
 
 The target user profile is **Computer Engineering (CEG) students at the NUS**, particularly those planning their module enrolment across semesters and needing to
 track their progress against graduation requirements. They are familiar with NUS module codes and the
 concept of module prerequisites.
 
-#### Value proposition
+### Value proposition
 
 ClassCraft solves the problem of manual and error-prone study planning. It provides a quick way for
 CEG students to **visualize their academic journey**, ensure they meet the **default graduation
@@ -60,7 +104,7 @@ streamlined and guided approach to academic planning.
 
 ---
 
-### User Stories
+## User Stories
 
 | Version | As a ... | I want to ... | So that I can ... |
 | :---: | :---: | :--- | :--- |
@@ -72,7 +116,7 @@ streamlined and guided approach to academic planning.
 
 ---
 
-### Non-Functional Requirements
+## Non-Functional Requirements
 
 * **Reliability:** The application must correctly fetch and parse module data from the **NUSMods**
   API to ensure accurate prerequisites and module details.
@@ -83,7 +127,7 @@ streamlined and guided approach to academic planning.
 
 ---
 
-### Glossary
+# Glossary
 
 * ***NUSMods*** - A community-driven platform providing data on National University of Singapore
   (NUS) modules, including module codes, names, and prerequisites.
@@ -93,7 +137,7 @@ streamlined and guided approach to academic planning.
 
 ---
 
-### Instructions for manual testing
+## Instructions for manual testing
 
 1.  **Start the application:** Compile and run the `ClassCraft` application.
 2.  **View Sample Plan:** Enter the command to view the sample study plan (e.g., `view sample`).

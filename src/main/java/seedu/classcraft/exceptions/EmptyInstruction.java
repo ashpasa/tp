@@ -12,7 +12,7 @@ public class EmptyInstruction extends Exception{
      *
      * @param specificInstruction The specific instruction that has an incorrect format
      */
-    public EmptyInstruction( String specificInstruction) {
+    public EmptyInstruction(String specificInstruction) {
         super("The instruction format for " + specificInstruction + " is incorrect. ");
 
     }
