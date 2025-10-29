@@ -79,6 +79,8 @@ User inputs are parsed into commands by the **`Parser`** class.
     * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
 
 ### **Command Classes**
+![UML diagram of the Sequence Diagram Front](/docs/UMLdiagrams/Sequence_Diagram_Front.png)
+![UML diagram of the Sequence Diagram Back](/docs/UMLdiagrams/Sequence_Diagram_Back.png)
 
 Each command class extends the abstract `Command` class.
 
