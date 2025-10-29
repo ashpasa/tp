@@ -140,66 +140,51 @@ public class Ui {
             return "None";
         }
 
-        // Handle OR nodes
         if (node.has("or")) {
-            StringBuilder result = new StringBuilder();
-            JsonNode orNode = node.get("or");
-            if (orNode.isArray()) {
-                result.append("(");
-                boolean first = true;
-                for (JsonNode child : orNode) {
-                    String childStr = prettifyPrereqTree(child);
-                    if (!childStr.isEmpty() && !isBridgingModule(childStr)) {
-                        if (!first) {
-                            result.append(" OR ");
-                        }
-                        result.append(childStr);
-                        first = false;
-                    }
-                }
-                result.append(")");
-                return result.toString();
-            }
+            return prettifyArrayNode(node.get("or"), "OR");
         }
 
-        // Handle AND nodes
         if (node.has("and")) {
-            StringBuilder result = new StringBuilder();
-            JsonNode andNode = node.get("and");
-            if (andNode.isArray()) {
-                result.append("(");
-                boolean first = true;
-                for (JsonNode child : andNode) {
-                    String childStr = prettifyPrereqTree(child);
-                    if (!childStr.isEmpty() && !isBridgingModule(childStr)) {
-                        if (!first) {
-                            result.append(" AND ");
-                        }
-                        result.append(childStr);
-                        first = false;
-                    }
-                }
-                result.append(")");
-                return result.toString();
-            }
+            return prettifyArrayNode(node.get("and"), "AND");
         }
 
         if (node.isTextual()) {
-            String code = stripGradeRequirement(node.asText());
-            if (isValidModuleCode(code) && !isBridgingModule(code)) {
-                return code;
-            }
-            return "";
+            return prettifyModuleNode(node.asText());
         }
 
         if (node.has("moduleCode")) {
-            String code = stripGradeRequirement(node.get("moduleCode").asText());
-            if (isValidModuleCode(code) && !isBridgingModule(code)) {
-                return code;
-            }
-            return "";
+            return prettifyModuleNode(node.get("moduleCode").asText());
         }
 
+        return "";
+    }
+
+    private String prettifyArrayNode(JsonNode arrayNode, String joinWord) {
+        if (arrayNode == null || !arrayNode.isArray()) {
+            return "";
+        }
+        StringBuilder result = new StringBuilder("(");
+        boolean first = true;
+        for (JsonNode child : arrayNode) {
+            String childStr = prettifyPrereqTree(child);
+            if (childStr.isEmpty() || isBridgingModule(childStr)) {
+                continue;
+            }
+            if (!first) {
+                result.append(" ").append(joinWord).append(" ");
+            }
+            result.append(childStr);
+            first = false;
+        }
+        result.append(")");
+        return result.toString();
+    }
+
+    private String prettifyModuleNode(String codeRaw) {
+        String code = stripGradeRequirement(codeRaw);
+        if (isValidModuleCode(code) && !isBridgingModule(code)) {
+            return code;
+        }
         return "";
     }
 
