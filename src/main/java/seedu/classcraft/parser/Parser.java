@@ -153,7 +153,8 @@ public class Parser {
         try {
             if (instructions.length == 1) {
                 if (!(instructions[0].equals("help") || instructions[0].equals("exit")
-                        || instructions[0].equals("confirm") || instructions[0].equals("balance"))) {
+                        || instructions[0].equals("confirm") || instructions[0].equals("balance")
+                        || instructions[0].equals("progress"))) {
                     throw new IllegalArgumentException("OOPS!!! The description of a " +
                             instructions[0] + " cannot be empty.");
                 }
