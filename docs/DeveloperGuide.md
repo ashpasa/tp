@@ -7,7 +7,7 @@
 
 ### Design & implementation
 
-#### **Parsing user input to commands**
+### **Parsing user input to commands**
 
 User inputs are parsed into commands by the **`Parser`** class.
 
@@ -24,8 +24,6 @@ User inputs are parsed into commands by the **`Parser`** class.
       command classes (e.g., `AddCommand`, `DeleteCommand`, `ViewCommand`, etc).
     * It returns an instance of the appropriate command class based on the parsed command word.
     * If the command word does not match any known commands, it returns an `InvalidCommand` instance.
-    * Command classes are extended from the abstract `Command` class, which defines a common interface for all commands.
-      and each command class implements the `execute(StudyPlan studyPlan, Ui ui, Storage storage)` method.
   
 * **Helper Methods**
     * `parseAdd()`: Parses arguments for the `AddCommand`, extracting the module code and semester.
@@ -36,14 +34,51 @@ User inputs are parsed into commands by the **`Parser`** class.
     * `parseSpec()` : Parses arguments for the `SpecCommand`, extracting the specialization.
     * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
 
+### **Command Classes**
 
+Each command class extends the abstract `Command` class.
+
+* **Implementation:** Each command class is responsible for a specific user action, such as 
+   adding or deleting modules, viewing plans, calculating credits, etc.
+* Command abstract class contains an abstract method `execute(StudyPlan studyPlan, Ui ui, Storage storage)` that each 
+  command class must implement to define its specific behavior.
+* **Key Command Classes:**
+    * `AddCommand`: Adds a module to a specified semester in the study plan.
+    * `DeleteCommand`: Removes a module from the study plan.
+    * `ViewCommand`: Displays either the sample study plan or graduation requirements.
+    * `CalcCreditsCommand`: Calculates and displays the total modular credits for a specified semester.
+    * `SpecCommand`: Displays specialization information that user can take if they have chosen a specialization.
+    * `PrereqCommand`: Displays prerequisite information for a specified module.
+    * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
+
+### **Storing current study plan**
+
+The current study plan created by the user is stored into a local txt/json
+file using the **`Storage`** class, and restored upon application launch.
+* **Implementation:** The `Storage` class handles reading from and writing to the local file.
+* **Key Methods: `createFile()`**
+  * Creates a new file and its directory if it does not exist.
+  * Called during application startup in the Storage constructor,
+  when a new storage instance is created.
+* **Key Methods: `restoreData(Storage storage)`**
+    * Reads the stored study plan data from the local file.
+    * Parses the data and reconstructs the `StudyPlan` object.
+    * For each semester, it retrieves the list of module codes and uses 
+  the `StudyPlan`'s addModule method to populate the study plan.
+* **Helper Methods**
+    * `appendToFile(String moduleCode , int semester)`: 
+  Reads the stored plan and finds the semester to append the new module code to.
+      * Used in studyPlan's `addModule()` method to update the storage file.
+    * `deleteModule()`: Reads the stored plan and loops through each semester to find the 
+  specified module code and remove the specified module code.
+      * Used in studyPlan's `deleteModule()` method to update the storage file.
 
 My primary contribution is in **DM3**, which involves creating and
 storing the **sample study plan** and the **CEG default graduation
 requirements**. This is primarily handled by the `StudyPlan`
 and `Grad` classes within the `seedu.classcraft.studyplan` package.
 
-#### **Storing and Displaying Graduation Requirements**
+### **Storing and Displaying Graduation Requirements**
 
 The **`Grad`** class is responsible for holding the fixed, default CEG core modules.
 
@@ -56,7 +91,7 @@ The **`Grad`** class is responsible for holding the fixed, default CEG core modu
       which fetches details like the full module name and prerequisites. This design decouples the
       static list of required codes from the process of fetching dynamic details.
 
-#### **Generating the Sample Study Plan**
+### **Generating the Sample Study Plan**
 
 The **`StudyPlan`** class manages the user's study plan (a list of modules across semesters)
 and includes a factory method to generate a pre-set sample plan.
