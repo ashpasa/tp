@@ -74,7 +74,7 @@ class ParserTest {
         parser = new Parser("delete ");
         assertThrows(EmptyInstruction.class, () -> parser.parseDelete(),
                 "An EmptyInstruction exception " +
-                "should be thrown for null input.");
+                        "should be thrown for null input.");
 
     }
 
@@ -103,7 +103,7 @@ class ParserTest {
         parser = new Parser(userInput);
         assertThrows(EmptyInstruction.class, () -> parser.parseAdd(),
                 "An EmptyInstruction exception " +
-                "should be thrown for null input.");
+                        "should be thrown for null input.");
 
     }
 
@@ -193,7 +193,6 @@ class ParserTest {
         parser = new Parser("");
         assertEquals("", parser.parsePrereq());
     }
-
 
 
 }

@@ -8,7 +8,7 @@ import seedu.classcraft.ui.Ui;
  * DeleteCommand class representing a command to delete a module from the study plan.
  * Extends the Command abstract class.
  */
-public class DeleteCommand extends Command{
+public class DeleteCommand extends Command {
     public String moduleToDelete;
 
     /**
@@ -27,8 +27,8 @@ public class DeleteCommand extends Command{
      * which takes in module code and storage handler
      *
      * @param studyPlan The current study plan ,including data restored from storage
-     * @param ui The user interface to interact with the user
-     * @param storage The storage handler to read/write data
+     * @param ui        The user interface to interact with the user
+     * @param storage   The storage handler to read/write data
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {

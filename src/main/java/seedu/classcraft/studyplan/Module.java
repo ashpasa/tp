@@ -1,6 +1,7 @@
 package seedu.classcraft.studyplan;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public class Module {
     private int prerequisitesCount; // default 0, updates when added to ModuleHandler
 
     public Module(String modName, String modCode, int modCreds, String modDescription, List<String> prerequisites,
-                   int semesterTaught, int defaultSemester) {
+                  int semesterTaught, int defaultSemester) {
         this.modName = modName;
         this.modCode = modCode;
         this.modCreds = modCreds;

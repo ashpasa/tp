@@ -14,8 +14,8 @@ public class InvalidCommand extends Command {
      * Prints out a message to user indicating that their input is not valid.
      *
      * @param studyPlan The current study plan ,including data restored from storage
-     * @param ui The user interface to interact with the user
-     * @param storage The storage handler to read/write data
+     * @param ui        The user interface to interact with the user
+     * @param storage   The storage handler to read/write data
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {

@@ -42,7 +42,7 @@ public class Parser {
     public Parser(String userInput) {
         assert userInput != null : "User input must not be null";
         this.userInputString = userInput;
-        logger.log(Level.INFO,"Received user input: " + userInputString);
+        logger.log(Level.INFO, "Received user input: " + userInputString);
         parseInstructions();
     }
 
@@ -56,8 +56,6 @@ public class Parser {
     }
 
 
-
-
     /**
      * Parses the user input into a command object.
      * Using the commandType and userInstructions parsed earlier,
@@ -68,7 +66,7 @@ public class Parser {
      * @return Command object corresponding to the user input.
      */
     public Command parseInput() {
-        logger.log(Level.INFO,"Parsing input, detected commandType: " + commandType);
+        logger.log(Level.INFO, "Parsing input, detected commandType: " + commandType);
         try {
             switch (commandType) {
             case "help":
@@ -101,12 +99,12 @@ public class Parser {
                 return new ExitCommand();
             case "prereq":
                 String prereqModuleCode = parsePrereq();
-                return new PrereqCommand(prereqModuleCode); 
+                return new PrereqCommand(prereqModuleCode);
             default:
                 return new InvalidCommand();
             }
         } catch (EmptyInstruction e) {
-            logger.log(Level.SEVERE,"Error parsing input into command: " + e.getMessage());
+            logger.log(Level.SEVERE, "Error parsing input into command: " + e.getMessage());
         }
         return new InvalidCommand();
     }
@@ -144,8 +142,7 @@ public class Parser {
      *
      * @param instructions Array of strings containing command and instructions,
      *                     which checks the first element of the array.
-     *
-     *  @return boolean indicating if the command is found.
+     * @return boolean indicating if the command is found.
      */
     private boolean isCommandFound(String[] instructions) {
         return CommandList.isCommandFound(instructions[0]);
@@ -157,7 +154,7 @@ public class Parser {
      * (help, exit, confirm) and sets the commandType accordingly.
      * Throws EmptyInstruction if the command is not valid.
      */
-    private void handleSingleInstruction(String[] instructions) throws  EmptyInstruction{
+    private void handleSingleInstruction(String[] instructions) throws EmptyInstruction {
         if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("confirm"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
             throw new EmptyInstruction(instructions[0]);
@@ -206,7 +203,8 @@ public class Parser {
             if (moduleSplit.length < 2) {
                 throw new EmptyInstruction("add");
             }
-            String moduleCode = moduleSplit[1].trim().toUpperCase();;
+            String moduleCode = moduleSplit[1].trim().toUpperCase();
+            ;
             String semester = addInstructions[1].trim();
 
             if (moduleCode.isEmpty() || semester.isEmpty()) {
@@ -217,7 +215,7 @@ public class Parser {
             addModuleInformation[1] = semester;
 
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
-            logger.log(Level.WARNING,"Error parsing add command - Incorrect format " + e.getMessage());
+            logger.log(Level.WARNING, "Error parsing add command - Incorrect format " + e.getMessage());
             throw new EmptyInstruction("add");
         }
         return addModuleInformation;
@@ -234,7 +232,8 @@ public class Parser {
      */
     public String parseDelete() throws EmptyInstruction {
         try {
-            String moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();;
+            String moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();
+            ;
             if (moduleCode.isEmpty()) {
                 throw new EmptyInstruction("delete");
             }
