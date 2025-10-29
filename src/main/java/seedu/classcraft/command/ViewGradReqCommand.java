@@ -16,8 +16,8 @@ public class ViewGradReqCommand extends Command {
      * the Grad class.
      *
      * @param studyPlan The current study plan ,including data restored from storage
-     * @param ui The user interface to interact with the user
-     * @param storage The storage handler to read/write data
+     * @param ui        The user interface to interact with the user
+     * @param storage   The storage handler to read/write data
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws Exception {

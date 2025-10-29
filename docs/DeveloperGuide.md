@@ -51,6 +51,72 @@ The various methods then return the respective parts of the the `.json` file as 
 
 ## Implementation
 
+### **Parsing user input to commands**
+
+User inputs are parsed into commands by the **`Parser`** class.
+
+* **Implementation:** A new parser object is instantiated in `ClassCraft.java` to handle user inputs, 
+  which calls the parser constructor in `Parser.java`, passing the raw user input string to parseInstructions().
+
+* **Key Method: `parseInstructions(String userInput)`**
+    * This method splits the user input into the command word and arguments.
+    * It handles the instruction based on if it is a single word or a double word command.
+    * The command word is extracted and saved to commandType variable.
+  
+* **Key Method: `parseInput()`**
+    * This method uses a switch-case structure to map command words to their respective
+      command classes (e.g., `AddCommand`, `DeleteCommand`, `ViewCommand`, etc).
+    * It returns an instance of the appropriate command class based on the parsed command word.
+    * If the command word does not match any known commands, it returns an `InvalidCommand` instance.
+  
+* **Helper Methods**
+    * `parseAdd()`: Parses arguments for the `AddCommand`, extracting the module code and semester.
+    * `parseDelete()`: Parses arguments for the `DeleteCommand`, extracting the module code.
+    * `parseView()`: Parses arguments for the `ViewCommand`, determining whether to view the sample plan 
+       or graduation requirements.
+    * `parseMC()` : Parses arguments for the `CalcCreditsCommand`, extracting the semester.
+    * `parseSpec()` : Parses arguments for the `SpecCommand`, extracting the specialization.
+    * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
+
+### **Command Classes**
+
+Each command class extends the abstract `Command` class.
+
+* **Implementation:** Each command class is responsible for a specific user action, such as 
+   adding or deleting modules, viewing plans, calculating credits, etc.
+* Command abstract class contains an abstract method `execute(StudyPlan studyPlan, Ui ui, Storage storage)` that each 
+  command class must implement to define its specific behavior.
+* **Key Command Classes:**
+    * `AddCommand`: Adds a module to a specified semester in the study plan.
+    * `DeleteCommand`: Removes a module from the study plan.
+    * `ViewCommand`: Displays either the sample study plan or graduation requirements.
+    * `CalcCreditsCommand`: Calculates and displays the total modular credits for a specified semester.
+    * `SpecCommand`: Displays specialization information that user can take if they have chosen a specialization.
+    * `PrereqCommand`: Displays prerequisite information for a specified module.
+    * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
+
+### **Storing current study plan**
+
+The current study plan created by the user is stored into a local txt/json
+file using the **`Storage`** class, and restored upon application launch.
+* **Implementation:** The `Storage` class handles reading from and writing to the local file.
+* **Key Methods: `createFile()`**
+  * Creates a new file and its directory if it does not exist.
+  * Called during application startup in the Storage constructor,
+  when a new storage instance is created.
+* **Key Methods: `restoreData(Storage storage)`**
+    * Reads the stored study plan data from the local file.
+    * Parses the data and reconstructs the `StudyPlan` object.
+    * For each semester, it retrieves the list of module codes and uses 
+  the `StudyPlan`'s addModule method to populate the study plan.
+* **Helper Methods**
+    * `appendToFile(String moduleCode , int semester)`: 
+  Reads the stored plan and finds the semester to append the new module code to.
+      * Used in studyPlan's `addModule()` method to update the storage file.
+    * `deleteModule()`: Reads the stored plan and loops through each semester to find the 
+  specified module code and remove the specified module code.
+      * Used in studyPlan's `deleteModule()` method to update the storage file.
+
 My primary contribution is in **DM3**, which involves creating and
 storing the **sample study plan** and the **CEG default graduation
 requirements**. This is primarily handled by the `StudyPlan`

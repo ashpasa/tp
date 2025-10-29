@@ -3,7 +3,7 @@ package seedu.classcraft.exceptions;
 /**
  * Exception class for handling empty or incorrectly formatted instructions.
  */
-public class EmptyInstruction extends Exception{
+public class EmptyInstruction extends Exception {
 
     /**
      * Constructor for EmptyInstruction exception.

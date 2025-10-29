@@ -19,6 +19,7 @@ public class Grad {
 
     /**
      * Returns the list of all core modules required for CEG graduation.
+     *
      * @return A list of CEG core module codes.
      */
     public static List<String> getCoreRequirements() {

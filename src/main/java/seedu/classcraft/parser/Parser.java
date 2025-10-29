@@ -51,25 +51,11 @@ public class Parser {
         return userInstructions;
     }
 
-    public String getUserInputString() {
-        return userInputString;
-    }
 
     public String getCommandType() {
         return commandType;
     }
 
-    public void setCommandType(String commandType) {
-        this.commandType = commandType;
-    }
-
-    public void setUserInputString(String userInputString) {
-        this.userInputString = userInputString;
-    }
-
-    public void setUserInstructions(String userInstructions) {
-        this.userInstructions = userInstructions;
-    }
 
     /**
      * Parses the user input into a command object.
@@ -155,7 +141,7 @@ public class Parser {
      * Catches EmptyInstruction exceptions and sets commandType to "invalid"
      * if any required instructions/its components are missing.
      */
-    public void parseInstructions() {
+    private void parseInstructions() {
         String[] instructions = userInputString.split(" ", 2);
         assert instructions.length > 0 : "Instructions must have at least one element";
 
@@ -186,7 +172,7 @@ public class Parser {
      * Checks if the command is found in the CommandList enum.
      *
      * @param instructions Array of strings containing command and instructions,
-     *     which checks the first element of the array.
+     *                     which checks the first element of the array.
      * @return boolean indicating if the command is found.
      */
     private boolean isCommandFound(String[] instructions) {

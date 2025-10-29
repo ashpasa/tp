@@ -14,6 +14,7 @@ import java.util.List;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
+
 /**
  * Storage class responsible for handling file operations related to
  * storing and retrieving study plan data.
@@ -41,23 +42,23 @@ public class Storage {
      * Appends a module code to the specified semester in the data file.
      * Reads all lines from the file, updates the line for the given semester,
      * and writes the updated lines back to the file.
+     *
      * @param moduleCode The module code to append.
-     * @param semester The semester number (1-8) to which the module code should be appended.
+     * @param semester   The semester number (1-8) to which the module code should be appended.
      */
-    public void appendToFile( String moduleCode, int semester) {
+    public void appendToFile(String moduleCode, int semester) {
         Path filePath = Paths.get(dataFile);
         try {
             List<String> lines = Files.readAllLines(filePath);
-            String line = lines.get(semester -1);
+            String line = lines.get(semester - 1);
             String updatedLine = line.concat(" " + moduleCode + ",");
-            lines.set(semester -1, updatedLine);
+            lines.set(semester - 1, updatedLine);
             Files.write(filePath, lines);
         } catch (IOException e) {
             System.out.println("Oh no! I was not able to update the file: " + e.getMessage());
         }
 
     }
-
 
 
     /**
@@ -110,10 +111,10 @@ public class Storage {
             Path filePath = Paths.get(dataFile);
             List<String> lines = Files.readAllLines(filePath);
             assert semester >= 1 && semester <= lines.size() : "Semester number out of bounds.";
-            String line = lines.get(semester -1);
+            String line = lines.get(semester - 1);
             String updatedLine = line.replace(" " + moduleToDelete + ",", "");
             logger.log(Level.INFO, " Updated line after deletion." + updatedLine);
-            lines.set(semester -1, updatedLine);
+            lines.set(semester - 1, updatedLine);
             Files.write(filePath, lines);
         } catch (IOException e) {
             System.out.println("Oh no! I was not able to update the file: " + e.getMessage());
@@ -129,7 +130,7 @@ public class Storage {
      * @param storage The storage handler to read/write data.
      * @return A StudyPlan object populated with the restored data.
      */
-    public StudyPlan restoreData (Storage storage) {
+    public StudyPlan restoreData(Storage storage) {
         int totalSemesters = 8;
         StudyPlan studyPlan = new StudyPlan(totalSemesters);
         try {
@@ -148,7 +149,7 @@ public class Storage {
                 for (String module : modules) {
                     String moduleCode = module.trim();
                     if (!moduleCode.isEmpty()) {
-                        studyPlan.addModule(moduleCode, semester,storage, true);
+                        studyPlan.addModule(moduleCode, semester, storage, true);
                     }
                 }
 
