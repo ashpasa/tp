@@ -15,6 +15,8 @@ Above shows the high-level architecture of ClassCraft. The programme is broken d
 
 **Main components of the architecture**
 
+![Class Diagram showing the associations between classes](/docs/UMLdiagrams/Class_Diagram.png)
+
 `ClassCraft.java` (containing only the `ClassCraft` class) is the main entry point into the programme. It handles startup and is responsible for cleanup after the programme is exited.
 
 The bulk of ClassCraft's functionality is handled by the following components:
@@ -33,8 +35,6 @@ The bulk of ClassCraft's functionality is handled by the following components:
 ### Command component
 
 ### NUSModsFetcher component
-
-![Class diagram for the NUSmodsFetcher class](/docs/UMLdiagrams/NUSmodsFetcher_Diagram.png)
 
 `NUSmodsFetcher.java` is responsible for fetching the endpoints of the NUSMods API, which stores module information as `.json` files, in order to obtain information about modules.
 
