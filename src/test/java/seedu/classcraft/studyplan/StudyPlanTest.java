@@ -32,14 +32,12 @@ public class StudyPlanTest {
         plan.addModule(m2, 1);
         plan.addModule(m3, 2);
 
-        // use -1 to request total credits (calls calculateTotalCredits internally)
         assertEquals(12, plan.calculateSemCredits(-1));
     }
 
     @Test
     public void calculateSemCredits_emptySemester_returnsZero() {
         StudyPlan plan = new StudyPlan(2);
-        // no modules added to semester 2 (index 1)
         assertEquals(0, plan.calculateSemCredits(1));
     }
 
