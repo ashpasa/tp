@@ -9,8 +9,7 @@ This project makes use of the following external resources:
 
 ### Architecture
 
-![UML diagram of the high-level architecture of ClassCraft](/UMLdiagrams/Architecture_Diagram.png)
-<img src="/UMLdiagrams/ArchitectureWithClasses.png" alt="UML diagram of the high-level architecture of ClassCraft with classes" width="600" />
+![UML diagram of the high-level architecture of ClassCraft with classes](/UMLdiagrams/ArchitectureWithClasses.png)
 
 Above shows the high-level architecture of ClassCraft. The programme is broken down to various packages within the classcraft folder, each handling a different domain of the programme. This section will provide an overview of each package and its role and functionality.
 
@@ -40,7 +39,7 @@ Each command is represented by a class that extends the abstract `Command` class
 
 This is how the 'AddCommnand' class interacts with other components:
 
-<img src="/UMLdiagrams/AddCommandSequence.png" alt="Add command sequence diagram" width="600" />
+<img alt="Add command sequence diagram" src="/UMLdiagrams/AddCommandSequence.png" width="600"/>
 
 When a command is executed, it interacts with the `Studyplan`, `UI`, and `Storage` components to perform its function.
 
@@ -61,7 +60,9 @@ The various methods then return the respective parts of the the `.json` file as 
 ### UI component
 
 This shows how the `Ui` class interacts with other components:
-<img src="/UMLdiagrams/ViewCurrentSequence.png" alt="UI sequence diagram" width="600" />
+![UI sequence diagram](/UMLdiagrams/ViewCurrentSequence.png)
+
+When a command is executed, it interacts with the `Ui` component to display messages to the user.
 
 ## Implementation
 
