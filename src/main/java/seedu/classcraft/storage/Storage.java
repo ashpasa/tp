@@ -22,7 +22,7 @@ import java.util.logging.Level;
  */
 public class Storage {
 
-    private static Logger logger = Logger.getLogger(Parser.class.getName());
+    private static Logger logger = Logger.getLogger(Storage.class.getName());
     private String dataFile;
 
     /**

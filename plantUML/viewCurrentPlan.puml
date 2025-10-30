@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+participant ":ViewCurrentPlanCommand" as ViewCurrentPlanCommand
+participant "ui:UI" as UI
+participant "plan:StudyPlan" as StudyPlan
+participant "mod:Module" as Module
+
+activate ViewCurrentPlanCommand
+ViewCurrentPlanCommand-> UI: displayCurrentPlan(...)
+activate UI
+UI-> UI : displayStudyPlan(StudyPlan plan, String title)
+activate UI
+UI->StudyPlan: getStudyPlan(...)
+activate StudyPlan
+return
+UI -> Module : getPrerequisitesDisplay(...)
+activate Module
+Module --> UI :  prereqsInfo
+deactivate Module
+return
+return
+
+
+
+@enduml
