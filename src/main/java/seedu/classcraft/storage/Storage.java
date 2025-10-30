@@ -1,6 +1,5 @@
 package seedu.classcraft.storage;
 
-import seedu.classcraft.parser.Parser;
 import seedu.classcraft.studyplan.StudyPlan;
 
 import java.io.File;
