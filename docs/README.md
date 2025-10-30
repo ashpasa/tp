@@ -1,4 +1,4 @@
-# Duke
+# ClassCraft
 
 {Give product intro here}
 

@@ -13,11 +13,11 @@ public enum CommandList {
      * (e.g., "add-completed") by mapping them to enum names
      * with underscores (e.g., "add_completed").
      *
-     * @param test The command word from user input.
+     * @param command The command word from user input.
      * @return true if a matching command is found, false otherwise.
      */
-    public static boolean isCommandFound(String test) {
-        String testWithUnderscore = test.replace('-', '_');
+    public static boolean isCommandFound(String command) {
+        String testWithUnderscore = command.replace('-', '_');
 
         for (CommandList c : CommandList.values()) {
             if (c.name().equalsIgnoreCase(testWithUnderscore)) {

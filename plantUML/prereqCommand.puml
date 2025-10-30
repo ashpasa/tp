@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+participant ":PrereqCommand" as PrereqCommand
+participant ":NUSmodsFetcher" as NUSmodsFetcher
+participant "rootJson: JsonNode" as rootJson
+participant ":UI" as UI
+
+activate PrereqCommand
+PrereqCommand-> NUSmodsFetcher: getModuleTitle(...)
+activate NUSmodsFetcher
+return
+PrereqCommand-> NUSmodsFetcher: fetchModuleJson(...)
+activate NUSmodsFetcher
+return
+PrereqCommand -> rootJson: get(...)
+activate rootJson
+return
+PrereqCommand-> UI: displayPrerequisites(...)
+activate UI
+return
+@enduml
