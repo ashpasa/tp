@@ -188,7 +188,7 @@ public class Parser {
      */
     private void handleSingleInstruction(String[] instructions) throws EmptyInstruction {
         // Merged "progress" from HEAD branch
-        if (!(instructions[0].equals("help") || instructions[0].equals("exit")
+        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("balance")
                 || instructions[0].equals("confirm") || instructions[0].equals("progress"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
             throw new EmptyInstruction(instructions[0]);
