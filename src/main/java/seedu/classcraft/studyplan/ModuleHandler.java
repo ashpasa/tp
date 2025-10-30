@@ -28,7 +28,12 @@ public class ModuleHandler {
         this.modules = new HashMap<>();
     }
 
-    // Fetches module data from NUSMods and create a module object
+    /**
+     * Creates a Module object by fetching details from NUSMods API.
+     * 
+     * @param moduleCode The module code of the module to be created.
+     * @return The created Module object.
+     */
     public Module createModule(String moduleCode) {
         String modName = "placeholder";
         int modCreds = 0;
@@ -85,6 +90,11 @@ public class ModuleHandler {
         return modules;
     }
 
+    /**
+     * Adds a module to the modules map if it does not already exist.
+     * 
+     * @param module The module to be added.
+     */
     public void addModule(Module module) {
         modules.putIfAbsent(module.getModCode(), module);
     }

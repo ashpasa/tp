@@ -56,6 +56,13 @@ public class StudyPlan {
         // @@author
     }
 
+    /**
+     * Adds a module to a specific semester in the study plan.
+     * 
+     * @param module The module to be added.
+     * @param semester The semester number (1-based index).
+     * @throws IllegalArgumentException
+     */
     public void addModule(Module module, int semester) throws IllegalArgumentException {
         if (semester < 1 || semester > studyPlan.size()) {
             throw new IllegalArgumentException("Semester " + semester + " is invalid.");
@@ -85,6 +92,15 @@ public class StudyPlan {
                 "Module code should be in the modules map after adding.";
     }
 
+    /**
+     * Method to add a module to the study plan with prerequisite validation.
+     * 
+     * @param moduleCode The module code to be added.
+     * @param semester The semester number (1-based index).
+     * @param storage Storage object for persistence.
+     * @param isRestored Indicates if the module is being restored from storage.
+     * @throws Exception
+     */
     public void addModule(String moduleCode, int semester, Storage storage, boolean isRestored) throws Exception {
         // Use ModuleHandler to fetch data and create the Module object
         boolean isModAddedPrev = modules.containsKey(moduleCode);
@@ -116,6 +132,12 @@ public class StudyPlan {
         LOGGER.info("Added " + moduleCode + " to semester " + semester);
     }
 
+    /**
+     * Removes a module from the study plan.
+     * 
+     * @param moduleString The module code to be removed.
+     * @param storage Storage object for persistence.
+     */
     public void removeModule(String moduleString, Storage storage) {
         try {
             if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
@@ -246,6 +268,10 @@ public class StudyPlan {
         return studyPlan;
     }
 
+    /**
+     * Creates a sample study plan for demonstration purposes.
+     * @return A StudyPlan object populated with sample modules.
+     */
     public static StudyPlan createSampleStudyPlan() {
         // Assuming CEG is an 8-semester course
         StudyPlan samplePlan = new StudyPlan(8);
@@ -288,12 +314,15 @@ public class StudyPlan {
         return samplePlan;
     }
 
+    /**
+     * Returns a sample study plan for demonstration purposes.
+     * @return A StudyPlan object populated with sample modules.
+     */
     public static StudyPlan getSampleStudyPlan() {
         return createSampleStudyPlan();
     }
 
     // @@author ashpasa
-
     /**
      * Calculates the total credits for a specific semester or for the entire study plan.
      *
@@ -312,18 +341,22 @@ public class StudyPlan {
 
         int semesterCredits = 0;
         for (Module module : studyPlan.get(semesterIndex)) {
+            assert module.getModCreds() >= 0 : "Module credits should be non-negative.";
             semesterCredits += module.getModCreds();
         }
         return semesterCredits;
     }
 
     /**
+     * Calculates the total module credits in the entire study plan.
+     * 
      * @return Total credits for the entire study plan
      */
     private int calculateTotalCredits() {
         int totalCredits = 0;
         for (int i = 0; i < studyPlan.size(); i++) {
             int semCreds = calculateSemCredits(i);
+            assert semCreds >= 0 : "Semester credits should be non-negative.";
             totalCredits += semCreds;
         }
         return totalCredits;

@@ -187,7 +187,6 @@ public class Parser {
      * Throws EmptyInstruction if the command is not valid.
      */
     private void handleSingleInstruction(String[] instructions) throws EmptyInstruction {
-        // Merged "progress" from HEAD branch
         if (!(instructions[0].equals("help") || instructions[0].equals("exit")
                 || instructions[0].equals("confirm") || instructions[0].equals("progress"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
@@ -301,6 +300,7 @@ public class Parser {
         }
     }
 
+    // @@author ashpasa
     /**
      * Parses the user input for mc command.
      * Expects either a semester number or "total".
@@ -323,6 +323,7 @@ public class Parser {
         }
         return semester;
     }
+    // @@author
 
     /**
      * Parses the user input for spec command.
@@ -346,7 +347,13 @@ public class Parser {
                 throw new IllegalArgumentException("OOPS!!! The specialisation must be either "
                         + "ae, 4.0, iot, robotics or st.");
             }
-        } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
+            return "";
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Error: Missing specialisation for 'spec' command.");
+            return "";
+        } catch (NullPointerException e) {
             System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
             return "";
         }

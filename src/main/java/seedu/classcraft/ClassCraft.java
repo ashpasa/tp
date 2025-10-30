@@ -10,10 +10,15 @@ import seedu.classcraft.ui.Ui;
 
 public class ClassCraft {
     /**
-     * Main entry-point for the java.duke.ClassCraft application.
+     * Represents the entry-point for the java.duke.ClassCraft application.
      */
     public static String studyPlanFile = "./ClassCraftData/studyPlan.txt";
 
+    /**
+     * The main method to run the ClassCraft application.
+     * 
+     * @param args Command line arguments, should be empty.
+     */
     public static void main(String[] args) {
         String logo = " ________  ___       ________  ________   ________  ________  __" +
                 "______  ________  ________ _________   \n" +

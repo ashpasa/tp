@@ -105,6 +105,7 @@ public class Storage {
      * removing the specified module code, and writes the updated lines back to the file.
      *
      * @param moduleToDelete The module code to delete.
+     * @param semester The semester number (1-8) from which the module code should be deleted.
      */
     public void deleteModule(String moduleToDelete, int semester) {
         try {

@@ -4,6 +4,7 @@ import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
+// @@author ashpasa
 public class CalcCreditsCommand extends Command {
     private int calculatedSemIndex;
 
@@ -18,3 +19,4 @@ public class CalcCreditsCommand extends Command {
         ui.displayTotalCredits(calculatedSemIndex, totalCredits);
     }
 }
+// @@author
