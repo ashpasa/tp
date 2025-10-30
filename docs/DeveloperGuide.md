@@ -6,13 +6,13 @@
 
 ### Architecture
 
-![UML diagram of the high-level architecture of ClassCraft](docs/UMLdiagrams/Architecture_Diagram.png)
+![UML diagram of the high-level architecture of ClassCraft](/UMLdiagrams/Architecture_Diagram.png)
 
 Above shows the high-level architecture of ClassCraft. The programme is broken down to various packages within the classcraft folder, each handling a different domain of the programme. This section will provide an overview of each package and its role and functionality.
 
 **Main components of the architecture**
 
-![Class Diagram showing the associations between classes](docs/UMLdiagrams/Class_Diagram.png)
+![Class Diagram showing the associations between classes](/UMLdiagrams/Class_Diagram.png)
 
 `ClassCraft.java` (containing only the `ClassCraft` class) is the main entry point into the programme. It handles startup and is responsible for cleanup after the programme is exited.
 
@@ -76,8 +76,8 @@ User inputs are parsed into commands by the **`Parser`** class.
     * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
 
 ### **Command Classes**
-![UML diagram of the Sequence Diagram Front](/docs/UMLdiagrams/Sequence_Diagram_Front.png)
-![UML diagram of the Sequence Diagram Back](/docs/UMLdiagrams/Sequence_Diagram_Back.png)
+![UML diagram of the Sequence Diagram Front](/UMLdiagrams/Sequence_Diagram_Front.png)
+![UML diagram of the Sequence Diagram Back](/UMLdiagrams/Sequence_Diagram_Back.png)
 
 Each command class extends the abstract `Command` class.
 
