@@ -19,7 +19,11 @@ public class PrerequisiteChecker {
     private static final Logger logger = Logger.getLogger(PrerequisiteChecker.class.getName());
 
     /**
-     * Validates if prerequisites are satisfied before adding module
+     * Validates if prerequisites are satisfied before adding module.
+     * 
+     * @param module The module to be added.
+     * @param targetSemester The semester number (1-based index) to which the module is being added.
+     * @param studyPlan The current study plan instance.
      */
     public static void validatePrerequisites(Module module, int targetSemester, StudyPlan studyPlan)
             throws StudyPlanException {

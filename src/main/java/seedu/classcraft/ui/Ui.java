@@ -12,6 +12,11 @@ public class Ui {
     private static final Logger logger = Logger.getLogger(Ui.class.getName());
     private String line = "_____________________________________________________" + System.lineSeparator();
 
+    /**
+     * Prints a generic message to the console, framed by lines for clarity.
+     * 
+     * @param message The message to be printed.
+     */
     public void printMessage(String message) {
         assert message != null : "Message cannot be null";
         logger.log(Level.FINE, "Printing message: {0}", message);
@@ -60,9 +65,12 @@ public class Ui {
         displayStudyPlan(currentPlan, "Current Study Plan");
     }
 
+    // @@author ashpasa
     /**
-     * @param semesterIndex The index of the semester in the ArrayList, with -1 representing overall total
-     * @param totalCredits  The number of module credits for the corresponding semester, or overall
+     * Displays the total module credits for a given semester or overall.
+     * 
+     * @param semesterIndex The index of the semester in the ArrayList, with -1 representing overall total.
+     * @param totalCredits  The number of module credits for the corresponding semester, or overall.
      */
     public void displayTotalCredits(int semesterIndex, int totalCredits) {
         String semesterString = "";
@@ -80,7 +88,13 @@ public class Ui {
         System.out.println(semesterString + " Module Credits: " + Integer.toString(totalCredits));
         System.out.print(line);
     }
+    // @@author
 
+    /**
+     * Displays an error message to the user.
+     * 
+     * @param errorMessage The error message to be displayed.
+     */
     public void showError(String errorMessage) {
         assert errorMessage != null : "Error message cannot be null";
         logger.log(Level.WARNING, "Displaying error: {0}", errorMessage);
@@ -90,12 +104,24 @@ public class Ui {
         System.out.println("============================================================");
     }
 
+    /**
+     * Displays a general message to the user.
+     * 
+     * @param message The message to be displayed.
+     */
     public void showMessage(String message) {
         System.out.println("============================================================");
         System.out.println(message);
         System.out.println("============================================================");
     }
 
+    /**
+     * Displays the prerequisites for a given module.
+     * 
+     * @param moduleCode  The module code.
+     * @param moduleTitle The module title.
+     * @param prereqTree  The prerequisite tree in JSON format.
+     */
     public void displayPrerequisites(String moduleCode, String moduleTitle, JsonNode prereqTree) {
         assert moduleCode != null : "Module code cannot be null";
         logger.log(Level.INFO, "Displaying prerequisites for: {0}", moduleCode);
@@ -120,7 +146,9 @@ public class Ui {
     }
 
     /**
-     * Displays an error message for prerequisite lookup
+     * Displays an error message for prerequisite lookup.
+     * 
+     * @param moduleCode The module code.
      */
     public void displayPrereqError(String moduleCode) {
         assert moduleCode != null : "Module code cannot be null";

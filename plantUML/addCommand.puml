@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+Participant "studyPlan:StudyPlan" as StudyPlan
+Participant "moduleHandler:ModuleHandler" as ModuleHandler
+Participant ":NUSmodsFetcher" as NUSmodsFetcher
+Participant ":PrerequisiteChecker" as PrerequisiteChecker
+Participant ":Storage" as Storage
+activate StudyPlan
+StudyPlan-> ModuleHandler: createModule(...)
+activate ModuleHandler
+ModuleHandler -> NUSmodsFetcher: get specific module details
+activate NUSmodsFetcher
+return
+return
+StudyPlan-> PrerequisiteChecker: validatePrerequisites(...)
+activate PrerequisiteChecker
+return
+opt isModAddedPrev
+    StudyPlan->Storage : deleteModule(...)
+    activate Storage
+    return
+end
+StudyPlan-> StudyPlan: addModule(...)
+activate StudyPlan
+return
+opt !isRestore
+    StudyPlan -> Storage : appendToFile(...)
+    activate Storage
+    return
+end
+
+
+
+@enduml
