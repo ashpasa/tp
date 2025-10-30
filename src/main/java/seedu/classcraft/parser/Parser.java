@@ -186,8 +186,9 @@ public class Parser {
      * Throws EmptyInstruction if the command is not valid.
      */
     private void handleSingleInstruction(String[] instructions) throws EmptyInstruction {
-        if (!(instructions[0].equals("help") || instructions[0].equals("exit")
-                || instructions[0].equals("progress"))) {
+        // Merged "progress" from HEAD branch
+        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("balance")
+                || instructions[0].equals("confirm") || instructions[0].equals("progress"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
             throw new EmptyInstruction(instructions[0]);
         }
