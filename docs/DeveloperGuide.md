@@ -1,5 +1,8 @@
 # Developer Guide for ***ClassCraft***
 
+##Acknowledgements
+This project makes use of the following external resources:
+* The NUSMods API: https://api.nusmods.com/v2/
 ---
 
 ## Design
@@ -7,6 +10,7 @@
 ### Architecture
 
 ![UML diagram of the high-level architecture of ClassCraft](/UMLdiagrams/Architecture_Diagram.png)
+<img src="/UMLdiagrams/ArchitectureWithClasses.png" alt="UML diagram of the high-level architecture of ClassCraft with classes" width="600" />
 
 Above shows the high-level architecture of ClassCraft. The programme is broken down to various packages within the classcraft folder, each handling a different domain of the programme. This section will provide an overview of each package and its role and functionality.
 
@@ -31,9 +35,19 @@ The bulk of ClassCraft's functionality is handled by the following components:
 
 ### Command component
 
+The `command` package contains all the commands that can be carried out by the user. 
+Each command is represented by a class that extends the abstract `Command` class.
+
+This is how the 'AddCommnand' class interacts with other components:
+
+<img src="/UMLdiagrams/AddCommandSequence.png" alt="Add command sequence diagram" width="600" />
+
+When a command is executed, it interacts with the `Studyplan`, `UI`, and `Storage` components to perform its function.
+
 ### NUSModsFetcher component
 
-`NUSmodsFetcher.java` is responsible for fetching the endpoints of the NUSMods API, which stores module information as `.json` files, in order to obtain information about modules.
+`NUSmodsFetcher.java` is responsible for fetching the endpoints of the NUSMods API, which stores module information as `.json` files, 
+in order to obtain information about modules.
 
 `NUSmodsFetcher` first retrieves the `.json` file containing information on a given module from the NUSMods API as a `JsonNode`.
 The various methods then return the respective parts of the the `.json` file as required by the user.
@@ -45,6 +59,9 @@ The various methods then return the respective parts of the the `.json` file as 
 ### Studyplan component
 
 ### UI component
+
+This shows how the `Ui` class interacts with other components:
+<img src="/UMLdiagrams/ViewCurrentSequence.png" alt="UI sequence diagram" width="600" />
 
 ## Implementation
 
@@ -96,7 +113,7 @@ Each command class extends the abstract `Command` class.
 
 ### **Storing current study plan**
 
-The current study plan created by the user is stored into a local txt/json
+The current study plan created by the user is stored into a local txt
 file using the **`Storage`** class, and restored upon application launch.
 * **Implementation:** The `Storage` class handles reading from and writing to the local file.
 * **Key Methods: `createFile()`**
@@ -196,13 +213,17 @@ streamlined and guided approach to academic planning.
 
 ## User Stories
 
-| Version | As a ... | I want to ... | So that I can ... |
-| :---: | :---: | :--- | :--- |
-| v1.0 | new user | see usage instructions | refer to them when I forget how to use the application |
-| v1.0 | CEG student | view the sample study plan | have a baseline and understand how to structure my own plan |
-| v1.0 | CEG student | view the CEG default graduation requirements | know which core modules I must take for graduation |
-| v1.0 | CEG student | add a module to a specific semester | customize my study plan quickly |
-| v1.0 | CEG student | remove a module from a specific semester | adjust my plan if my enrolment changes |
+| Version |    As a ...    | I want to ...                                                   | So that I can ...                                             |
+|:-------:|:--------------:|:----------------------------------------------------------------|:--------------------------------------------------------------|
+|  v1.0   |    new user    | see usage instructions                                          | refer to them when I forget how to use the application        |
+|  v1.0   |  CEG student   | view the sample study plan                                      | have a baseline and understand how to structure my own plan   |
+|  v1.0   |  CEG student   | view the CEG default graduation requirements                    | know which core modules I must take for graduation            |
+|  v1.0   |  CEG student   | add a module to a specific semester                             | customize my study plan quickly                               |
+|  v1.0   |  CEG student   | remove a module from a specific semester                        | adjust my plan if my enrolment changes                        |
+|  v2.0   | Long time user | retrieve created study plan                                     | I can refer to it in the future for module planning           |
+|  v2.0:  | Potential user | generate a 4 year CEG study plan                                | I can find out the potential Specialisations/TE that i can do |
+|  v2.0   |  Expert user   | find out what modules are needed for an intended specialisation | I complete my specialisation in a reasonable time             |
+|  v2.0   |    New user    | Find out the prerequisites of a specific module                 | I know when the earliest I can complete the module is         |
 
 ---
 
