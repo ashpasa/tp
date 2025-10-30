@@ -1,6 +1,5 @@
 package seedu.classcraft.storage;
 
-import seedu.classcraft.parser.Parser;
 import seedu.classcraft.studyplan.StudyPlan;
 
 import java.io.File;
@@ -22,7 +21,7 @@ import java.util.logging.Level;
  */
 public class Storage {
 
-    private static Logger logger = Logger.getLogger(Parser.class.getName());
+    private static Logger logger = Logger.getLogger(Storage.class.getName());
     private String dataFile;
 
     /**
@@ -105,6 +104,7 @@ public class Storage {
      * removing the specified module code, and writes the updated lines back to the file.
      *
      * @param moduleToDelete The module code to delete.
+     * @param semester The semester number (1-8) from which the module code should be deleted.
      */
     public void deleteModule(String moduleToDelete, int semester) {
         try {
