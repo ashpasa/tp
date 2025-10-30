@@ -1,6 +1,5 @@
 package seedu.classcraft.storage;
 
-import seedu.classcraft.parser.Parser;
 import seedu.classcraft.studyplan.StudyPlan;
 
 import java.io.File;
@@ -22,7 +21,7 @@ import java.util.logging.Level;
  */
 public class Storage {
 
-    private static Logger logger = Logger.getLogger(Parser.class.getName());
+    private static Logger logger = Logger.getLogger(Storage.class.getName());
     private String dataFile;
 
     /**

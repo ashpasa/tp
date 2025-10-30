@@ -1,21 +1,18 @@
 # Developer Guide for ***ClassCraft***
 
-## Acknowledgements
-{list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
-
 ---
 
 ## Design
 
 ### Architecture
 
-![UML diagram of the high-level architecture of ClassCraft](/docs/UMLdiagrams/Architecture_Diagram.png)
+![UML diagram of the high-level architecture of ClassCraft](docs/UMLdiagrams/Architecture_Diagram.png)
 
 Above shows the high-level architecture of ClassCraft. The programme is broken down to various packages within the classcraft folder, each handling a different domain of the programme. This section will provide an overview of each package and its role and functionality.
 
 **Main components of the architecture**
 
-![Class Diagram showing the associations between classes](/docs/UMLdiagrams/Class_Diagram.png)
+![Class Diagram showing the associations between classes](docs/UMLdiagrams/Class_Diagram.png)
 
 `ClassCraft.java` (containing only the `ClassCraft` class) is the main entry point into the programme. It handles startup and is responsible for cleanup after the programme is exited.
 
@@ -119,11 +116,6 @@ file using the **`Storage`** class, and restored upon application launch.
   specified module code and remove the specified module code.
       * Used in studyPlan's `deleteModule()` method to update the storage file.
 
-My primary contribution is in **DM3**, which involves creating and
-storing the **sample study plan** and the **CEG default graduation
-requirements**. This is primarily handled by the `StudyPlan`
-and `Grad` classes within the `seedu.classcraft.studyplan` package.
-
 ### **Storing and Displaying Graduation Requirements**
 
 The **`Grad`** class is responsible for holding the fixed, default CEG core modules.
@@ -152,6 +144,36 @@ and includes a factory method to generate a pre-set sample plan.
   factory method (`createSampleStudyPlan`) centralizes the knowledge of how a plan is structured and
   ensures that the sample plan is created using the same internal logic (`addModule`,
   `ModuleHandler`) as a user-generated plan.
+
+### **Viewing Degree Progress**
+
+This feature allows the user to see their current academic progress toward graduation.
+It displays a completion percentage along with the total "secured" Modular Credits (MCs) (from `COMPLETED` or `EXEMPTED` modules) compared to the total MCs required.
+
+* **Implementation:** The feature is initiated by the **`ViewProgressCommand`** class. 
+* This command class acts as a controller: it contains no business logic itself, but instead queries the **`StudyPlan`** class to get the progress data. 
+* The `StudyPlan` class is solely responsible for performing the calculations, as it owns the list of completed modules and the required MCs constant. Finally, the command formats this information and passes it to the **`Ui`** to be displayed to the user.
+
+* **Key Methods: `ViewProgressCommand.executeCommand(StudyPlan studyPlan, Ui ui, Storage storage)`**
+    * This is the main method invoked when the user runs the command.
+    * It calls `studyPlan.getDegreeProgressPercentage()`, `studyPlan.getTotalSecuredMCs()`, and `studyPlan.getTotalMcsForGraduation()` to fetch the necessary data.
+    * It formats these results into a user-readable `String` (e.g., "Your Degree Progress: 8.75%\nSecured MCs: 14 / 160").
+    * It passes this `String` to the `ui.printMessage()` method for display.
+
+* **Key Methods: `StudyPlan.getDegreeProgressPercentage()`**
+    * Calculates the degree progress percentage.
+    * It gets the total secured MCs by calling `getTotalSecuredMCs()`.
+    * It divides the secured MCs by the `TOTAL_MCS_FOR_GRADUATION` constant (e.g., 160) and multiplies by 100.0.
+    * It rounds the result to two decimal places before returning.
+
+* **Helper Methods: `StudyPlan.getTotalSecuredMCs()`**
+    * Calculates the total number of MCs the student has "secured" (completed or exempted).
+    * It iterates through the `completedModulesList` (which stores all modules marked as `COMPLETED` or `EXEMPTED`).
+    * It sums the `modCreds` (Modular Credits) from each `Module` in that list and returns the total. `PLANNED` modules are not counted.
+
+* **Helper Methods: `StudyPlan.getTotalMcsForGraduation()`**
+    * This is a simple getter method.
+    * It returns the value of the `TOTAL_MCS_FOR_GRADUATION` constant, allowing the `ViewProgressCommand` to access this value to display it to the user.
 
 ---
 

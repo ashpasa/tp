@@ -170,12 +170,11 @@ public class StudyPlan {
     }
 
     /**
-     * @@author lingru
-     * Adds a module that is already completed or exempted to the study plan.
-     *
+     * @author lingru
      * @param moduleCode The code of the module to add.
-     * @param status The status (COMPLETED or EXEMPTED).
+     * @param status     The status (COMPLETED or EXEMPTED).
      * @throws Exception If module fetching fails or module is already in the plan.
+     *     Adds a module that is already completed or exempted to the study plan.
      */
     public void addCompletedModule(String moduleCode, ModuleStatus status) throws Exception {
         if (status == ModuleStatus.PLANNED) {
@@ -184,8 +183,8 @@ public class StudyPlan {
 
         // Check if already exists in PLANNED modules
         if (modules.containsKey(moduleCode)) {
-            throw new StudyPlanException("Module " + moduleCode 
-                                         + " is already PLANNED in Semester " + modules.get(moduleCode));
+            throw new StudyPlanException("Module " + moduleCode
+                    + " is already PLANNED in Semester " + modules.get(moduleCode));
         }
 
         // Check if already exists in COMPLETED/EXEMPTED modules
@@ -209,9 +208,8 @@ public class StudyPlan {
 
     /**
      * @@author lingru
-     * Calculates the student's degree progress percentage.
-     *
      * @return The progress percentage, rounded to two decimal places.
+     *     calculates the student's degree progress percentage.
      */
     public double getDegreeProgressPercentage() {
         if (TOTAL_MCS_FOR_GRADUATION <= 0) {
@@ -229,9 +227,8 @@ public class StudyPlan {
 
     /**
      * @@author lingru
-     * Gets the total number of secured MCs (from completed/exempted modules).
-     *
      * @return Total secured MCs.
+     *     Gets the total number of secured MCs (from completed/exempted modules).
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -243,9 +240,8 @@ public class StudyPlan {
 
     /**
      * @@author lingru
-     * Gets the total MCs required for graduation.
-     *
      * @return Total required MCs.
+     *     Gets the total MCs required for graduation.
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
@@ -253,10 +249,9 @@ public class StudyPlan {
 
     /**
      * @@author lingru
-     * Helper method to check if a module exists anywhere in the plan (planned or completed).
-     *
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
+     *     Helper method to check if a module exists anywhere in the plan (planned or completed).
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || completedModulesMap.containsKey(moduleCode);
@@ -371,7 +366,7 @@ public class StudyPlan {
         int numberOfSems = studyPlan.size();
         int numberOfHighWorkloadSemesters = 0;
         for (int i = 0; i < numberOfSems; i++) {
-            if (calculateSemCredits(i) > (totalCredits/numberOfSems) + 5) {
+            if (calculateSemCredits(i) > (totalCredits / numberOfSems) + 5) {
                 System.out.println("Semester " + (i + 1) + " has a high workload. Please consider moving some modules" +
                         " to other semesters instead");
                 numberOfHighWorkloadSemesters++;
