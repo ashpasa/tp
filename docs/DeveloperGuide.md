@@ -114,6 +114,8 @@ Each command class extends the abstract `Command` class.
     * `CalcCreditsCommand`: Calculates and displays the total modular credits for a specified semester.
     * `SpecCommand`: Displays specialization information that user can take if they have chosen a specialization.
     * `PrereqCommand`: Displays prerequisite information for a specified module.
+    * `AddCompletedCommand`: Adds modules with a specific status, eg. completed/exempted
+    * `CurrentSemCommand`: Sets the current semester the user is in
     * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
 
 ### **Storing current study plan**
