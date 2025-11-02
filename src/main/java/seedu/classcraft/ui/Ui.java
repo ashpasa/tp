@@ -181,6 +181,16 @@ public class Ui {
             return "None";
         }
 
+        if (node.isTextual()) {
+            String text = node.asText();
+            String cleaned = text.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
+            cleaned = cleaned.replaceAll("%", " (or any variant)");
+            if (cleaned.isEmpty()) {
+                return "None";
+            }
+            return cleaned;
+        }
+
         if (node.has("or")) {
             return prettifyArrayNode(node.get("or"), "OR");
         }
@@ -218,6 +228,11 @@ public class Ui {
             first = false;
         }
         result.append(")");
+
+        if (first) {
+            return "";
+        }
+
         return result.toString();
     }
 
@@ -238,7 +253,7 @@ public class Ui {
     }
 
     private boolean isValidModuleCode(String code) {
-        return code != null && code.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$");
+        return code != null && code.matches("^[A-Z]{2,3}\\d{4}[A-Z]{0,2}$");
     }
 
     private boolean isBridgingModule(String code) {

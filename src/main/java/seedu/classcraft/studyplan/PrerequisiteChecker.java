@@ -51,13 +51,33 @@ public class PrerequisiteChecker {
         boolean satisfied = evaluatePrereqTree(prereqTree, completedModules);
 
         if (!satisfied) {
-            String errorMessage = buildErrorMessage(module.getModCode(), targetSemester, prereqTree, completedModules);
-            logger.log(Level.WARNING, "Prerequisites not satisfied for module {0}: {1}",
-                    new Object[]{module.getModCode(), errorMessage});
-            throw new StudyPlanException(errorMessage);
+            logger.log(Level.WARNING, "Prerequisites not satisfied for module {0}", module.getModCode());
+
+            // Extract human-readable prerequisite string for error message
+            String prereqString = "";
+            if (prereqTree.isTextual()) {
+                // Handle plain text prerequisites like "CS1010%:D"
+                prereqString = formatWildcardPrerequisite(prereqTree.asText());
+            } else {
+                // Handle structured prerequisites
+                prereqString = prettifyPrereqTree(prereqTree);
+            }
+
+            throw new StudyPlanException("Cannot add " + module.getModCode() + " to semester " + targetSemester +
+                    ".\n" + "Required prerequisites: " + prereqString + "\n\n" +
+                    "You have not completed any prerequisite modules in earlier semesters.\n\n" +
+                    "Please add the required prerequisite modules to an earlier semester first.");
         }
 
         logger.log(Level.INFO, "Prerequisites satisfied for module {0}", module.getModCode());
+    }
+
+    private static String formatWildcardPrerequisite(String prereqText) {
+        // Remove grade requirements (e.g., ":D", ":B", etc.)
+        String cleaned = prereqText.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
+        // Replace % wildcard with descriptive text
+        cleaned = cleaned.replaceAll("%", " (or any variant)");
+        return cleaned;
     }
 
     /**
@@ -92,7 +112,7 @@ public class PrerequisiteChecker {
             return isModuleCompleted(node.get("moduleCode").asText(), completedModules);
         }
 
-        return true;
+        return false;
     }
 
     private static boolean evaluateOrNode(JsonNode orNode, Set<String> completedModules) {
@@ -142,9 +162,22 @@ public class PrerequisiteChecker {
             return true;
         }
 
+        if (moduleCode.contains("%")) {
+            String baseCode = moduleCode.replace("%", "");
+
+            boolean found = completedModules.stream()
+                    .anyMatch(code -> code.startsWith(baseCode));
+
+            if (found) {
+                logger.log(Level.FINEST, "Module {0} matched wildcard pattern {1}",
+                        new Object[]{baseCode, moduleCode});
+            }
+            return found;
+        }
+
         if (!isValidModuleCode(moduleCode)) {
             logger.log(Level.WARNING, "Invalid module code format: {0}", moduleCode);
-            return true;
+            return false;
         }
 
         boolean completed = completedModules.contains(moduleCode);
@@ -153,7 +186,7 @@ public class PrerequisiteChecker {
     }
 
     private static boolean isValidModuleCode(String moduleCode) {
-        return moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$");
+        return moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]{0,2}$");
     }
 
     /**
