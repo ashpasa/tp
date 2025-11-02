@@ -289,12 +289,11 @@ public class PrerequisiteChecker {
         URL resource = logger.getClass().getResource(className);
 
         if (resource == null) {
-            System.out.println("Unable to determine runtime environment.");
             return;
         }
 
         String protocol = resource.getProtocol();
-        System.out.println("Protocol: " + protocol);
+
         if (Objects.equals(protocol, "jrt")) {
             logger.setLevel(Level.OFF);
         } else if (Objects.equals(protocol, "file")) {
