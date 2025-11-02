@@ -210,6 +210,7 @@ public class Parser {
                 ui.showMessage("OOPS!!! Too many arguments provided for command '" + commandType + "'.");
                 this.commandType = "invalid";
             } catch (NullPointerException e) {
+                // This is expected if commandType is "invalid" or not in the map, do nothing.
             }
         } catch (EmptyInstruction | IllegalArgumentException e) {
             ui.showMessage(e.getMessage());
@@ -548,3 +549,4 @@ public class Parser {
         }
     }
 }
+

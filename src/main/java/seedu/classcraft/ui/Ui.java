@@ -54,12 +54,12 @@ public class Ui {
             System.out.print(line);
         }
 
-        int current_semester = StudyPlan.getCurrentSemester();
+        int currentSemester = StudyPlan.getCurrentSemester();
 
         ArrayList<ArrayList<Module>> planData = plan.getStudyPlan();
 
         for (int i = 0; i < planData.size(); i++) {
-            if (!sample && (i + 1 < current_semester)) {
+            if (!sample && (i + 1 < currentSemester)) {
                 System.out.println("Semester " + (i + 1) + " (Completed):");
             } else {
                 System.out.println("Semester " + (i + 1) + ":");
@@ -277,3 +277,4 @@ public class Ui {
         }
     }
 }
+

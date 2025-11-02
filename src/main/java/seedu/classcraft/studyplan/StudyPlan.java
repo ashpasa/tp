@@ -70,6 +70,49 @@ public class StudyPlan {
         StudyPlan.currentSemester = currentSemester;
     }
 
+    /**
+     * Sets the current semester.
+     * Moves all modules *before* this semester to COMPLETED status
+     * and updates storage accordingly.
+     *
+     * @param newCurrentSemester The semester to set as current (1-based).
+     * @param storage            Storage handler for persistence.
+     * @return The number of modules moved to COMPLETED.
+     * @throws StudyPlanException If semester is invalid.
+     */
+    public int setCurrentSemester(int newCurrentSemester, Storage storage) throws StudyPlanException {
+        if (newCurrentSemester < 1 || newCurrentSemester > studyPlan.size()) {
+            throw new StudyPlanException("Semester " + newCurrentSemester + " is invalid. " +
+                    "Must be between 1 and " + studyPlan.size());
+        }
+
+        this.currentSemester = newCurrentSemester;
+        int modulesCompletedCount = 0;
+
+        for (int i = 0; i < newCurrentSemester - 1; i++) {
+            ArrayList<Module> semesterModules = studyPlan.get(i);
+            int currentSemesterNumber = i + 1;
+
+            for (int j = semesterModules.size() - 1; j >= 0; j--) {
+                Module mod = semesterModules.get(j);
+
+                semesterModules.remove(j);
+                modules.remove(mod.getModCode());
+
+                mod.setStatus(ModuleStatus.COMPLETED);
+                completedModulesList.add(mod);
+                completedModulesMap.put(mod.getModCode(), mod);
+
+                storage.saveSecuredModule(mod);
+                // Delete from planned line
+                storage.deleteModule(mod.getModCode(), currentSemesterNumber);
+
+                modulesCompletedCount++;
+            }
+        }
+        return modulesCompletedCount;
+    }
+
     public static int getTotalSemesters() {
         return totalSemesters;
     }
@@ -199,8 +242,8 @@ public class StudyPlan {
      * @param storage    Storage handler added.
      * @param isRestored Flag to prevent re-saving on load.
      * @throws Exception If module fetching fails or module is already in the plan.
-     * Adds a module that is already completed or exempted to the study plan.
      */
+
     public void addCompletedModule(String moduleCode, ModuleStatus status,
                                    Storage storage, boolean isRestored) throws Exception {
         if (status == ModuleStatus.PLANNED) {
@@ -257,7 +300,6 @@ public class StudyPlan {
     /**
      * @author lingru
      * @return The progress percentage, rounded to two decimal places.
-     * calculates the student's degree progress percentage.
      */
     public double getDegreeProgressPercentage() {
         if (TOTAL_MCS_FOR_GRADUATION <= 0) {
@@ -290,7 +332,7 @@ public class StudyPlan {
     /**
      * @@author lingru
      * @return Total secured MCs.
-     * Gets the total number of secured MCs (from completed/exempted modules).
+     *    Gets the total number of secured MCs (from completed/exempted modules).
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -303,7 +345,7 @@ public class StudyPlan {
     /**
      * @author lingru
      * @return Total required MCs.
-     * Gets the total MCs required for graduation.
+     *    Gets the total MCs required for graduation.
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
@@ -313,7 +355,7 @@ public class StudyPlan {
      * @author lingru
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
-     * Helper method to check if a module exists anywhere in the plan (planned or completed).
+     *    Helper method to check if a module exists anywhere in the plan (planned or completed).
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || completedModulesMap.containsKey(moduleCode);
@@ -451,50 +493,6 @@ public class StudyPlan {
         }
     }
 
-
-    /**
-     * Sets the current semester.
-     * Moves all modules *before* this semester to COMPLETED status
-     * and updates storage accordingly.
-     *
-     * @param newCurrentSemester The semester to set as current (1-based).
-     * @param storage            Storage handler for persistence.
-     * @return The number of modules moved to COMPLETED.
-     * @throws StudyPlanException If semester is invalid.
-     */
-    public int setCurrentSemester(int newCurrentSemester, Storage storage) throws StudyPlanException {
-        if (newCurrentSemester < 1 || newCurrentSemester > studyPlan.size()) {
-            throw new StudyPlanException("Semester " + newCurrentSemester + " is invalid. " +
-                    "Must be between 1 and " + studyPlan.size());
-        }
-
-        this.currentSemester = newCurrentSemester;
-        int modulesCompletedCount = 0;
-
-        for (int i = 0; i < newCurrentSemester - 1; i++) {
-            ArrayList<Module> semesterModules = studyPlan.get(i);
-            int currentSemesterNumber = i + 1;
-
-            for (int j = semesterModules.size() - 1; j >= 0; j--) {
-                Module mod = semesterModules.get(j);
-
-                semesterModules.remove(j);
-                modules.remove(mod.getModCode());
-
-                mod.setStatus(ModuleStatus.COMPLETED);
-                completedModulesList.add(mod);
-                completedModulesMap.put(mod.getModCode(), mod);
-
-                storage.saveSecuredModule(mod);
-                // Delete from planned line
-                storage.deleteModule(mod.getModCode(), currentSemesterNumber);
-
-                modulesCompletedCount++;
-            }
-        }
-        return modulesCompletedCount;
-    }
-
     /**
      * Sets logger level depending on how the program is run.
      * When running from a jar file, it disables logging.
@@ -517,3 +515,4 @@ public class StudyPlan {
         }
     }
 }
+

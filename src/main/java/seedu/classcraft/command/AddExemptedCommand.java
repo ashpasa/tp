@@ -46,3 +46,4 @@ public class AddExemptedCommand extends Command {
         }
     }
 }
+
