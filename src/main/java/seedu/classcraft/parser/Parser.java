@@ -39,7 +39,6 @@ public class Parser {
 
             Map.entry("help", 1),
             Map.entry("exit", 1),
-            Map.entry("balance", 1),
             Map.entry("progress", 1),
             Map.entry("view", 2),
             Map.entry("plan", 2),
@@ -48,7 +47,9 @@ public class Parser {
             Map.entry("mc", 2),
             Map.entry("spec", 2),
             Map.entry("prereq", 2),
-            Map.entry("add-exempted", 2)
+            Map.entry("add-exempted", 2),
+            Map.entry("check", 1),
+            Map.entry("current_semester", 2)
     );
 
 
