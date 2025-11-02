@@ -48,7 +48,8 @@ public class Parser {
             Map.entry("mc", 2),
             Map.entry("spec", 2),
             Map.entry("prereq", 2),
-            Map.entry("add-exempted", 2)
+            Map.entry("add-exempted", 2),
+            Map.entry("check", 2)
     );
 
 
