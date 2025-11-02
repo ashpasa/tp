@@ -78,9 +78,11 @@ public class Parser {
         return userInstructions;
     }
 
+
     public String getCommandType() {
         return commandType;
     }
+
 
     /**
      * Parses the user input into a command object.
@@ -504,16 +506,14 @@ public class Parser {
         }
     }
 
+    // and setLoggerLevel from master. Discarded parseCurrentSem.
     /**
-     * Parses the user input for the current_semester command.
-     * Validates the inputs before setting the currentSemester attribute in StudyPlan.
+     * Parses the user input for set-current-sem command.
+     * Expects a single integer.
      *
-     * @return returns a String containing the current semester
-     *                    Catches EmptyInstruction exceptions and sets commandType to "invalid"
-     *                    if any required instructions/its components are missing.
+     * @return int representing the semester, or -1 for error.
      */
-    public String parseCurrentSem() throws EmptyInstruction {
-        String currentSem;
+    private int parseSetCurrentSem() {
         try {
             int semester = Integer.parseInt(userInstructions.trim());
             if (semester < 1 || semester > 8) {
