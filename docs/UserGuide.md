@@ -106,7 +106,7 @@ Format: `view plan`
 
 ### View Modules required for a Specialisation: `spec {Specialisation}`
 
-Displays a list of modules required for the selected specialisation.
+Displays modules required for the respective CEG specialisations.
 
 Format: `spec {Specialisation}`
 
@@ -137,11 +137,11 @@ Format: `mc {SEMESTER}`, where {SEMESTER} is an integer from 0 to 8
 
 Example: `mc 4`
 
-### Balance Study Plan: `balance`
+### Check Study Plan: `check`
 
-Helps to balance workload of study plan by detecting any semesters with unusually high workload.
+Checks the workload of the study plan and detects any semesters with unusually high workload.
 
-Format: `balance`
+Format: `check`
 
 ### View degree progression: `progress`
 
@@ -196,7 +196,7 @@ If you do choose to edit the file, please ensure that you have a backup copy of 
 | View Sample         | view sample                     | Show a sample study plan          |
 | Specialisation      | spec {SPEC}                     | Show specialisation information   |
 | Calculate MCs       | mc {SEMESTER}                   | Calculate module credits          |
-| Balance             | balance                         | Balance workload in study plan    |
+| Check               | check                           | Checks workload of study plan     |
 | Progress            | progress                        | View degree progress in %         |
 | Pre-Requisite       | prereq {MODULE_CODE}            | View Pre-Requisites               |
 | Help                | help                            | Show help information             |

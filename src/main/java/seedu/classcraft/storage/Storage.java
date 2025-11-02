@@ -7,11 +7,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -34,6 +36,7 @@ public class Storage {
      * @param dataFile The path to the data file for storing study plan information.
      */
     public Storage(String dataFile) {
+        setLoggerLevel();
         assert dataFile != null : "Data file path cannot be null.";
         this.dataFile = dataFile;
         createFile();
@@ -269,5 +272,25 @@ public class Storage {
     }
 
 
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+        if (Objects.equals(protocol, "jar")) {
+            logger.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            logger.setLevel(Level.ALL);
+        }
+    }
 }
 
