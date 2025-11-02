@@ -191,11 +191,11 @@ public class StudyPlan {
     }
 
     /**
+     * @author lingru
      * @param moduleCode The code of the module to add.
      * @param status     The status (COMPLETED or EXEMPTED).
      * @throws Exception If module fetching fails or module is already in the plan.
      *                   Adds a module that is already completed or exempted to the study plan.
-     * @author lingru
      */
     public void addCompletedModule(String moduleCode, ModuleStatus status) throws Exception {
         if (status == ModuleStatus.PLANNED) {
@@ -228,9 +228,9 @@ public class StudyPlan {
     }
 
     /**
-     * @return The progress percentage, rounded to two decimal places.
-     * calculates the student's degree progress percentage.
      * @author lingru
+     * @return The progress percentage, rounded to two decimal places.
+     *                   calculates the student's degree progress percentage.
      */
     public double getDegreeProgressPercentage() {
         if (TOTAL_MCS_FOR_GRADUATION <= 0) {
@@ -247,9 +247,9 @@ public class StudyPlan {
     }
 
     /**
-     * @return Total secured MCs.
-     * Gets the total number of secured MCs (from completed/exempted modules).
      * @author lingru
+     * @return Total secured MCs.
+     *                   Gets the total number of secured MCs (from completed/exempted modules).
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -260,19 +260,19 @@ public class StudyPlan {
     }
 
     /**
-     * @return Total required MCs.
-     * Gets the total MCs required for graduation.
      * @author lingru
+     * @return Total required MCs.
+     *                   Gets the total MCs required for graduation.
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
     }
 
     /**
+     * @author lingru
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
-     * Helper method to check if a module exists anywhere in the plan (planned or completed).
-     * @author lingru
+     *                   Helper method to check if a module exists anywhere in the plan (planned or completed).
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || completedModulesMap.containsKey(moduleCode);
