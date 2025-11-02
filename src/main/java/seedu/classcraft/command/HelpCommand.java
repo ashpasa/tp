@@ -39,7 +39,7 @@ public class HelpCommand extends Command {
                 + "10. progress - View your current degree progress.\n   Format: progress\n\n"
                 + "11. spec - View modules required for a CEG specialisation.\n   Format: spec {SPECIALISATION} "
                 + "(SPECIALISATION: ae,4.0,iot,robotics,st)\n\n"
-                + "12. balance - Balances workload of study plan.\n   Format: balance\n"
+                + "12. check - Checks workload distribution of study plan.\n   Format: check\n"
                 + "13. current_semester - Indicates the current semester, so that modules from previous semesters are" +
                 " marked as completed.\n   Format: current_semester s/{SEMESTER} (SEMESTER: 1 to 8)\n";
 

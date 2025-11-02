@@ -385,7 +385,7 @@ public class StudyPlan {
     /**
      * Indicates to the user which semesters have a high workload (2 or more modules than their average workload)
      */
-    public void balanceStudyPlan() {
+    public void checkStudyPlan() {
         int totalUncompletedCredits = 0;
         for (int i = currentSemester - 1; i < studyPlan.size(); i++) {
             int semCreds = calculateSemCredits(i);

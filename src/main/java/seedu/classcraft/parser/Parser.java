@@ -1,6 +1,6 @@
 package seedu.classcraft.parser;
 
-import seedu.classcraft.command.BalanceCommand;
+import seedu.classcraft.command.CheckCommand;
 import seedu.classcraft.command.Command;
 import seedu.classcraft.command.AddCommand;
 import seedu.classcraft.command.CalcCreditsCommand;
@@ -124,8 +124,8 @@ public class Parser {
             case "prereq":
                 String prereqModuleCode = parsePrereq();
                 return new PrereqCommand(prereqModuleCode);
-            case "balance":
-                return new BalanceCommand();
+            case "check":
+                return new CheckCommand();
             case "current_semester":
                 String current_sem = parseCurrentSem();
                 return new CurrentSemCommand(current_sem);
@@ -159,7 +159,7 @@ public class Parser {
         try {
             if (instructions.length == 1) {
                 if (!(instructions[0].equals("help") || instructions[0].equals("exit")
-                        || instructions[0].equals("balance")
+                        || instructions[0].equals("check")
                         || instructions[0].equals("progress"))) {
                     throw new IllegalArgumentException("OOPS!!! The description of a " +
                             instructions[0] + " cannot be empty.");
@@ -193,7 +193,7 @@ public class Parser {
      * Throws EmptyInstruction if the command is not valid.
      */
     private void handleSingleInstruction(String[] instructions) throws EmptyInstruction {
-        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("balance")
+        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("check")
                 || instructions[0].equals("confirm") || instructions[0].equals("progress"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
             throw new EmptyInstruction(instructions[0]);
