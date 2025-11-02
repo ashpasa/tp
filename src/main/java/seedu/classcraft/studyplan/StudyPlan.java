@@ -3,6 +3,7 @@ package seedu.classcraft.studyplan;
 import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.storage.Storage;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -45,6 +46,7 @@ public class StudyPlan {
     private ModuleHandler moduleHandler;
 
     public StudyPlan(int totalSemesters) {
+        setLoggerLevel();
         StudyPlan.totalSemesters = totalSemesters;
         for (int i = 0; i < totalSemesters; i++) {
             ArrayList<Module> innerList = new ArrayList<>();
@@ -189,11 +191,11 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
      * @param moduleCode The code of the module to add.
      * @param status     The status (COMPLETED or EXEMPTED).
      * @throws Exception If module fetching fails or module is already in the plan.
      *                   Adds a module that is already completed or exempted to the study plan.
+     * @author lingru
      */
     public void addCompletedModule(String moduleCode, ModuleStatus status) throws Exception {
         if (status == ModuleStatus.PLANNED) {
@@ -226,9 +228,9 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
      * @return The progress percentage, rounded to two decimal places.
-     *                   calculates the student's degree progress percentage.
+     * calculates the student's degree progress percentage.
+     * @author lingru
      */
     public double getDegreeProgressPercentage() {
         if (TOTAL_MCS_FOR_GRADUATION <= 0) {
@@ -245,9 +247,9 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
      * @return Total secured MCs.
-     *                   Gets the total number of secured MCs (from completed/exempted modules).
+     * Gets the total number of secured MCs (from completed/exempted modules).
+     * @author lingru
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -258,19 +260,19 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
      * @return Total required MCs.
-     *                   Gets the total MCs required for graduation.
+     * Gets the total MCs required for graduation.
+     * @author lingru
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
     }
 
     /**
-     * @author lingru
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
-     *                   Helper method to check if a module exists anywhere in the plan (planned or completed).
+     * Helper method to check if a module exists anywhere in the plan (planned or completed).
+     * @author lingru
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || completedModulesMap.containsKey(moduleCode);
@@ -399,4 +401,26 @@ public class StudyPlan {
         }
     }
 
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            System.out.println("Unable to determine runtime environment.");
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+        System.out.println("Protocol: " + protocol);
+        if (Objects.equals(protocol, "jar")) {
+            LOGGER.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            LOGGER.setLevel(Level.ALL);
+        }
+    }
 }

@@ -20,6 +20,8 @@ import seedu.classcraft.command.ViewProgressCommand;
 import seedu.classcraft.exceptions.EmptyInstruction;
 import seedu.classcraft.studyplan.ModuleStatus;
 
+import java.net.URL;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,6 +44,7 @@ public class Parser {
      * @param userInput The full user input string.
      */
     public Parser(String userInput) {
+        setLoggerLevel();
         assert userInput != null : "User input must not be null";
         this.userInputString = userInput.stripLeading();
         logger.log(Level.INFO, "Received user input: " + userInputString);
@@ -460,6 +463,29 @@ public class Parser {
             throw new EmptyInstruction("current_semester");
         }
         return currentSem;
+    }
+
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            System.out.println("Unable to determine runtime environment.");
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+        System.out.println("Protocol: " + protocol);
+        if (Objects.equals(protocol, "jar")) {
+            logger.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            logger.setLevel(Level.ALL);
+        }
     }
 }
 

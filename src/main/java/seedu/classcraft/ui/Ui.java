@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.studyplan.Module;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -12,9 +14,13 @@ public class Ui {
     private static final Logger logger = Logger.getLogger(Ui.class.getName());
     private String line = "_____________________________________________________" + System.lineSeparator();
 
+    public Ui() {
+        setLoggerLevel();
+    }
+
     /**
      * Prints a generic message to the console, framed by lines for clarity.
-     * 
+     *
      * @param message The message to be printed.
      */
     public void printMessage(String message) {
@@ -66,9 +72,10 @@ public class Ui {
     }
 
     // @@author ashpasa
+
     /**
      * Displays the total module credits for a given semester or overall.
-     * 
+     *
      * @param semesterIndex The index of the semester in the ArrayList, with -1 representing overall total.
      * @param totalCredits  The number of module credits for the corresponding semester, or overall.
      */
@@ -92,7 +99,7 @@ public class Ui {
 
     /**
      * Displays an error message to the user.
-     * 
+     *
      * @param errorMessage The error message to be displayed.
      */
     public void showError(String errorMessage) {
@@ -106,7 +113,7 @@ public class Ui {
 
     /**
      * Displays a general message to the user.
-     * 
+     *
      * @param message The message to be displayed.
      */
     public void showMessage(String message) {
@@ -117,7 +124,7 @@ public class Ui {
 
     /**
      * Displays the prerequisites for a given module.
-     * 
+     *
      * @param moduleCode  The module code.
      * @param moduleTitle The module title.
      * @param prereqTree  The prerequisite tree in JSON format.
@@ -147,7 +154,7 @@ public class Ui {
 
     /**
      * Displays an error message for prerequisite lookup.
-     * 
+     *
      * @param moduleCode The module code.
      */
     public void displayPrereqError(String moduleCode) {
@@ -231,5 +238,28 @@ public class Ui {
     private boolean isBridgingModule(String code) {
         return code.equals("MA1301") || code.equals("MA1301X")
                 || code.equals("MA1301FC") || code.equals("PC1201");
+    }
+
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            System.out.println("Unable to determine runtime environment.");
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+        System.out.println("Protocol: " + protocol);
+        if (Objects.equals(protocol, "jrt")) {
+            logger.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            logger.setLevel(Level.ALL);
+        }
     }
 }
