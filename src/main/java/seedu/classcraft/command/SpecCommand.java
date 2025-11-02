@@ -52,7 +52,7 @@ public class SpecCommand extends Command {
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws IOException {
         try {
             JsonNode specNode = mapper.readTree(SPEC_DATA);
-
+            System.out.println("============================================================");
             System.out.println("These are all the mods that count towards your specialisation");
             printJsonArray(specNode.get(specToQuery).get("prereq"));
 
@@ -65,6 +65,7 @@ public class SpecCommand extends Command {
                     printJsonArray(specNode.get(specToQuery).get(key));
                 }
             }
+            System.out.println("============================================================");
         } catch (IOException e) {
             System.out.println("Error reading specialisations file");
         }

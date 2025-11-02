@@ -29,10 +29,10 @@ public class ClassCraft {
 
         StudyPlan currentStudyPlan = storage.restoreData(storage);
         Scanner in = new Scanner(System.in);
-        String userInput = "";
+        String userInput;
 
 
-        while (!"exit".equals(userInput)) {
+        while (true) {
             if (!in.hasNextLine()) {
                 return;
             }
@@ -45,11 +45,10 @@ public class ClassCraft {
                 command.executeCommand(currentStudyPlan, ui, storage);
 
             } catch (Exception e) {
-                ui.printMessage("Error: " + e.getMessage());
+                ui.showMessage("Error: " + e.getMessage());
             }
 
         }
 
-        in.close();
     }
 }

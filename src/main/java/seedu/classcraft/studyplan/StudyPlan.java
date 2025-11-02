@@ -2,6 +2,7 @@ package seedu.classcraft.studyplan;
 
 import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.storage.Storage;
+import seedu.classcraft.ui.Ui;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class StudyPlan {
     // @@author
 
     private ModuleHandler moduleHandler;
+    private Ui ui = new Ui();
 
     public StudyPlan(int totalSemesters) {
         setLoggerLevel();
@@ -164,11 +166,14 @@ public class StudyPlan {
      * @param moduleString The module code to be removed.
      * @param storage      Storage object for persistence.
      */
+
     public void removeModule(String moduleString, Storage storage) throws StudyPlanException {
         if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
             LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
+            ui.showMessage(moduleString + " does not exist in your study plan.");
             throw new StudyPlanException("Module " + moduleString + " does not exist");
         }
+
 
         if (modules.containsKey(moduleString)) {
             Integer sem = modules.get(moduleString);
@@ -311,7 +316,7 @@ public class StudyPlan {
             samplePlan.addModule(ee2026, 2);
 
             // Semester 3
-            Module cs2040s = handler.createModule("CS2040S");
+            Module cs2040s = handler.createModule("CS2040C");
             samplePlan.addModule(cs2040s, 3);
 
             // Add other core/sample modules for Semesters 3 to 8 (to be added)
