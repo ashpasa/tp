@@ -177,6 +177,11 @@ public class Ui {
             first = false;
         }
         result.append(")");
+
+        if (first) {
+            return "";
+        }
+
         return result.toString();
     }
 
@@ -197,7 +202,7 @@ public class Ui {
     }
 
     private boolean isValidModuleCode(String code) {
-        return code != null && code.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$");
+        return code != null && code.matches("^[A-Z]{2,3}\\d{4}[A-Z]{0,2}$");
     }
 
     private boolean isBridgingModule(String code) {

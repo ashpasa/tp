@@ -95,20 +95,15 @@ public class StudyPlan {
 
         Module newModule = moduleHandler.createModule(moduleCode);
 
-        try {
-            PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
-        } catch (StudyPlanException e) {
-            LOGGER.info("Prerequisite validation failed for " + moduleCode
-                    + " in semester " + semester + ": " + e.getMessage());
-            throw e;
-        }
+        // VALIDATE PREREQUISITES BEFORE DOING ANYTHING ELSE
+        PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
 
+        // Only proceed if validation passes
         if (isModAddedPrev) {
             storage.deleteModule(moduleCode, previousSemester);
         }
 
         addModule(newModule, semester);
-
         if (!isRestored) {
             storage.appendToFile(moduleCode, semester);
         }

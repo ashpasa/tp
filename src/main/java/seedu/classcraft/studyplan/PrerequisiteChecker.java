@@ -85,7 +85,7 @@ public class PrerequisiteChecker {
             return isModuleCompleted(node.get("moduleCode").asText(), completedModules);
         }
 
-        return true;
+        return false;
     }
 
     private static boolean evaluateOrNode(JsonNode orNode, Set<String> completedModules) {
@@ -137,7 +137,7 @@ public class PrerequisiteChecker {
 
         if (!isValidModuleCode(moduleCode)) {
             logger.log(Level.WARNING, "Invalid module code format: {0}", moduleCode);
-            return true;
+            return false;
         }
 
         boolean completed = completedModules.contains(moduleCode);
@@ -146,7 +146,7 @@ public class PrerequisiteChecker {
     }
 
     private static boolean isValidModuleCode(String moduleCode) {
-        return moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$");
+        return moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]{0,2}$");
     }
 
     /**

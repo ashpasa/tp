@@ -46,10 +46,8 @@ public class ModuleHandler {
 
         List<String> prerequisites = new ArrayList<>();
 
-
         try {
             JsonNode rootJson = NUSmodsFetcher.fetchModuleJson(moduleCode);
-
             JsonNode prerequisiteNode = rootJson.get("prereqTree");
 
             if (prerequisiteNode != null && !prerequisiteNode.isNull()) {
