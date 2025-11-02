@@ -1,8 +1,11 @@
 # Developer Guide for ***ClassCraft***
 
-##Acknowledgements
+## Acknowledgements
+
 This project makes use of the following external resources:
+
 * The NUSMods API: https://api.nusmods.com/v2/
+
 ---
 
 ## Design
@@ -11,13 +14,16 @@ This project makes use of the following external resources:
 
 ![UML diagram of the high-level architecture of ClassCraft with classes](/UMLdiagrams/ArchitectureWithClasses.png)
 
-Above shows the high-level architecture of ClassCraft. The programme is broken down to various packages within the classcraft folder, each handling a different domain of the programme. This section will provide an overview of each package and its role and functionality.
+Above shows the high-level architecture of ClassCraft. The programme is broken down to various packages within the
+classcraft folder, each handling a different domain of the programme. This section will provide an overview of each
+package and its role and functionality.
 
 **Main components of the architecture**
 
 ![Class Diagram showing the associations between classes](/UMLdiagrams/Class_Diagram.png)
 
-`ClassCraft.java` (containing only the `ClassCraft` class) is the main entry point into the programme. It handles startup and is responsible for cleanup after the programme is exited.
+`ClassCraft.java` (containing only the `ClassCraft` class) is the main entry point into the programme. It handles
+startup and is responsible for cleanup after the programme is exited.
 
 The bulk of ClassCraft's functionality is handled by the following components:
 
@@ -34,21 +40,23 @@ The bulk of ClassCraft's functionality is handled by the following components:
 
 ### Command component
 
-The `command` package contains all the commands that can be carried out by the user. 
+The `command` package contains all the commands that can be carried out by the user.
 Each command is represented by a class that extends the abstract `Command` class.
 
 This is how the 'AddCommnand' class interacts with other components:
 
-<img alt="Add command sequence diagram" src="/UMLdiagrams/AddCommandSequence.png" width="600"/>
+![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
 
 When a command is executed, it interacts with the `Studyplan`, `UI`, and `Storage` components to perform its function.
 
 ### NUSModsFetcher component
 
-`NUSmodsFetcher.java` is responsible for fetching the endpoints of the NUSMods API, which stores module information as `.json` files, 
+`NUSmodsFetcher.java` is responsible for fetching the endpoints of the NUSMods API, which stores module information as
+`.json` files,
 in order to obtain information about modules.
 
-`NUSmodsFetcher` first retrieves the `.json` file containing information on a given module from the NUSMods API as a `JsonNode`.
+`NUSmodsFetcher` first retrieves the `.json` file containing information on a given module from the NUSMods API as a
+`JsonNode`.
 The various methods then return the respective parts of the the `.json` file as required by the user.
 
 ### Parser component
@@ -56,6 +64,21 @@ The various methods then return the respective parts of the the `.json` file as 
 ### Storage component
 
 ### Studyplan component
+
+`StudyPlan.java` is responsible for maintaining the study plan created by the user.
+
+`StudyPlan` interacts with `ModuleHandler` class to create `Module` objects based on the Module Code.
+
+`ModuleHandler` creates `Module` objects and populates the attributes using the `NUSModsFetcher` class.
+
+`StudyPlan` adds `Module` objects to a 2D ArrayList<ArrayList<Module>>, where the first 'layer' is the respective
+semester and the inner 'layer' is the respective modules taken in that semester.
+
+A hashmap is used to store KEY:VALUE pairs of MODULE_CODE:SEMESTER for easy access to edit the 2D ArrayList.
+
+#### Design Considerations
+We decided to use a 2D array together with a Hashmap to store the modules and semesters, as we believe that it offers
+both structural clarity and efficiency when editing the study plan.
 
 ### UI component
 
@@ -70,38 +93,41 @@ When a command is executed, it interacts with the `Ui` component to display mess
 
 User inputs are parsed into commands by the **`Parser`** class.
 
-* **Implementation:** A new parser object is instantiated in `ClassCraft.java` to handle user inputs, 
+* **Implementation:** A new parser object is instantiated in `ClassCraft.java` to handle user inputs,
   which calls the parser constructor in `Parser.java`, passing the raw user input string to parseInstructions().
 
 * **Key Method: `parseInstructions(String userInput)`**
     * This method splits the user input into the command word and arguments.
     * It handles the instruction based on if it is a single word or a double word command.
     * The command word is extracted and saved to commandType variable.
-  
+
 * **Key Method: `parseInput()`**
     * This method uses a switch-case structure to map command words to their respective
       command classes (e.g., `AddCommand`, `DeleteCommand`, `ViewCommand`, etc).
     * It returns an instance of the appropriate command class based on the parsed command word.
     * If the command word does not match any known commands, it returns an `InvalidCommand` instance.
-  
+
 * **Helper Methods**
     * `parseAdd()`: Parses arguments for the `AddCommand`, extracting the module code and semester.
     * `parseDelete()`: Parses arguments for the `DeleteCommand`, extracting the module code.
-    * `parseView()`: Parses arguments for the `ViewCommand`, determining whether to view the sample plan 
-       or graduation requirements.
+    * `parseView()`: Parses arguments for the `ViewCommand`, determining whether to view the sample plan
+      or graduation requirements.
     * `parseMC()` : Parses arguments for the `CalcCreditsCommand`, extracting the semester.
     * `parseSpec()` : Parses arguments for the `SpecCommand`, extracting the specialization.
     * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
+    * `parseAddWithStatus()`: Parses arguments for the `AddCompletedCommand`, extracting the module code and status.
+    * `parseCurrentSem()`: Parses arguments for the `CurrentSemCommand`, extracting the current semester.
 
 ### **Command Classes**
+
 ![UML diagram of the Sequence Diagram Front](/UMLdiagrams/Sequence_Diagram_Front.png)
 ![UML diagram of the Sequence Diagram Back](/UMLdiagrams/Sequence_Diagram_Back.png)
 
 Each command class extends the abstract `Command` class.
 
-* **Implementation:** Each command class is responsible for a specific user action, such as 
-   adding or deleting modules, viewing plans, calculating credits, etc.
-* Command abstract class contains an abstract method `execute(StudyPlan studyPlan, Ui ui, Storage storage)` that each 
+* **Implementation:** Each command class is responsible for a specific user action, such as
+  adding or deleting modules, viewing plans, calculating credits, etc.
+* Command abstract class contains an abstract method `execute(StudyPlan studyPlan, Ui ui, Storage storage)` that each
   command class must implement to define its specific behavior.
 * **Key Command Classes:**
     * `AddCommand`: Adds a module to a specified semester in the study plan.
@@ -110,29 +136,32 @@ Each command class extends the abstract `Command` class.
     * `CalcCreditsCommand`: Calculates and displays the total modular credits for a specified semester.
     * `SpecCommand`: Displays specialization information that user can take if they have chosen a specialization.
     * `PrereqCommand`: Displays prerequisite information for a specified module.
+    * `AddCompletedCommand`: Adds modules with a specific status, eg. completed/exempted
+    * `CurrentSemCommand`: Sets the current semester the user is in
     * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
 
 ### **Storing current study plan**
 
 The current study plan created by the user is stored into a local txt
 file using the **`Storage`** class, and restored upon application launch.
+
 * **Implementation:** The `Storage` class handles reading from and writing to the local file.
 * **Key Methods: `createFile()`**
-  * Creates a new file and its directory if it does not exist.
-  * Called during application startup in the Storage constructor,
-  when a new storage instance is created.
+    * Creates a new file and its directory if it does not exist.
+    * Called during application startup in the Storage constructor,
+      when a new storage instance is created.
 * **Key Methods: `restoreData(Storage storage)`**
     * Reads the stored study plan data from the local file.
     * Parses the data and reconstructs the `StudyPlan` object.
-    * For each semester, it retrieves the list of module codes and uses 
-  the `StudyPlan`'s addModule method to populate the study plan.
+    * For each semester, it retrieves the list of module codes and uses
+      the `StudyPlan`'s addModule method to populate the study plan.
 * **Helper Methods**
-    * `appendToFile(String moduleCode , int semester)`: 
-  Reads the stored plan and finds the semester to append the new module code to.
-      * Used in studyPlan's `addModule()` method to update the storage file.
-    * `deleteModule()`: Reads the stored plan and loops through each semester to find the 
-  specified module code and remove the specified module code.
-      * Used in studyPlan's `deleteModule()` method to update the storage file.
+    * `appendToFile(String moduleCode , int semester)`:
+      Reads the stored plan and finds the semester to append the new module code to.
+        * Used in studyPlan's `addModule()` method to update the storage file.
+    * `deleteModule()`: Reads the stored plan and loops through each semester to find the
+      specified module code and remove the specified module code.
+        * Used in studyPlan's `deleteModule()` method to update the storage file.
 
 ### **Storing and Displaying Graduation Requirements**
 
@@ -166,16 +195,22 @@ and includes a factory method to generate a pre-set sample plan.
 ### **Viewing Degree Progress**
 
 This feature allows the user to see their current academic progress toward graduation.
-It displays a completion percentage along with the total "secured" Modular Credits (MCs) (from `COMPLETED` or `EXEMPTED` modules) compared to the total MCs required.
+It displays a completion percentage along with the total "secured" Modular Credits (MCs) (from `COMPLETED` or `EXEMPTED`
+modules) compared to the total MCs required.
 
-* **Implementation:** The feature is initiated by the **`ViewProgressCommand`** class. 
-* This command class acts as a controller: it contains no business logic itself, but instead queries the **`StudyPlan`** class to get the progress data. 
-* The `StudyPlan` class is solely responsible for performing the calculations, as it owns the list of completed modules and the required MCs constant. Finally, the command formats this information and passes it to the **`Ui`** to be displayed to the user.
+* **Implementation:** The feature is initiated by the **`ViewProgressCommand`** class.
+* This command class acts as a controller: it contains no business logic itself, but instead queries the **`StudyPlan`**
+  class to get the progress data.
+* The `StudyPlan` class is solely responsible for performing the calculations, as it owns the list of completed modules
+  and the required MCs constant. Finally, the command formats this information and passes it to the **`Ui`** to be
+  displayed to the user.
 
 * **Key Methods: `ViewProgressCommand.executeCommand(StudyPlan studyPlan, Ui ui, Storage storage)`**
     * This is the main method invoked when the user runs the command.
-    * It calls `studyPlan.getDegreeProgressPercentage()`, `studyPlan.getTotalSecuredMCs()`, and `studyPlan.getTotalMcsForGraduation()` to fetch the necessary data.
-    * It formats these results into a user-readable `String` (e.g., "Your Degree Progress: 8.75%\nSecured MCs: 14 / 160").
+    * It calls `studyPlan.getDegreeProgressPercentage()`, `studyPlan.getTotalSecuredMCs()`, and
+      `studyPlan.getTotalMcsForGraduation()` to fetch the necessary data.
+    * It formats these results into a user-readable `String` (e.g., "Your Degree Progress: 8.75%\nSecured MCs: 14 /
+      160").
     * It passes this `String` to the `ui.showMessage()` method for display.
 
 * **Key Methods: `StudyPlan.getDegreeProgressPercentage()`**
@@ -187,11 +222,13 @@ It displays a completion percentage along with the total "secured" Modular Credi
 * **Helper Methods: `StudyPlan.getTotalSecuredMCs()`**
     * Calculates the total number of MCs the student has "secured" (completed or exempted).
     * It iterates through the `completedModulesList` (which stores all modules marked as `COMPLETED` or `EXEMPTED`).
-    * It sums the `modCreds` (Modular Credits) from each `Module` in that list and returns the total. `PLANNED` modules are not counted.
+    * It sums the `modCreds` (Modular Credits) from each `Module` in that list and returns the total. `PLANNED` modules
+      are not counted.
 
 * **Helper Methods: `StudyPlan.getTotalMcsForGraduation()`**
     * This is a simple getter method.
-    * It returns the value of the `TOTAL_MCS_FOR_GRADUATION` constant, allowing the `ViewProgressCommand` to access this value to display it to the user.
+    * It returns the value of the `TOTAL_MCS_FOR_GRADUATION` constant, allowing the `ViewProgressCommand` to access this
+      value to display it to the user.
 
 ---
 
@@ -199,7 +236,8 @@ It displays a completion percentage along with the total "secured" Modular Credi
 
 ### Target user profile
 
-The target user profile is **Computer Engineering (CEG) students at the NUS**, particularly those planning their module enrolment across semesters and needing to
+The target user profile is **Computer Engineering (CEG) students at the NUS**, particularly those planning their module
+enrolment across semesters and needing to
 track their progress against graduation requirements. They are familiar with NUS module codes and the
 concept of module prerequisites.
 
@@ -251,15 +289,15 @@ streamlined and guided approach to academic planning.
 
 ## Instructions for manual testing
 
-1.  **Start the application:** Compile and run the `ClassCraft` application.
-2.  **View Sample Plan:** Enter the command to view the sample study plan (e.g., `view sample`).
-    Verify that the output shows modules like `CS1010` and `EE2026` across different semesters.
-3.  **View Graduation Requirements:** Enter the command to view the default graduation requirements
-    (e.g., `view grad`). Verify that a list of core modules (e.g., `CS1010`, `CS2030S`, `EE2026`) is
-    displayed along with their names and prerequisite information.
-4.  **Add a Module:** Enter a command to add a module (e.g., `add CS3230 /s 5`). View the study plan
-    again and confirm the module is placed in the specified semester.
-5.  **Delete a Module:** Enter a command to delete a module (e.g., `delete CS3230`). View the study
-    plan and confirm the module is removed.
+1. **Start the application:** Compile and run the `ClassCraft` application.
+2. **View Sample Plan:** Enter the command to view the sample study plan (e.g., `view sample`).
+   Verify that the output shows modules like `CS1010` and `EE2026` across different semesters.
+3. **View Graduation Requirements:** Enter the command to view the default graduation requirements
+   (e.g., `view grad`). Verify that a list of core modules (e.g., `CS1010`, `CS2030S`, `EE2026`) is
+   displayed along with their names and prerequisite information.
+4. **Add a Module:** Enter a command to add a module (e.g., `add CS3230 /s 5`). View the study plan
+   again and confirm the module is placed in the specified semester.
+5. **Delete a Module:** Enter a command to delete a module (e.g., `delete CS3230`). View the study
+   plan and confirm the module is removed.
 
     
