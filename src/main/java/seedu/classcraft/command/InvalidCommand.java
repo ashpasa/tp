@@ -19,8 +19,5 @@ public class InvalidCommand extends Command {
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
-        String invalidMessage = "I'm sorry, but I don't know what that means :-(." +
-                " Please type 'help' to see the list of available commands.";
-        ui.printMessage(invalidMessage);
     }
 }

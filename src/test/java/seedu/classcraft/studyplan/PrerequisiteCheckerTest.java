@@ -458,7 +458,7 @@ class PrerequisiteCheckerTest {
                 prereqs, 0, 2);
 
         String display = module.getPrerequisitesDisplay();
-        assertTrue(display.contains("Prereqs:"));
+        assertTrue(display.contains("Prerequisites:"));
         assertTrue(display.contains("CS1010"));
         assertTrue(display.contains("MA1521"));
     }

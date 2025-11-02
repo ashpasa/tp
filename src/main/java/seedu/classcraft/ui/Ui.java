@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.studyplan.Module;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -12,9 +14,13 @@ public class Ui {
     private static final Logger logger = Logger.getLogger(Ui.class.getName());
     private String line = "_____________________________________________________" + System.lineSeparator();
 
+    public Ui() {
+        setLoggerLevel();
+    }
+
     /**
      * Prints a generic message to the console, framed by lines for clarity.
-     * 
+     *
      * @param message The message to be printed.
      */
     public void printMessage(String message) {
@@ -32,15 +38,21 @@ public class Ui {
      * @param plan  The study plan data (either current or sample).
      * @param title The title to display (e.g., "CEG Sample Study Plan").
      */
-    private void displayStudyPlan(StudyPlan plan, String title) {
+    private void displayStudyPlan(StudyPlan plan, String title, boolean sample) {
         System.out.print(line);
         System.out.println(title);
         System.out.print(line);
 
+        int current_semester = StudyPlan.getCurrentSemester();
+
         ArrayList<ArrayList<Module>> planData = plan.getStudyPlan();
 
         for (int i = 0; i < planData.size(); i++) {
-            System.out.println("Semester " + (i + 1) + ":");
+            if (!sample && (i + 1 < current_semester)) {
+                System.out.println("Semester " + (i + 1) + " (Completed):");
+            } else {
+                System.out.println("Semester " + (i + 1) + ":");
+            }
             ArrayList<Module> semesterMods = planData.get(i);
 
             if (semesterMods.isEmpty()) {
@@ -58,17 +70,18 @@ public class Ui {
     }
 
     public void displaySamplePlan(StudyPlan samplePlan) {
-        displayStudyPlan(samplePlan, "CEG Sample Study Plan");
+        displayStudyPlan(samplePlan, "CEG Sample Study Plan", true);
     }
 
     public void displayCurrentPlan(StudyPlan currentPlan) {
-        displayStudyPlan(currentPlan, "Current Study Plan");
+        displayStudyPlan(currentPlan, "Current Study Plan", false);
     }
 
     // @@author ashpasa
+
     /**
      * Displays the total module credits for a given semester or overall.
-     * 
+     *
      * @param semesterIndex The index of the semester in the ArrayList, with -1 representing overall total.
      * @param totalCredits  The number of module credits for the corresponding semester, or overall.
      */
@@ -92,7 +105,7 @@ public class Ui {
 
     /**
      * Displays an error message to the user.
-     * 
+     *
      * @param errorMessage The error message to be displayed.
      */
     public void showError(String errorMessage) {
@@ -106,7 +119,7 @@ public class Ui {
 
     /**
      * Displays a general message to the user.
-     * 
+     *
      * @param message The message to be displayed.
      */
     public void showMessage(String message) {
@@ -117,7 +130,7 @@ public class Ui {
 
     /**
      * Displays the prerequisites for a given module.
-     * 
+     *
      * @param moduleCode  The module code.
      * @param moduleTitle The module title.
      * @param prereqTree  The prerequisite tree in JSON format.
@@ -126,7 +139,7 @@ public class Ui {
         assert moduleCode != null : "Module code cannot be null";
         logger.log(Level.INFO, "Displaying prerequisites for: {0}", moduleCode);
 
-        System.out.print(line);
+        System.out.print("============================================================\n");
         System.out.println("Module: " + moduleCode + " - " + moduleTitle);
         System.out.print(line);
 
@@ -142,12 +155,12 @@ public class Ui {
             System.out.println("Note: You need to satisfy these prerequisites before taking this module.");
         }
 
-        System.out.print(line);
+        System.out.print("============================================================");
     }
 
     /**
      * Displays an error message for prerequisite lookup.
-     * 
+     *
      * @param moduleCode The module code.
      */
     public void displayPrereqError(String moduleCode) {
@@ -231,5 +244,26 @@ public class Ui {
     private boolean isBridgingModule(String code) {
         return code.equals("MA1301") || code.equals("MA1301X")
                 || code.equals("MA1301FC") || code.equals("PC1201");
+    }
+
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+        if (Objects.equals(protocol, "jrt")) {
+            logger.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            logger.setLevel(Level.ALL);
+        }
     }
 }
