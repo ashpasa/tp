@@ -38,7 +38,7 @@ public class ModuleHandler {
      * @param moduleCode The module code of the module to be created.
      * @return The created Module object.
      */
-    public Module createModule(String moduleCode) throws NUSmodsFetcherException {
+    public Module createModule(String moduleCode) throws Exception {
         String modName = "placeholder";
         int modCreds = 0;
         String modDescription = "placeholder";
