@@ -507,23 +507,25 @@ public class Parser {
         String currentSem;
         try {
 
-            String[] currentSemInstructions = userInstructions.split("s/", 2);
-
-            if (currentSemInstructions.length < 2) {
-                logger.log(Level.WARNING, "Missing semester for current_semester command.");
-                throw new EmptyInstruction("current_semester");
-            }
-
-            String semester = currentSemInstructions[1].trim();
+            String semester = userInstructions.trim();
 
             if (semester.isEmpty()) {
                 logger.log(Level.WARNING, "Missing semester for current_semester command.");
+                ui.showMessage("Missing semester for current_semester command.");
                 throw new EmptyInstruction("current_semester");
             }
 
             if (!(semester.matches("^[a-zA-Z0-9]+$"))) {
                 logger.log(Level.WARNING, "Invalid format for current_semester command, " +
                         "may contain non-alphanumeric characters.");
+                ui.showMessage("Invalid format for current_semester command, " +
+                        "may contain non-alphanumeric characters.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            if (Integer.parseInt(semester) < 1 || Integer.parseInt(semester) > 8) {
+                logger.log(Level.WARNING, "Semester for current_semester command out of range.");
+                ui.showMessage("Semester for current_semester command out of range.");
                 throw new EmptyInstruction("current_semester");
             }
 

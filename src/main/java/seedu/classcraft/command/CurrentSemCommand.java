@@ -46,10 +46,10 @@ public class CurrentSemCommand extends Command {
             ui.showMessage("Successfully set current semester to " + currentSem);
         } catch (IllegalArgumentException e) {
             // Handle invalid semester errors
-            ui.printMessage("Invalid semester");
+            ui.showMessage("Invalid semester");
         } catch (Exception e) {
             // Handle other errors (API failures, etc.)
-            ui.printMessage("Error adding module: " + e.getMessage());
+            ui.showMessage("Error adding module: " + e.getMessage());
         }
     }
 }
