@@ -56,6 +56,8 @@ The various methods then return the respective parts of the the `.json` file as 
 ### Storage component
 
 ### Studyplan component
+`StudyPlan.java` is responsible for 
+
 
 ### UI component
 
@@ -92,6 +94,8 @@ User inputs are parsed into commands by the **`Parser`** class.
     * `parseMC()` : Parses arguments for the `CalcCreditsCommand`, extracting the semester.
     * `parseSpec()` : Parses arguments for the `SpecCommand`, extracting the specialization.
     * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
+    * `parseAddWithStatus()`: Parses arguments for the `AddCompletedCommand`, extracting the module code and status.
+    * `parseCurrentSem()`: Parses arguments for the `CurrentSemCommand`, extracting the current semester.
 
 ### **Command Classes**
 ![UML diagram of the Sequence Diagram Front](/UMLdiagrams/Sequence_Diagram_Front.png)
