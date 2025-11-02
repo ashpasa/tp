@@ -176,7 +176,7 @@ It displays a completion percentage along with the total "secured" Modular Credi
     * This is the main method invoked when the user runs the command.
     * It calls `studyPlan.getDegreeProgressPercentage()`, `studyPlan.getTotalSecuredMCs()`, and `studyPlan.getTotalMcsForGraduation()` to fetch the necessary data.
     * It formats these results into a user-readable `String` (e.g., "Your Degree Progress: 8.75%\nSecured MCs: 14 / 160").
-    * It passes this `String` to the `ui.printMessage()` method for display.
+    * It passes this `String` to the `ui.showMessage()` method for display.
 
 * **Key Methods: `StudyPlan.getDegreeProgressPercentage()`**
     * Calculates the degree progress percentage.

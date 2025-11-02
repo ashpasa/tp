@@ -11,7 +11,7 @@ public class BalanceCommand extends Command {
 
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
-        ui.printMessage("Study plan balancing");
+        ui.showMessage("Study plan balancing");
         studyPlan.balanceStudyPlan();
     }
 }

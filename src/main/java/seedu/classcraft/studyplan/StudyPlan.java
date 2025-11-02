@@ -2,6 +2,7 @@ package seedu.classcraft.studyplan;
 
 import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.storage.Storage;
+import seedu.classcraft.ui.Ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class StudyPlan {
     // @@author
 
     private ModuleHandler moduleHandler;
+    private Ui ui = new Ui();
 
     public StudyPlan(int totalSemesters) {
         for (int i = 0; i < totalSemesters; i++) {
@@ -142,6 +144,7 @@ public class StudyPlan {
         try {
             if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
                 LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
+                ui.showMessage(moduleString + " does not exist in your study plan.");
                 throw new StudyPlanException("Module " + moduleString + " does not exist");
             }
 
@@ -156,6 +159,7 @@ public class StudyPlan {
                 modules.remove(moduleString);
                 storage.deleteModule(moduleString, sem);
                 LOGGER.info("Removed " + moduleString + " from semester " + sem);
+                ui.showMessage("Successfully removed " + moduleString + " from semester " + sem);
 
             } else if (completedModulesMap.containsKey(moduleString)) {
                 Module modToRemove = completedModulesMap.get(moduleString);
@@ -289,7 +293,7 @@ public class StudyPlan {
             samplePlan.addModule(ee2026, 2);
 
             // Semester 3
-            Module cs2040s = handler.createModule("CS2040S");
+            Module cs2040s = handler.createModule("CS2040C");
             samplePlan.addModule(cs2040s, 3);
 
             // Add other core/sample modules for Semesters 3 to 8 (to be added)

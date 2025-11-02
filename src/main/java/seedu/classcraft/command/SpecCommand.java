@@ -34,7 +34,7 @@ public class SpecCommand extends Command {
         try {
             File specFile = new File(SPECDATA);
             JsonNode specNode = mapper.readTree(specFile);
-
+            System.out.println("============================================================");
             System.out.println("These are all the mods that count towards your specialisation");
             printJsonArray(specNode.get(specToQuery).get("prereq"));
 
@@ -47,6 +47,7 @@ public class SpecCommand extends Command {
                     printJsonArray(specNode.get(specToQuery).get(key));
                 }
             }
+            System.out.println("============================================================");
         } catch (IOException e) {
             System.out.println("Error reading specialisations file");
         }

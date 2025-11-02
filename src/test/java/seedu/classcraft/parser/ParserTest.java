@@ -150,7 +150,7 @@ class ParserTest {
     }
 
     @Test
-    void testParseSpec() {
+    void testParseSpec() throws EmptyInstruction {
         Parser parser = new Parser("spec ae");
         assertEquals("ae", parser.parseSpec());
 
@@ -166,24 +166,34 @@ class ParserTest {
         parser = new Parser("spec st");
         assertEquals("st", parser.parseSpec());
 
-        parser = new Parser("spec unknown");
-        assertEquals("", parser.parseSpec());
+        assertThrows(EmptyInstruction.class, () -> {
+            Parser p = new Parser("spec unknown");
+            p.parseSpec();
+        });
 
-        assertThrows(IllegalArgumentException.class, () -> new Parser("spec"));
+        assertThrows(EmptyInstruction.class, () -> {
+            Parser p = new Parser("spec");
+            p.parseSpec();
+        });
     }
 
     @Test
-    void testParsePrereq() {
+    void testParsePrereq() throws EmptyInstruction {
         Parser parser = new Parser("prereq CS2103T extra");
         assertEquals("CS2103T", parser.parsePrereq());
 
         parser = new Parser("prereq CS2103");
         assertEquals("CS2103", parser.parsePrereq());
 
-        parser = new Parser("prereq invalid_code");
-        assertEquals("", parser.parsePrereq());
+        assertThrows(EmptyInstruction.class, () -> {
+            Parser p = new Parser("prereq invalid_code");
+            p.parsePrereq();
+        });
 
-        assertThrows(IllegalArgumentException.class, () -> new Parser("prereq"));
+        assertThrows(EmptyInstruction.class, () -> {
+            Parser p = new Parser("prereq");
+            p.parsePrereq();
+        });
 
     }
 
