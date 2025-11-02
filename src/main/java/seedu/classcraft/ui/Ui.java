@@ -140,6 +140,16 @@ public class Ui {
             return "None";
         }
 
+        if (node.isTextual()) {
+            String text = node.asText();
+            String cleaned = text.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
+            cleaned = cleaned.replaceAll("%", " (or any variant)");
+            if (cleaned.isEmpty()) {
+                return "None";
+            }
+            return cleaned;
+        }
+
         if (node.has("or")) {
             return prettifyArrayNode(node.get("or"), "OR");
         }

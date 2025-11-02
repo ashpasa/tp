@@ -51,11 +51,9 @@ public class Parser {
         return userInstructions;
     }
 
-
     public String getCommandType() {
         return commandType;
     }
-
 
     /**
      * Parses the user input into a command object.
