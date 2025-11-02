@@ -332,7 +332,6 @@ public class StudyPlan {
     /**
      * @@author lingru
      * @return Total secured MCs.
-     *    Gets the total number of secured MCs (from completed/exempted modules).
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -345,7 +344,6 @@ public class StudyPlan {
     /**
      * @author lingru
      * @return Total required MCs.
-     *    Gets the total MCs required for graduation.
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
@@ -355,7 +353,6 @@ public class StudyPlan {
      * @author lingru
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
-     *    Helper method to check if a module exists anywhere in the plan (planned or completed).
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || completedModulesMap.containsKey(moduleCode);
