@@ -4,14 +4,18 @@ import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
-public class BalanceCommand extends Command {
-    public BalanceCommand() {
+
+/**
+ * CheckCommand class representing the command to check for semesters with high workload.
+ */
+public class CheckCommand extends Command {
+    public CheckCommand() {
         super();
     }
 
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
-        ui.printMessage("Study plan balancing");
-        studyPlan.balanceStudyPlan();
+        ui.showMessage("Checking Study plan...");
+        studyPlan.checkStudyPlan();
     }
 }

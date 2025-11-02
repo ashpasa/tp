@@ -1,9 +1,10 @@
 package seedu.classcraft.parser;
 
-import seedu.classcraft.command.BalanceCommand;
+import seedu.classcraft.command.CheckCommand;
 import seedu.classcraft.command.Command;
 import seedu.classcraft.command.AddCommand;
 import seedu.classcraft.command.CalcCreditsCommand;
+import seedu.classcraft.command.CurrentSemCommand;
 import seedu.classcraft.command.DeleteCommand;
 import seedu.classcraft.command.CommandList;
 import seedu.classcraft.command.ExitCommand;
@@ -18,7 +19,11 @@ import seedu.classcraft.command.AddCompletedCommand;
 import seedu.classcraft.command.ViewProgressCommand;
 import seedu.classcraft.exceptions.EmptyInstruction;
 import seedu.classcraft.studyplan.ModuleStatus;
+import seedu.classcraft.ui.Ui;
 
+import java.util.Map;
+import java.net.URL;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,9 +34,30 @@ import java.util.logging.Logger;
  */
 public class Parser {
     private static Logger logger = Logger.getLogger(Parser.class.getName());
+
+    Map<String, Integer> commandArgLimits = Map.ofEntries(
+
+            Map.entry("help", 1),
+            Map.entry("exit", 1),
+            Map.entry("progress", 1),
+            Map.entry("view", 2),
+            Map.entry("plan", 2),
+            Map.entry("add", 3),
+            Map.entry("delete", 2),
+            Map.entry("mc", 2),
+            Map.entry("spec", 2),
+            Map.entry("prereq", 2),
+            Map.entry("add-exempted", 2),
+            Map.entry("check", 1),
+            Map.entry("current_semester", 2)
+    );
+
+
     private String commandType;
     private String userInputString;
     private String userInstructions;
+    private String[] argumentList;
+    private Ui ui = new Ui();
 
     /**
      * Constructor for Parser class.
@@ -41,8 +67,9 @@ public class Parser {
      * @param userInput The full user input string.
      */
     public Parser(String userInput) {
+        setLoggerLevel();
         assert userInput != null : "User input must not be null";
-        this.userInputString = userInput;
+        this.userInputString = userInput.trim(); //remove leading/trailing spaces
         logger.log(Level.INFO, "Received user input: " + userInputString);
         parseInstructions();
     }
@@ -98,9 +125,6 @@ public class Parser {
                 return new ViewProgressCommand();
             // @@author lingru (End of changes)
 
-            case "confirm":
-                return new InvalidCommand();
-            //return new ConfirmCommand();
             case "view":
                 String viewItems = parseView();
                 switch (viewItems) {
@@ -121,8 +145,11 @@ public class Parser {
             case "prereq":
                 String prereqModuleCode = parsePrereq();
                 return new PrereqCommand(prereqModuleCode);
-            case "balance":
-                return new BalanceCommand();
+            case "check":
+                return new CheckCommand();
+            case "current_semester":
+                String current_sem = parseCurrentSem();
+                return new CurrentSemCommand(current_sem);
             default:
                 return new InvalidCommand();
             }
@@ -140,10 +167,17 @@ public class Parser {
      * if any required instructions/its components are missing.
      */
     private void parseInstructions() {
-        String[] instructions = userInputString.split(" ", 2);
+        String normalizedInput = userInputString.trim().replaceAll("\\s+", " ");
+        this.argumentList = normalizedInput.split("\\s+");
+        String[] instructions = normalizedInput.split(" ", 2);
         assert instructions.length > 0 : "Instructions must have at least one element";
 
+
+        instructions[0] = instructions[0].toLowerCase();
+
         if (!isCommandFound(instructions)) {
+            ui.showMessage("OOPS!!! I'm sorry, but I don't know what that means :-(\n" +
+                    "Please type 'help' to see the list of available commands.");
             this.commandType = "invalid";
             return;
         }
@@ -151,7 +185,7 @@ public class Parser {
         try {
             if (instructions.length == 1) {
                 if (!(instructions[0].equals("help") || instructions[0].equals("exit")
-                        || instructions[0].equals("confirm") || instructions[0].equals("balance")
+                        || instructions[0].equals("check")
                         || instructions[0].equals("progress"))) {
                     throw new IllegalArgumentException("OOPS!!! The description of a " +
                             instructions[0] + " cannot be empty.");
@@ -161,11 +195,24 @@ public class Parser {
             } else if (instructions.length == 2) {
                 handleDualInstruction(instructions);
             }
-        } catch (EmptyInstruction e) {
-            System.out.println(e.getMessage());
+
+            try {
+                int maxArgs = commandArgLimits.get(commandType);
+
+                if (argumentList.length > maxArgs) {
+                    throw new EmptyInstruction(commandType);
+
+                }
+            } catch (EmptyInstruction e) {
+                ui.showMessage("OOPS!!! Too many arguments provided for command '" + commandType + "'.");
+                this.commandType = "invalid";
+            }
+        } catch (EmptyInstruction | IllegalArgumentException e) {
+            ui.showMessage(e.getMessage());
             this.commandType = "invalid";
         }
     }
+
 
     /**
      * Checks if the command is found in the CommandList enum.
@@ -185,8 +232,7 @@ public class Parser {
      * Throws EmptyInstruction if the command is not valid.
      */
     private void handleSingleInstruction(String[] instructions) throws EmptyInstruction {
-        // Merged "progress" from HEAD branch
-        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("balance")
+        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("check")
                 || instructions[0].equals("confirm") || instructions[0].equals("progress"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
             throw new EmptyInstruction(instructions[0]);
@@ -205,6 +251,8 @@ public class Parser {
     private void handleDualInstruction(String[] instructions) throws EmptyInstruction {
         if (instructions[1].isEmpty()) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
+            ui.showMessage("OOPS!!! The description of a " +
+                    instructions[0] + " cannot be empty.");
             throw new EmptyInstruction(instructions[0]);
         }
         this.commandType = instructions[0];
@@ -220,35 +268,61 @@ public class Parser {
      *
      * @return String array containing module code and semester information.
      */
+
     public String[] parseAdd() throws EmptyInstruction {
         String[] addModuleInformation = new String[2];
+        String moduleCode = null;
+        String semester = null;
+
         try {
+            String normalized = userInstructions.trim().replaceAll("\\s+", " ");
+            int nIndex = normalized.indexOf("n/");
+            int sIndex = normalized.indexOf("s/");
 
-            String[] addInstructions = userInstructions.split("s/", 2);
-
-            if (addInstructions.length < 2) {
+            if (nIndex == -1 || sIndex == -1) {
+                ui.showMessage("Both module code 'n/' and semester 's/' must be present in your input.");
                 throw new EmptyInstruction("add");
             }
-            String[] moduleSplit = addInstructions[0].split("n/", 2);
-            if (moduleSplit.length < 2) {
-                throw new EmptyInstruction("add");
+
+            if (nIndex < sIndex) {
+                // n/ appears first
+                String codePart = normalized.substring(nIndex + 2, sIndex).trim();
+                String semesterPart = normalized.substring(sIndex + 2).trim();
+                moduleCode = codePart.toUpperCase();
+                semester = semesterPart;
+            } else {
+                // s/ appears first
+                String semesterPart = normalized.substring(sIndex + 2, nIndex).trim();
+                String codePart = normalized.substring(nIndex + 2).trim();
+                moduleCode = codePart.toUpperCase();
+                semester = semesterPart;
             }
-            String moduleCode = moduleSplit[1].trim().toUpperCase();
-            String semester = addInstructions[1].trim();
 
             if (moduleCode.isEmpty() || semester.isEmpty()) {
+                ui.showMessage("Missing module code or semester information.\n" +
+                        "Please make sure your input contains both module code and semester information.");
+                logger.log(Level.WARNING, "Missing module code or semester for add command.");
+                throw new EmptyInstruction("add");
+            }
+
+            if (!(moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$") && semester.matches("^[1-8]$"))) {
+                ui.showMessage("Invalid module code or semester format.\n" +
+                        "Please ensure module code is valid (e.g., CS1010) " +
+                        "and semester is a number between 1 and 8.");
+                logger.log(Level.WARNING, "Invalid format for add command, may contain non-alphanumeric characters.");
                 throw new EmptyInstruction("add");
             }
 
             addModuleInformation[0] = moduleCode;
             addModuleInformation[1] = semester;
 
-        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+        } catch (Exception e) {
             logger.log(Level.WARNING, "Error parsing add command - Incorrect format " + e.getMessage());
             throw new EmptyInstruction("add");
         }
         return addModuleInformation;
     }
+
 
     /**
      * Parses the user input for delete command.
@@ -263,10 +337,22 @@ public class Parser {
         try {
             String moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();
             if (moduleCode.isEmpty()) {
+                ui.showMessage("Module code is missing.\n" +
+                        "Please make sure your input contains module code information.");
                 throw new EmptyInstruction("delete");
+            }
+
+            if (!moduleCode.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$")) {
+                ui.showMessage("Invalid module code format.\n" +
+                        "Please ensure module code is valid (e.g., CS1010).");
+                logger.log(Level.WARNING, "Invalid format for delete command, " +
+                        "may contain non-alphanumeric characters.");
+                throw new EmptyInstruction("add");
             }
             return moduleCode;
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            ui.showMessage("Error: Invalid input format. Please enter input in the correct format " +
+                    "(e.g., delete CS1010).");
             logger.log(Level.WARNING, "Error parsing delete command - Incorrect format " + e.getMessage());
             throw new EmptyInstruction("delete");
         }
@@ -291,6 +377,8 @@ public class Parser {
                 logger.log(Level.INFO, "Parsed view command successfully, item to view: " + viewInstructions);
                 return viewInstructions;
             default:
+                ui.showMessage("You can only view 'plan', 'grad' or 'sample'!" +
+                        "Please enter a valid view option.");
                 throw new EmptyInstruction("view");
             }
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
@@ -298,6 +386,8 @@ public class Parser {
             throw new EmptyInstruction("view");
         }
     }
+
+    // @@author ashpasa
 
     /**
      * Parses the user input for mc command.
@@ -315,12 +405,13 @@ public class Parser {
                 semester = Integer.parseInt(trimmedInstructions);
             }
         } catch (ArrayIndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
-            System.out.println("Error: Invalid input format. Please enter input in the correct format "
+            ui.showMessage("Error: Invalid input format. Please enter input in the correct format "
                     + "(e.g., mc 1 or mc total).");
             return -1;
         }
         return semester;
     }
+    // @@author
 
     /**
      * Parses the user input for spec command.
@@ -328,7 +419,7 @@ public class Parser {
      *
      * @return String containing the specialisation, or empty string on error.
      */
-    public String parseSpec() {
+    public String parseSpec() throws EmptyInstruction {
         String specItemsInformation;
         try {
             String specInstructions = userInstructions.split(" ", 2)[0].trim().toLowerCase();
@@ -344,9 +435,17 @@ public class Parser {
                 throw new IllegalArgumentException("OOPS!!! The specialisation must be either "
                         + "ae, 4.0, iot, robotics or st.");
             }
-        } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
-            System.out.println("Error: Invalid input format. Please enter input in the correct format. ");
-            return "";
+        } catch (IllegalArgumentException e) {
+            ui.showMessage("The specialisation must be either " +
+                    "ae, 4.0, iot, robotics or st. Please enter a valid specialisation.");
+            throw new EmptyInstruction("spec");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            ui.showMessage("Error: Missing specialisation for 'spec' command.");
+            throw new EmptyInstruction("spec");
+
+        } catch (NullPointerException e) {
+            ui.showMessage("Error: Invalid input format. Please enter input in the correct format. ");
+            throw new EmptyInstruction("spec");
         }
         return specItemsInformation;
     }
@@ -357,7 +456,7 @@ public class Parser {
      *
      * @return String containing the module code, or empty string on error.
      */
-    public String parsePrereq() {
+    public String parsePrereq() throws EmptyInstruction {
         String moduleCode;
         try {
             moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();
@@ -365,9 +464,9 @@ public class Parser {
                 throw new IllegalArgumentException("Invalid module code format.");
             }
         } catch (ArrayIndexOutOfBoundsException | NullPointerException | IllegalArgumentException e) {
-            System.out.println("Error: Invalid input format. Please enter input in "
+            ui.showMessage("Error: Invalid input format. Please enter input in "
                     + "the correct format (e.g., prereq CS2103T).");
-            return "";
+            throw new EmptyInstruction("prereq");
         }
         return moduleCode;
     }
@@ -384,14 +483,75 @@ public class Parser {
         try {
             String moduleCode = userInstructions.split(" ", 2)[0].trim().toUpperCase();
             if (moduleCode.isEmpty()) {
-                System.out.println("Error: Missing module code for '" + commandName + "'.");
+                ui.showMessage("Error: Missing module code for '" + commandName + "'.");
                 return new InvalidCommand();
             }
+
+            if (!moduleCode.matches("^[a-zA-Z0-9]+$")) {
+                logger.log(Level.WARNING, "Invalid format for addWithStatus command, " +
+                        "may contain non-alphanumeric characters.");
+                throw new EmptyInstruction("add");
+            }
+
             return new AddCompletedCommand(moduleCode, status);
         } catch (Exception e) {
-            System.out.println("Error: Invalid input format for '" + commandName
+            ui.showMessage("Error: Invalid input format for '" + commandName
                     + "' (e.g. " + commandName + " CS1010).");
             return new InvalidCommand();
+        }
+    }
+
+    public String parseCurrentSem() throws EmptyInstruction {
+        String currentSem;
+        try {
+
+            String[] currentSemInstructions = userInstructions.split("s/", 2);
+
+            if (currentSemInstructions.length < 2) {
+                logger.log(Level.WARNING, "Missing semester for current_semester command.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            String semester = currentSemInstructions[1].trim();
+
+            if (semester.isEmpty()) {
+                logger.log(Level.WARNING, "Missing semester for current_semester command.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            if (!(semester.matches("^[a-zA-Z0-9]+$"))) {
+                logger.log(Level.WARNING, "Invalid format for current_semester command, " +
+                        "may contain non-alphanumeric characters.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            currentSem = semester;
+
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            logger.log(Level.WARNING, "Error parsing current_semester command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("current_semester");
+        }
+        return currentSem;
+    }
+
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+        if (Objects.equals(protocol, "jar")) {
+            logger.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            logger.setLevel(Level.ALL);
         }
     }
 }

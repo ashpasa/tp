@@ -3,7 +3,9 @@ package seedu.classcraft.studyplan;
 import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.exceptions.StudyPlanException;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.HashSet;
@@ -19,13 +21,18 @@ public class PrerequisiteChecker {
     private static final Logger logger = Logger.getLogger(PrerequisiteChecker.class.getName());
 
     /**
-     * Validates if prerequisites are satisfied before adding module
+     * Validates if prerequisites are satisfied before adding module.
+     *
+     * @param module         The module to be added.
+     * @param targetSemester The semester number (1-based index) to which the module is being added.
+     * @param studyPlan      The current study plan instance.
      */
     public static void validatePrerequisites(Module module, int targetSemester, StudyPlan studyPlan)
             throws StudyPlanException {
         assert module != null : "Module cannot be null";
         assert studyPlan != null : "StudyPlan cannot be null";
         assert targetSemester > 0 : "Target semester must be positive";
+        setLoggerLevel(logger);
 
         logger.log(Level.INFO, "Validating prerequisites for module {0} in semester {1}",
                 new Object[]{module.getModCode(), targetSemester});
@@ -303,5 +310,27 @@ public class PrerequisiteChecker {
             return code;
         }
         return "";
+    }
+
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public static void setLoggerLevel(Logger logger) {
+        String className = "/" + logger.getClass().getName().replace('.', '/') + ".class";
+        URL resource = logger.getClass().getResource(className);
+
+        if (resource == null) {
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+
+        if (Objects.equals(protocol, "jrt")) {
+            logger.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            logger.setLevel(Level.ALL);
+        }
     }
 }

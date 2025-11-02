@@ -1,8 +1,11 @@
 package seedu.classcraft.studyplan;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -25,10 +28,16 @@ public class ModuleHandler {
 
 
     public ModuleHandler() {
+        setLoggerLevel();
         this.modules = new HashMap<>();
     }
 
-    // Fetches module data from NUSMods and create a module object
+    /**
+     * Creates a Module object by fetching details from NUSMods API.
+     *
+     * @param moduleCode The module code of the module to be created.
+     * @return The created Module object.
+     */
     public Module createModule(String moduleCode) throws NUSmodsFetcherException {
         String modName = "placeholder";
         int modCreds = 0;
@@ -40,8 +49,9 @@ public class ModuleHandler {
             modCreds = NUSmodsFetcher.getModuleCredits(moduleCode);
             modDescription = NUSmodsFetcher.getModuleDescription(moduleCode);
         } catch (NUSmodsFetcherException e) {
-            LOGGER.warning("Could not fetch details for " + moduleCode + ". Using default values. Error: " + e.getMessage());
-            throw new NUSmodsFetcherException("Module " + moduleCode + " does not exist or could not be fetched from NUSMods.");
+            LOGGER.warning("Could not fetch details for " + moduleCode
+                    + ". Using default values. Error: " + e.getMessage());
+            throw new IllegalArgumentException("Module " + moduleCode + " does not exist.");
         }
 
         List<String> prerequisites = new ArrayList<>();
@@ -83,6 +93,11 @@ public class ModuleHandler {
         return modules;
     }
 
+    /**
+     * Adds a module to the modules map if it does not already exist.
+     *
+     * @param module The module to be added.
+     */
     public void addModule(Module module) {
         modules.putIfAbsent(module.getModCode(), module);
     }
@@ -154,5 +169,26 @@ public class ModuleHandler {
                 || moduleCode.equals("PC1201");
     }
 
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+
+        if (Objects.equals(protocol, "jar")) {
+            LOGGER.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            LOGGER.setLevel(Level.ALL);
+        }
+    }
 }
 

@@ -9,12 +9,15 @@ import java.util.Arrays;
 public class Grad {
 
     private static final List<String> CEG_CORE_MODULES = Arrays.asList(
-            "CS1010", "CS2030S", "CS2040S", "CS2100", "CS2101", "CS2103T",
-            "CS3230", "CS3244", "EE2026", "EE2027" // samples
+            "CG1111A", "CS1231", "CS2040C",
+            "EE2026", "MA1511", "MA1512", "MA1508E", "EG2401A",
+            "CG2111A", "CG2023", "CG2027", "CG2028", "CG2271", "CG3201",
+            "CG3207", "CS2107", "CS2113", "EE4204", "EG3611A"
     );
 
     private static final List<String> GENERAL_EDUCATION_MODULES = Arrays.asList(
-            "THE1001", "THE1002" // samples
+            "GEA1000", "CDE2501", "PF1101A", "ES2631", "DTK1234", "EG1311",
+            "CS1010", "EE2211", "CG4001"
     );
 
     /**
@@ -27,8 +30,10 @@ public class Grad {
     }
 
     /**
-     * Returns a formatted string displaying all graduation requirements,
+     * Produces a formatted string displaying all graduation requirements,
      * including module names fetched via ModuleHandler.
+     * 
+     * @return A string representation of all graduation requirements.
      */
     public static String getAllRequirementsDisplay() {
         StringBuilder sb = new StringBuilder();

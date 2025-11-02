@@ -35,9 +35,9 @@ public class DeleteCommand extends Command {
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         try {
             studyPlan.removeModule(moduleToDelete, storage);
-            ui.printMessage("Successfully deleted " + moduleToDelete + " from your study plan.");
+            ui.showMessage("Successfully deleted " + moduleToDelete + " from the study plan.");
         } catch (StudyPlanException e) {
-            ui.printMessage(e.getMessage());
+            ui.printMessage("Error deleting module: " + e.getMessage());
         }
     }
 }

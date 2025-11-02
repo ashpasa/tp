@@ -3,7 +3,9 @@ package seedu.classcraft.studyplan;
 import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.storage.Storage;
+import seedu.classcraft.ui.Ui;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.logging.Level;
  */
 public class StudyPlan {
     private static final Logger LOGGER = Logger.getLogger(StudyPlan.class.getName());
+    private static int totalSemesters = 8;
+    private static int currentSemester = 1;
 
     /**
      * @@author lingru
@@ -43,8 +47,11 @@ public class StudyPlan {
     // @@author
 
     private ModuleHandler moduleHandler;
+    private Ui ui = new Ui();
 
     public StudyPlan(int totalSemesters) {
+        setLoggerLevel();
+        StudyPlan.totalSemesters = totalSemesters;
         for (int i = 0; i < totalSemesters; i++) {
             ArrayList<Module> innerList = new ArrayList<>();
             studyPlan.add(innerList);
@@ -58,9 +65,37 @@ public class StudyPlan {
         // @@author
     }
 
+    public static int getCurrentSemester() {
+        return currentSemester;
+    }
+
+    public static void setCurrentSemester(int currentSemester) {
+        StudyPlan.currentSemester = currentSemester;
+    }
+
+    public static int getTotalSemesters() {
+        return totalSemesters;
+    }
+
+    public static void setTotalSemesters(int totalSemesters) {
+        StudyPlan.totalSemesters = totalSemesters;
+    }
+
+    /**
+     * Adds a module to a specific semester in the study plan.
+     *
+     * @param module   The module to be added.
+     * @param semester The semester number (1-based index).
+     * @throws IllegalArgumentException
+     */
     public void addModule(Module module, int semester) throws IllegalArgumentException {
         if (semester < 1 || semester > studyPlan.size()) {
             throw new IllegalArgumentException("Semester " + semester + " is invalid.");
+        }
+
+        if (modules.containsKey(module.getModCode())) {
+            throw new IllegalArgumentException("Module " + module.getModCode()
+                    + " is already PLANNED in Semester " + modules.get(module.getModCode()));
         }
 
         // @@author lingru
@@ -87,6 +122,15 @@ public class StudyPlan {
                 "Module code should be in the modules map after adding.";
     }
 
+    /**
+     * Method to add a module to the study plan with prerequisite validation.
+     *
+     * @param moduleCode The module code to be added.
+     * @param semester   The semester number (1-based index).
+     * @param storage    Storage object for persistence.
+     * @param isRestored Indicates if the module is being restored from storage.
+     * @throws Exception
+     */
     public void addModule(String moduleCode, int semester, Storage storage, boolean isRestored) throws Exception {
         // Use ModuleHandler to fetch data and create the Module object
         boolean isModAddedPrev = modules.containsKey(moduleCode);
@@ -111,12 +155,19 @@ public class StudyPlan {
         LOGGER.info("Added " + moduleCode + " to semester " + semester);
     }
 
-    public void removeModule(String moduleString, Storage storage) throws StudyPlanException {
+    /**
+     * Removes a module from the study plan.
+     *
+     * @param moduleString The module code to be removed.
+     * @param storage      Storage object for persistence.
+     */
 
-            if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
-                LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
-                throw new StudyPlanException("Module " + moduleString + " does not exist");
-            }
+    public void removeModule(String moduleString, Storage storage) throws StudyPlanException {
+        if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
+            LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
+            ui.showMessage(moduleString + " does not exist in your study plan.");
+            throw new StudyPlanException("Module " + moduleString + " does not exist");
+        }
 
             List<String> dependentModules = checkForDependentModules(moduleString);
             if (!dependentModules.isEmpty()) {
@@ -125,24 +176,24 @@ public class StudyPlan {
                         "Please delete those modules first before deleting " + moduleString + ".");
             }
 
-            if (modules.containsKey(moduleString)) {
-                Integer sem = modules.get(moduleString);
-                for (int i = 0; i < studyPlan.get(sem - 1).size(); i++) {
-                    if (Objects.equals(studyPlan.get(sem - 1).get(i).getModCode(), moduleString)) {
-                        studyPlan.get(sem - 1).remove(i);
-                        break;
-                    }
+        if (modules.containsKey(moduleString)) {
+            Integer sem = modules.get(moduleString);
+            for (int i = 0; i < studyPlan.get(sem - 1).size(); i++) {
+                if (Objects.equals(studyPlan.get(sem - 1).get(i).getModCode(), moduleString)) {
+                    studyPlan.get(sem - 1).remove(i);
+                    break;
                 }
-                modules.remove(moduleString);
-                storage.deleteModule(moduleString, sem);
-                LOGGER.info("Removed " + moduleString + " from semester " + sem);
-
-            } else if (completedModulesMap.containsKey(moduleString)) {
-                Module modToRemove = completedModulesMap.get(moduleString);
-                completedModulesList.remove(modToRemove);
-                completedModulesMap.remove(moduleString);
-                LOGGER.info("Removed " + moduleString + " from completed modules list.");
             }
+            modules.remove(moduleString);
+            storage.deleteModule(moduleString, sem);
+            LOGGER.info("Removed " + moduleString + " from semester " + sem);
+
+        } else if (completedModulesMap.containsKey(moduleString)) {
+            Module modToRemove = completedModulesMap.get(moduleString);
+            completedModulesList.remove(modToRemove);
+            completedModulesMap.remove(moduleString);
+            LOGGER.info("Removed " + moduleString + " from completed modules list.");
+        }
 
     }
 
@@ -244,12 +295,11 @@ public class StudyPlan {
     }
 
     /**
-     * @@author lingru
-     * Adds a module that is already completed or exempted to the study plan.
-     *
+     * @author lingru
      * @param moduleCode The code of the module to add.
-     * @param status The status (COMPLETED or EXEMPTED).
+     * @param status     The status (COMPLETED or EXEMPTED).
      * @throws Exception If module fetching fails or module is already in the plan.
+     *                   Adds a module that is already completed or exempted to the study plan.
      */
     public void addCompletedModule(String moduleCode, ModuleStatus status) throws Exception {
         if (status == ModuleStatus.PLANNED) {
@@ -258,8 +308,8 @@ public class StudyPlan {
 
         // Check if already exists in PLANNED modules
         if (modules.containsKey(moduleCode)) {
-            throw new StudyPlanException("Module " + moduleCode 
-                                         + " is already PLANNED in Semester " + modules.get(moduleCode));
+            throw new StudyPlanException("Module " + moduleCode
+                    + " is already PLANNED in Semester " + modules.get(moduleCode));
         }
 
         // Check if already exists in COMPLETED/EXEMPTED modules
@@ -282,10 +332,9 @@ public class StudyPlan {
     }
 
     /**
-     * @@author lingru
-     * Calculates the student's degree progress percentage.
-     *
+     * @author lingru
      * @return The progress percentage, rounded to two decimal places.
+     *                   calculates the student's degree progress percentage.
      */
     public double getDegreeProgressPercentage() {
         if (TOTAL_MCS_FOR_GRADUATION <= 0) {
@@ -302,10 +351,9 @@ public class StudyPlan {
     }
 
     /**
-     * @@author lingru
-     * Gets the total number of secured MCs (from completed/exempted modules).
-     *
+     * @author lingru
      * @return Total secured MCs.
+     *                   Gets the total number of secured MCs (from completed/exempted modules).
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -316,21 +364,19 @@ public class StudyPlan {
     }
 
     /**
-     * @@author lingru
-     * Gets the total MCs required for graduation.
-     *
+     * @author lingru
      * @return Total required MCs.
+     *                   Gets the total MCs required for graduation.
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
     }
 
     /**
-     * @@author lingru
-     * Helper method to check if a module exists anywhere in the plan (planned or completed).
-     *
+     * @author lingru
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
+     *                   Helper method to check if a module exists anywhere in the plan (planned or completed).
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || completedModulesMap.containsKey(moduleCode);
@@ -342,6 +388,11 @@ public class StudyPlan {
         return studyPlan;
     }
 
+    /**
+     * Creates a sample study plan for demonstration purposes.
+     *
+     * @return A StudyPlan object populated with sample modules.
+     */
     public static StudyPlan createSampleStudyPlan() {
         // Assuming CEG is an 8-semester course
         StudyPlan samplePlan = new StudyPlan(8);
@@ -364,7 +415,7 @@ public class StudyPlan {
             samplePlan.addModule(ee2026, 2);
 
             // Semester 3
-            Module cs2040s = handler.createModule("CS2040S");
+            Module cs2040s = handler.createModule("CS2040C");
             samplePlan.addModule(cs2040s, 3);
 
             // Add other core/sample modules for Semesters 3 to 8 (to be added)
@@ -384,6 +435,11 @@ public class StudyPlan {
         return samplePlan;
     }
 
+    /**
+     * Returns a sample study plan for demonstration purposes.
+     *
+     * @return A StudyPlan object populated with sample modules.
+     */
     public static StudyPlan getSampleStudyPlan() {
         return createSampleStudyPlan();
     }
@@ -408,18 +464,22 @@ public class StudyPlan {
 
         int semesterCredits = 0;
         for (Module module : studyPlan.get(semesterIndex)) {
+            assert module.getModCreds() >= 0 : "Module credits should be non-negative.";
             semesterCredits += module.getModCreds();
         }
         return semesterCredits;
     }
 
     /**
+     * Calculates the total module credits in the entire study plan.
+     *
      * @return Total credits for the entire study plan
      */
     private int calculateTotalCredits() {
         int totalCredits = 0;
         for (int i = 0; i < studyPlan.size(); i++) {
             int semCreds = calculateSemCredits(i);
+            assert semCreds >= 0 : "Semester credits should be non-negative.";
             totalCredits += semCreds;
         }
         return totalCredits;
@@ -429,20 +489,47 @@ public class StudyPlan {
     /**
      * Indicates to the user which semesters have a high workload (2 or more modules than their average workload)
      */
-    public void balanceStudyPlan() {
-        int totalCredits = calculateTotalCredits();
-        int numberOfSems = studyPlan.size();
+    public void checkStudyPlan() {
+        int totalUncompletedCredits = 0;
+        for (int i = currentSemester - 1; i < studyPlan.size(); i++) {
+            int semCreds = calculateSemCredits(i);
+            assert semCreds >= 0 : "Semester credits should be non-negative.";
+            totalUncompletedCredits += semCreds;
+        }
+
+        int numberOfSems = studyPlan.size() - currentSemester + 1;
         int numberOfHighWorkloadSemesters = 0;
-        for (int i = 0; i < numberOfSems; i++) {
-            if (calculateSemCredits(i) > (totalCredits/numberOfSems) + 5) {
+        for (int i = currentSemester - 1; i < numberOfSems; i++) {
+            if (calculateSemCredits(i) > (totalUncompletedCredits / numberOfSems) + 5) {
                 System.out.println("Semester " + (i + 1) + " has a high workload. Please consider moving some modules" +
                         " to other semesters instead");
                 numberOfHighWorkloadSemesters++;
             }
         }
-        if (numberOfHighWorkloadSemesters > 0) {
+        if (numberOfHighWorkloadSemesters == 0) {
             System.out.println("YAY! Your study plan is well balanced!");
         }
     }
 
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+
+        if (Objects.equals(protocol, "jar")) {
+            LOGGER.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            LOGGER.setLevel(Level.ALL);
+        }
+    }
 }

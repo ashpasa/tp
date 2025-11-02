@@ -143,7 +143,7 @@ public class Module {
         }
 
         String prereqsString = String.join(", ", prereqs);
-        return " (Prereqs: " + prereqsString + ")";
+        return " (Prerequisites: " + prereqsString + ")";
     }
 }
 

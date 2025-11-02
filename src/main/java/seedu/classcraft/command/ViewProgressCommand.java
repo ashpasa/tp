@@ -17,7 +17,7 @@ public class ViewProgressCommand extends Command {
     /**
      * @@author lingru
      * Executes the command to calculate and display degree progress.
-     * Uses the Ui.printMessage method to format the output.
+     * Uses the Ui.showMessage method to format the output.
      *
      * @param studyPlan The study plan to get data from.
      * @param ui The UI to display the result.
@@ -32,7 +32,7 @@ public class ViewProgressCommand extends Command {
         String message = "Your Degree Progress: " + percentage + "%" + System.lineSeparator()
                 + "Secured MCs: " + securedMCs + " / " + totalMCs;
 
-        ui.printMessage(message);
+        ui.showMessage(message);
     }
 }
 
