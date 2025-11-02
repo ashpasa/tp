@@ -20,6 +20,7 @@ public class ExitCommand extends Command {
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         String exitMessage = "Thank you for using ClassCraft! See you next time!";
-        ui.printMessage(exitMessage);
+        ui.showMessage(exitMessage);
+        System.exit(0);
     }
 }

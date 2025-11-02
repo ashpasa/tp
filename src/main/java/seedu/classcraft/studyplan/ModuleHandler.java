@@ -51,10 +51,10 @@ public class ModuleHandler {
         } catch (NUSmodsFetcherException e) {
             LOGGER.warning("Could not fetch details for " + moduleCode
                     + ". Using default values. Error: " + e.getMessage());
+            throw new IllegalArgumentException("Module " + moduleCode + " does not exist.");
         }
 
         List<String> prerequisites = new ArrayList<>();
-
 
         try {
             JsonNode rootJson = NUSmodsFetcher.fetchModuleJson(moduleCode);

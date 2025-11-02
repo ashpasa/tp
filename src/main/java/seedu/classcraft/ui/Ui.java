@@ -139,7 +139,7 @@ public class Ui {
         assert moduleCode != null : "Module code cannot be null";
         logger.log(Level.INFO, "Displaying prerequisites for: {0}", moduleCode);
 
-        System.out.print(line);
+        System.out.print("============================================================\n");
         System.out.println("Module: " + moduleCode + " - " + moduleTitle);
         System.out.print(line);
 
@@ -155,7 +155,7 @@ public class Ui {
             System.out.println("Note: You need to satisfy these prerequisites before taking this module.");
         }
 
-        System.out.print(line);
+        System.out.print("============================================================");
     }
 
     /**

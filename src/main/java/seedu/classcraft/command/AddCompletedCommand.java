@@ -40,9 +40,9 @@ public class AddCompletedCommand extends Command {
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws Exception {
         try {
             studyPlan.addCompletedModule(moduleCode, status);
-            ui.printMessage("Successfully added " + moduleCode + " as " + status.toString());
+            ui.showMessage("Successfully added " + moduleCode + " as " + status.toString());
         } catch (Exception e) {
-            ui.printMessage(e.getMessage());
+            ui.showMessage(e.getMessage());
         }
     }
 }

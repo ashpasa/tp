@@ -4,8 +4,8 @@ package seedu.classcraft.command;
  * CommandList enum contains all valid commands for the ClassCraft application.
  */
 public enum CommandList {
-    help, add, delete, view, exit, confirm,
-    progress, add_completed, add_exempted, mc, spec, prereq, check,
+    help, add, delete, view, exit,
+    progress, add_exempted, mc, spec, prereq, check,
     current_semester;
 
     /**

@@ -15,7 +15,7 @@ public class CheckCommand extends Command {
 
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
-        ui.printMessage("Checking Study plan...");
+        ui.showMessage("Checking Study plan...");
         studyPlan.checkStudyPlan();
     }
 }
