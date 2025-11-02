@@ -167,7 +167,8 @@ public class Storage {
                         studyPlan.addCompletedModule(moduleCode, status, storage, true);
 
                     } catch (Exception e) {
-                        logger.log(Level.WARNING, "Failed to restore secured module " + moduleInfo + ": " + e.getMessage());
+                        logger.log(Level.WARNING, "Failed to restore secured module "
+                                + moduleInfo + ": " + e.getMessage());
                     }
                 }
                 break;

@@ -21,7 +21,6 @@ public class StudyPlan {
      * (e.g., CEG/CS is 160 MCs). Adjust this value as needed.
      */
     private static final int TOTAL_MCS_FOR_GRADUATION = 160;
-    private int currentSemester;
 
     // --- Fields for PLANNED modules ---
     /**
@@ -42,6 +41,7 @@ public class StudyPlan {
     // @@author
 
     private ModuleHandler moduleHandler;
+    private int currentSemester;
 
     public StudyPlan(int totalSemesters) {
         for (int i = 0; i < totalSemesters; i++) {
@@ -181,7 +181,8 @@ public class StudyPlan {
      * @throws Exception If module fetching fails or module is already in the plan.
      * Finds PLANNED module, MOVES it, and updates Storage.
      */
-    public void addCompletedModule(String moduleCode, ModuleStatus status, Storage storage, boolean isRestored) throws Exception {
+    public void addCompletedModule(String moduleCode, ModuleStatus status,
+                                   Storage storage, boolean isRestored) throws Exception {
         if (status == ModuleStatus.PLANNED) {
             throw new IllegalArgumentException("Use addModule() for planned modules.");
         }
@@ -386,7 +387,7 @@ public class StudyPlan {
     /**
      * Calculates the total module credits in the entire study plan.
      * This now includes BOTH planned and secured (completed/exempted) modules.
-     * * @return Total credits for the entire study plan
+     * @return Total credits for the entire study plan
      */
     private int calculateTotalCredits() {
         int totalPlannedCredits = 0;
@@ -434,7 +435,8 @@ public class StudyPlan {
      */
     public int setCurrentSemester(int newCurrentSemester, Storage storage) throws StudyPlanException {
         if (newCurrentSemester < 1 || newCurrentSemester > studyPlan.size()) {
-            throw new StudyPlanException("Semester " + newCurrentSemester + " is invalid. Must be between 1 and " + studyPlan.size());
+            throw new StudyPlanException("Semester " + newCurrentSemester + " is invalid. " +
+                    "Must be between 1 and " + studyPlan.size());
         }
 
         this.currentSemester = newCurrentSemester;

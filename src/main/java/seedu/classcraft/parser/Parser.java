@@ -1,6 +1,23 @@
 package seedu.classcraft.parser;
 
-import seedu.classcraft.command.*;
+import seedu.classcraft.command.AddCommand;
+import seedu.classcraft.command.AddExemptedCommand;
+import seedu.classcraft.command.BalanceCommand;
+import seedu.classcraft.command.CalcCreditsCommand;
+import seedu.classcraft.command.Command;
+import seedu.classcraft.command.CommandList;
+import seedu.classcraft.command.DeleteCommand;
+import seedu.classcraft.command.ExitCommand;
+import seedu.classcraft.command.HelpCommand;
+import seedu.classcraft.command.InvalidCommand;
+import seedu.classcraft.command.PrereqCommand;
+import seedu.classcraft.command.SetCurrentSemCommand;
+import seedu.classcraft.command.SpecCommand;
+import seedu.classcraft.command.ViewCurrentPlanCommand;
+import seedu.classcraft.command.ViewGradReqCommand;
+import seedu.classcraft.command.ViewProgressCommand;
+import seedu.classcraft.command.ViewSamplePlanCommand;
+
 import seedu.classcraft.exceptions.EmptyInstruction;
 import seedu.classcraft.studyplan.ModuleStatus;
 
