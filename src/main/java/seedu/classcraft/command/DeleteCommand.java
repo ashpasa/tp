@@ -1,5 +1,6 @@
 package seedu.classcraft.command;
 
+import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
@@ -32,6 +33,11 @@ public class DeleteCommand extends Command {
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
-        studyPlan.removeModule(moduleToDelete, storage);
+        try {
+            studyPlan.removeModule(moduleToDelete, storage);
+            ui.printMessage("Successfully deleted " + moduleToDelete + " from your study plan.");
+        } catch (StudyPlanException e) {
+            ui.printMessage(e.getMessage());
+        }
     }
 }
