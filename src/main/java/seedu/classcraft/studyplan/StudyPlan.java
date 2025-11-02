@@ -179,7 +179,6 @@ public class StudyPlan {
      * @param storage    Storage handler added.
      * @param isRestored Flag to prevent re-saving on load.
      * @throws Exception If module fetching fails or module is already in the plan.
-     * Finds PLANNED module, MOVES it, and updates Storage.
      */
     public void addCompletedModule(String moduleCode, ModuleStatus status,
                                    Storage storage, boolean isRestored) throws Exception {
