@@ -29,7 +29,7 @@ public class ModuleHandler {
     }
 
     // Fetches module data from NUSMods and create a module object
-    public Module createModule(String moduleCode) {
+    public Module createModule(String moduleCode) throws NUSmodsFetcherException {
         String modName = "placeholder";
         int modCreds = 0;
         String modDescription = "placeholder";
@@ -40,8 +40,8 @@ public class ModuleHandler {
             modCreds = NUSmodsFetcher.getModuleCredits(moduleCode);
             modDescription = NUSmodsFetcher.getModuleDescription(moduleCode);
         } catch (NUSmodsFetcherException e) {
-            LOGGER.warning("Could not fetch details for " + moduleCode
-                    + ". Using default values. Error: " + e.getMessage());
+            LOGGER.warning("Could not fetch details for " + moduleCode + ". Using default values. Error: " + e.getMessage());
+            throw new NUSmodsFetcherException("Module " + moduleCode + " does not exist or could not be fetched from NUSMods.");
         }
 
         List<String> prerequisites = new ArrayList<>();
