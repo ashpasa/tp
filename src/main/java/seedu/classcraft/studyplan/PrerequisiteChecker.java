@@ -169,6 +169,8 @@ public class PrerequisiteChecker {
             }
         }
 
+        completedModules.addAll(studyPlan.getCompletedModulesMap().keySet());
+
         return completedModules;
     }
 

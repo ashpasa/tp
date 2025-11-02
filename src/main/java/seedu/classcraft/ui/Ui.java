@@ -28,6 +28,7 @@ public class Ui {
 
     /**
      * Prints the contents of a study plan, showing modules by semester.
+     * Now also displays Completed/Exempted modules first.
      *
      * @param plan  The study plan data (either current or sample).
      * @param title The title to display (e.g., "CEG Sample Study Plan").
@@ -36,6 +37,16 @@ public class Ui {
         System.out.print(line);
         System.out.println(title);
         System.out.print(line);
+
+        ArrayList<Module> completedMods = plan.getCompletedModulesList();
+        if (completedMods != null && !completedMods.isEmpty()) {
+            System.out.println("Completed / Exempted Modules:");
+            for (Module mod : completedMods) {
+                System.out.println("  - " + mod.getModCode() + " (" + mod.getModName() + ") - "
+                        + mod.getStatus().toString());
+            }
+            System.out.print(line);
+        }
 
         ArrayList<ArrayList<Module>> planData = plan.getStudyPlan();
 
@@ -50,7 +61,6 @@ public class Ui {
 
             for (Module mod : semesterMods) {
                 String prereqsInfo = mod.getPrerequisitesDisplay();
-
                 System.out.println("  - " + mod.getModCode() + " (" + mod.getModName() + ")" + prereqsInfo);
             }
         }

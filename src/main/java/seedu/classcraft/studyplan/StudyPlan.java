@@ -21,6 +21,7 @@ public class StudyPlan {
      * (e.g., CEG/CS is 160 MCs). Adjust this value as needed.
      */
     private static final int TOTAL_MCS_FOR_GRADUATION = 160;
+    private int currentSemester;
 
     // --- Fields for PLANNED modules ---
     /**
@@ -53,6 +54,7 @@ public class StudyPlan {
         // @@author lingru
         this.completedModulesList = new ArrayList<>();
         this.completedModulesMap = new HashMap<>();
+        this.currentSemester = 1;
         // @@author
     }
 
@@ -161,6 +163,7 @@ public class StudyPlan {
                 Module modToRemove = completedModulesMap.get(moduleString);
                 completedModulesList.remove(modToRemove);
                 completedModulesMap.remove(moduleString);
+                storage.deleteSecuredModule(moduleString);
                 LOGGER.info("Removed " + moduleString + " from completed modules list.");
             }
 
@@ -173,35 +176,59 @@ public class StudyPlan {
      * @author lingru
      * @param moduleCode The code of the module to add.
      * @param status     The status (COMPLETED or EXEMPTED).
+     * @param storage    Storage handler added.
+     * @param isRestored Flag to prevent re-saving on load.
      * @throws Exception If module fetching fails or module is already in the plan.
-     *     Adds a module that is already completed or exempted to the study plan.
+     * Finds PLANNED module, MOVES it, and updates Storage.
      */
-    public void addCompletedModule(String moduleCode, ModuleStatus status) throws Exception {
+    public void addCompletedModule(String moduleCode, ModuleStatus status, Storage storage, boolean isRestored) throws Exception {
         if (status == ModuleStatus.PLANNED) {
             throw new IllegalArgumentException("Use addModule() for planned modules.");
         }
 
-        // Check if already exists in PLANNED modules
-        if (modules.containsKey(moduleCode)) {
-            throw new StudyPlanException("Module " + moduleCode
-                    + " is already PLANNED in Semester " + modules.get(moduleCode));
-        }
-
-        // Check if already exists in COMPLETED/EXEMPTED modules
         if (completedModulesMap.containsKey(moduleCode)) {
+            if (isRestored) {
+                return;
+            }
             throw new StudyPlanException("Module " + moduleCode + " is already marked as "
                     + completedModulesMap.get(moduleCode).getStatus());
         }
 
-        // Fetch module data
-        Module newModule = moduleHandler.createModule(moduleCode);
+        Module moduleToMove = null;
+        boolean wasMoved = false;
+        Integer sem = 0;
 
-        // Set the correct status
-        newModule.setStatus(status);
+        if (modules.containsKey(moduleCode)) {
+            LOGGER.info("Module " + moduleCode + " is PLANNED. Moving it to " + status.toString());
+            sem = modules.get(moduleCode);
+            ArrayList<Module> semesterList = studyPlan.get(sem - 1);
 
-        // Add to the completed lists
-        completedModulesList.add(newModule);
-        completedModulesMap.put(moduleCode, newModule);
+            for (int i = 0; i < semesterList.size(); i++) {
+                if (Objects.equals(semesterList.get(i).getModCode(), moduleCode)) {
+                    moduleToMove = semesterList.remove(i);
+                    wasMoved = true;
+                    break;
+                }
+            }
+
+            modules.remove(moduleCode);
+        }
+
+
+        if (moduleToMove == null) {
+            moduleToMove = moduleHandler.createModule(moduleCode);
+        }
+
+        moduleToMove.setStatus(status);
+        completedModulesList.add(moduleToMove);
+        completedModulesMap.put(moduleCode, moduleToMove);
+
+        if (!isRestored) {
+            storage.saveSecuredModule(moduleToMove);
+            if (wasMoved) {
+                storage.deleteModule(moduleCode, sem);
+            }
+        }
 
         LOGGER.info("Added " + moduleCode + " as " + status.toString());
     }
@@ -223,6 +250,20 @@ public class StudyPlan {
 
         // Format to 2 decimal places
         return Math.round(percentage * 100.0) / 100.0;
+    }
+
+    /**
+     * @return The HashMap of completed/exempted modules.
+     */
+    public HashMap<String, Module> getCompletedModulesMap() {
+        return completedModulesMap;
+    }
+
+    /**
+     * @return The ArrayList of completed/exempted modules.
+     */
+    public ArrayList<Module> getCompletedModulesList() {
+        return completedModulesList;
     }
 
     /**
@@ -344,17 +385,21 @@ public class StudyPlan {
 
     /**
      * Calculates the total module credits in the entire study plan.
-     * 
-     * @return Total credits for the entire study plan
+     * This now includes BOTH planned and secured (completed/exempted) modules.
+     * * @return Total credits for the entire study plan
      */
     private int calculateTotalCredits() {
-        int totalCredits = 0;
+        int totalPlannedCredits = 0;
         for (int i = 0; i < studyPlan.size(); i++) {
             int semCreds = calculateSemCredits(i);
             assert semCreds >= 0 : "Semester credits should be non-negative.";
-            totalCredits += semCreds;
+            totalPlannedCredits += semCreds;
         }
-        return totalCredits;
+
+        // [Gemini] FIX: Get the MCs from the completed/exempted list
+        int totalSecuredCredits = getTotalSecuredMCs();
+
+        return totalPlannedCredits + totalSecuredCredits;
     }
     // @@author
 
@@ -377,4 +422,45 @@ public class StudyPlan {
         }
     }
 
+    /**
+     * Sets the current semester.
+     * Moves all modules *before* this semester to COMPLETED status
+     * and updates storage accordingly.
+     *
+     * @param newCurrentSemester The semester to set as current (1-based).
+     * @param storage            Storage handler for persistence.
+     * @return The number of modules moved to COMPLETED.
+     * @throws StudyPlanException If semester is invalid.
+     */
+    public int setCurrentSemester(int newCurrentSemester, Storage storage) throws StudyPlanException {
+        if (newCurrentSemester < 1 || newCurrentSemester > studyPlan.size()) {
+            throw new StudyPlanException("Semester " + newCurrentSemester + " is invalid. Must be between 1 and " + studyPlan.size());
+        }
+
+        this.currentSemester = newCurrentSemester;
+        int modulesCompletedCount = 0;
+
+        for (int i = 0; i < newCurrentSemester - 1; i++) {
+            ArrayList<Module> semesterModules = studyPlan.get(i);
+            int currentSemesterNumber = i + 1;
+
+            for (int j = semesterModules.size() - 1; j >= 0; j--) {
+                Module mod = semesterModules.get(j);
+
+                semesterModules.remove(j);
+                modules.remove(mod.getModCode());
+
+                mod.setStatus(ModuleStatus.COMPLETED);
+                completedModulesList.add(mod);
+                completedModulesMap.put(mod.getModCode(), mod);
+
+                storage.saveSecuredModule(mod);
+                // Delete from planned line
+                storage.deleteModule(mod.getModCode(), currentSemesterNumber);
+
+                modulesCompletedCount++;
+            }
+        }
+        return modulesCompletedCount;
+    }
 }

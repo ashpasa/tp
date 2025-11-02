@@ -1,6 +1,7 @@
 package seedu.classcraft.storage;
 
 import seedu.classcraft.studyplan.StudyPlan;
+import seedu.classcraft.studyplan.Module;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,20 +82,19 @@ public class Storage {
         }
 
         try {
-            if (f.createNewFile()) {
-                System.out.println("Yay! A file created successfully.");
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
-                    logger.log(Level.INFO, "Initializing new data file with semester headers.");
-                    for (int i = 1; i <= 8; i++) {
-                        bw.write(i + " -");
-                        bw.newLine();
-                    }
-                }
-            }
-        } catch (IOException e) {
-            System.out.println(" :{ an error occurred while creating the file: " + e.getMessage());
-        }
+            boolean fileExisted = !f.createNewFile();
 
+            if (!fileExisted) {
+                System.out.println("Yay! A file created successfully.");
+                initializeFile(f);
+            } else if (f.length() == 0) {
+                logger.log(Level.WARNING, "Data file exists but is empty. Re-initializing.");
+                initializeFile(f);
+            }
+
+        } catch (IOException e) {
+            System.out.println(" :{ an error occurred while creating/checking the file: " + e.getMessage());
+        }
     }
 
 
@@ -124,8 +124,8 @@ public class Storage {
 
     /**
      * Restores study plan data from the data file.
-     * Reads each line from the file, parses the semester and module codes,
-     * and adds the modules to a StudyPlan object using the addModule method.
+     * Pass 1: Loads SECURED modules (prerequisites)
+     * Pass 2: Loads PLANNED modules (semesters)
      *
      * @param storage The storage handler to read/write data.
      * @return A StudyPlan object populated with the restored data.
@@ -136,32 +136,163 @@ public class Storage {
         try {
             Path filePath = Paths.get(dataFile);
             List<String> lines = Files.readAllLines(filePath);
+
+            // Load SECURED modules first
             for (String line : lines) {
                 String[] restorationParts = line.split("-");
-                int semester = Integer.parseInt(restorationParts[0].trim());
-                if (restorationParts.length == 1) {
+                if (restorationParts.length < 2) {
                     continue;
                 }
-                assert restorationParts.length == 2 : "Each line should contain a semester and module codes.";
+
+                String lineType = restorationParts[0].trim();
                 String modulesPart = restorationParts[1].trim();
 
-                String[] modules = modulesPart.split(",");
-                for (String module : modules) {
-                    String moduleCode = module.trim();
-                    if (!moduleCode.isEmpty()) {
-                        studyPlan.addModule(moduleCode, semester, storage, true);
-                    }
+                if (modulesPart.isEmpty() || !lineType.equals("SECURED")) {
+                    continue;
                 }
 
+                String[] modules = modulesPart.split(",");
+                for (String moduleData : modules) {
+                    String moduleInfo = moduleData.trim();
+                    if (moduleInfo.isEmpty()) {
+                        continue;
+                    }
+
+                    try {
+                        String[] parts = moduleInfo.split(":");
+                        String moduleCode = parts[0];
+                        seedu.classcraft.studyplan.ModuleStatus status =
+                                seedu.classcraft.studyplan.ModuleStatus.valueOf(parts[1]);
+
+                        studyPlan.addCompletedModule(moduleCode, status, storage, true);
+
+                    } catch (Exception e) {
+                        logger.log(Level.WARNING, "Failed to restore secured module " + moduleInfo + ": " + e.getMessage());
+                    }
+                }
+                break;
             }
+
+            // ---  Load PLANNED modules ---
+            for (String line : lines) {
+                String[] restorationParts = line.split("-");
+                if (restorationParts.length < 2) {
+                    continue;
+                }
+
+                String lineType = restorationParts[0].trim();
+                String modulesPart = restorationParts[1].trim();
+
+                if (modulesPart.isEmpty() || lineType.equals("SECURED")) {
+                    continue;
+                }
+
+                try {
+                    int semester = Integer.parseInt(lineType);
+                    String[] modules = modulesPart.split(",");
+                    for (String module : modules) {
+                        String moduleCode = module.trim();
+                        if (!moduleCode.isEmpty()) {
+                            studyPlan.addModule(moduleCode, semester, storage, true);
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    logger.log(Level.WARNING, "Skipping invalid line in data file: " + line);
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "Error while restoring planned module: " + e.getMessage(), e);
+                }
+            }
+
         } catch (IOException e) {
             logger.log(Level.WARNING, "Failed to read the data file: " + e.getMessage());
             System.out.println("Oh no! I was not able to read the file: " + e.getMessage());
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Error while restoring data: " + e.getMessage());
-            throw new RuntimeException(e);
         }
         return studyPlan;
+    }
+
+    /**
+     * Helper method to write initial semester headers to a file.
+     *
+     * @param f The file to write to.
+     * @throws IOException If writing fails.
+     */
+    private void initializeFile(File f) throws IOException {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
+            logger.log(Level.INFO, "Initializing new data file with semester headers.");
+            for (int i = 1; i <= 8; i++) {
+                bw.write(i + " -");
+                bw.newLine();
+            }
+            bw.write("SECURED -");
+            bw.newLine();
+        }
+    }
+
+    /**
+     * Appends a secured module to the data file.
+     * Stores in the format "MODCODE:STATUS,"
+     *
+     * @param module The module to save.
+     */
+    public void saveSecuredModule(Module module) {
+        Path filePath = Paths.get(dataFile);
+        String moduleEntry = module.getModCode() + ":" + module.getStatus().toString() + ",";
+        try {
+            List<String> lines = Files.readAllLines(filePath);
+
+            int securedLineIndex = -1;
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).trim().startsWith("SECURED -")) {
+                    securedLineIndex = i;
+                    break;
+                }
+            }
+
+            if (securedLineIndex == -1) {
+                lines.add("SECURED - " + moduleEntry);
+            } else {
+                String line = lines.get(securedLineIndex);
+                String updatedLine = line.concat(" " + moduleEntry);
+                lines.set(securedLineIndex, updatedLine);
+            }
+
+            Files.write(filePath, lines);
+
+        } catch (IOException e) {
+            System.out.println("Oh no! I was not able to update the file with secured module: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes a secured module from the data file.
+     *
+     * @param moduleToDelete The module code to delete.
+     */
+    public void deleteSecuredModule(String moduleToDelete) {
+        Path filePath = Paths.get(dataFile);
+        try {
+            List<String> lines = Files.readAllLines(filePath);
+            int securedLineIndex = -1;
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).trim().startsWith("SECURED -")) {
+                    securedLineIndex = i;
+                    break;
+                }
+            }
+
+            if (securedLineIndex != -1) {
+                String line = lines.get(securedLineIndex);
+
+                String updatedLine = line.replace(" " + moduleToDelete + ":" + "COMPLETED" + ",", "");
+                updatedLine = updatedLine.replace(" " + moduleToDelete + ":" + "EXEMPTED" + ",", "");
+
+                lines.set(securedLineIndex, updatedLine);
+                Files.write(filePath, lines);
+            }
+
+        } catch (IOException e) {
+            System.out.println("Oh no! I was not able to update the file (delete secured): " + e.getMessage());
+        }
     }
 
 }

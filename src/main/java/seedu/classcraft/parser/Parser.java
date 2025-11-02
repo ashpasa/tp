@@ -1,21 +1,6 @@
 package seedu.classcraft.parser;
 
-import seedu.classcraft.command.BalanceCommand;
-import seedu.classcraft.command.Command;
-import seedu.classcraft.command.AddCommand;
-import seedu.classcraft.command.CalcCreditsCommand;
-import seedu.classcraft.command.DeleteCommand;
-import seedu.classcraft.command.CommandList;
-import seedu.classcraft.command.ExitCommand;
-import seedu.classcraft.command.HelpCommand;
-import seedu.classcraft.command.InvalidCommand;
-import seedu.classcraft.command.PrereqCommand;
-import seedu.classcraft.command.SpecCommand;
-import seedu.classcraft.command.ViewSamplePlanCommand;
-import seedu.classcraft.command.ViewGradReqCommand;
-import seedu.classcraft.command.ViewCurrentPlanCommand;
-import seedu.classcraft.command.AddCompletedCommand;
-import seedu.classcraft.command.ViewProgressCommand;
+import seedu.classcraft.command.*;
 import seedu.classcraft.exceptions.EmptyInstruction;
 import seedu.classcraft.studyplan.ModuleStatus;
 
@@ -85,12 +70,6 @@ public class Parser {
 
             // @@author lingru (Start of changes for new commands)
             /*
-             * e.g. : add-completed CS1010
-             */
-            case "add-completed":
-                return parseAddWithStatus(ModuleStatus.COMPLETED, "add-completed");
-
-            /*
              * e.g. : add-exempted CS1231
              */
             case "add-exempted":
@@ -122,6 +101,12 @@ public class Parser {
                 return new PrereqCommand(prereqModuleCode);
             case "balance":
                 return new BalanceCommand();
+            case "set_current_sem":
+                int semesterToSet = parseSetCurrentSem();
+                if (semesterToSet == -1) {
+                    return new InvalidCommand();
+                }
+                return new SetCurrentSemCommand(semesterToSet);
             default:
                 return new InvalidCommand();
             }
@@ -416,11 +401,31 @@ public class Parser {
                 throw new EmptyInstruction("add");
             }
 
-            return new AddCompletedCommand(moduleCode, status);
+            return new AddExemptedCommand(moduleCode, status);
         } catch (Exception e) {
             System.out.println("Error: Invalid input format for '" + commandName
                     + "' (e.g. " + commandName + " CS1010).");
             return new InvalidCommand();
+        }
+    }
+
+    /**
+     * Parses the user input for set-current-sem command.
+     * Expects a single integer.
+     *
+     * @return int representing the semester, or -1 for error.
+     */
+    private int parseSetCurrentSem() {
+        try {
+            int semester = Integer.parseInt(userInstructions.trim());
+            if (semester < 1) {
+                System.out.println("Error: Semester number must be a positive integer.");
+                return -1;
+            }
+            return semester;
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Invalid format. Please enter a number (e.g., set-current-sem 3).");
+            return -1;
         }
     }
 }
