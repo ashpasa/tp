@@ -4,6 +4,7 @@ import seedu.classcraft.command.BalanceCommand;
 import seedu.classcraft.command.Command;
 import seedu.classcraft.command.AddCommand;
 import seedu.classcraft.command.CalcCreditsCommand;
+import seedu.classcraft.command.CurrentSemCommand;
 import seedu.classcraft.command.DeleteCommand;
 import seedu.classcraft.command.CommandList;
 import seedu.classcraft.command.ExitCommand;
@@ -122,6 +123,9 @@ public class Parser {
                 return new PrereqCommand(prereqModuleCode);
             case "balance":
                 return new BalanceCommand();
+            case "current_semester":
+                String current_sem = parseCurrentSem();
+                return new CurrentSemCommand(current_sem);
             default:
                 return new InvalidCommand();
             }
@@ -314,6 +318,7 @@ public class Parser {
     }
 
     // @@author ashpasa
+
     /**
      * Parses the user input for mc command.
      * Expects either a semester number or "total".
@@ -422,6 +427,39 @@ public class Parser {
                     + "' (e.g. " + commandName + " CS1010).");
             return new InvalidCommand();
         }
+    }
+
+    public String parseCurrentSem() throws EmptyInstruction {
+        String currentSem;
+        try {
+
+            String[] currentSemInstructions = userInstructions.split("s/", 2);
+
+            if (currentSemInstructions.length < 2) {
+                logger.log(Level.WARNING, "Missing semester for current_semester command.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            String semester = currentSemInstructions[1].trim();
+
+            if (semester.isEmpty()) {
+                logger.log(Level.WARNING, "Missing semester for current_semester command.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            if (!(semester.matches("^[a-zA-Z0-9]+$"))) {
+                logger.log(Level.WARNING, "Invalid format for current_semester command, " +
+                        "may contain non-alphanumeric characters.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            currentSem = semester;
+
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            logger.log(Level.WARNING, "Error parsing current_semester command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("current_semester");
+        }
+        return currentSem;
     }
 }
 
