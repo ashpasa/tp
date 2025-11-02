@@ -39,7 +39,7 @@ Each command is represented by a class that extends the abstract `Command` class
 
 This is how the 'AddCommnand' class interacts with other components:
 
-<img alt="Add command sequence diagram" src="/UMLdiagrams/AddCommandSequence.png" width="600"/>
+![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
 
 When a command is executed, it interacts with the `Studyplan`, `UI`, and `Storage` components to perform its function.
 
