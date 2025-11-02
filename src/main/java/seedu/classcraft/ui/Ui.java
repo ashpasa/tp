@@ -38,15 +38,21 @@ public class Ui {
      * @param plan  The study plan data (either current or sample).
      * @param title The title to display (e.g., "CEG Sample Study Plan").
      */
-    private void displayStudyPlan(StudyPlan plan, String title) {
+    private void displayStudyPlan(StudyPlan plan, String title, boolean sample) {
         System.out.print(line);
         System.out.println(title);
         System.out.print(line);
 
+        int current_semester = StudyPlan.getCurrentSemester();
+
         ArrayList<ArrayList<Module>> planData = plan.getStudyPlan();
 
         for (int i = 0; i < planData.size(); i++) {
-            System.out.println("Semester " + (i + 1) + ":");
+            if (!sample && (i + 1 < current_semester)) {
+                System.out.println("Semester " + (i + 1) + " (Completed):");
+            } else {
+                System.out.println("Semester " + (i + 1) + ":");
+            }
             ArrayList<Module> semesterMods = planData.get(i);
 
             if (semesterMods.isEmpty()) {
@@ -64,11 +70,11 @@ public class Ui {
     }
 
     public void displaySamplePlan(StudyPlan samplePlan) {
-        displayStudyPlan(samplePlan, "CEG Sample Study Plan");
+        displayStudyPlan(samplePlan, "CEG Sample Study Plan", true);
     }
 
     public void displayCurrentPlan(StudyPlan currentPlan) {
-        displayStudyPlan(currentPlan, "Current Study Plan");
+        displayStudyPlan(currentPlan, "Current Study Plan", false);
     }
 
     // @@author ashpasa
