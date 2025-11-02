@@ -249,7 +249,7 @@ public class StudyPlan {
     /**
      * @author lingru
      * @return Total secured MCs.
-     * Gets the total number of secured MCs (from completed/exempted modules).
+     *                   Gets the total number of secured MCs (from completed/exempted modules).
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -260,9 +260,9 @@ public class StudyPlan {
     }
 
     /**
-     * @return Total required MCs.
-     * Gets the total MCs required for graduation.
      * @author lingru
+     * @return Total required MCs.
+     *                   Gets the total MCs required for graduation.
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
