@@ -34,6 +34,7 @@ public class Ui {
 
     /**
      * Prints the contents of a study plan, showing modules by semester.
+     * Now also displays Completed/Exempted modules first.
      *
      * @param plan  The study plan data (either current or sample).
      * @param title The title to display (e.g., "CEG Sample Study Plan").
@@ -43,12 +44,22 @@ public class Ui {
         System.out.println(title);
         System.out.print(line);
 
-        int current_semester = StudyPlan.getCurrentSemester();
+        ArrayList<Module> completedMods = plan.getCompletedModulesList();
+        if (completedMods != null && !completedMods.isEmpty()) {
+            System.out.println("Completed / Exempted Modules:");
+            for (Module mod : completedMods) {
+                System.out.println("  - " + mod.getModCode() + " (" + mod.getModName() + ") - "
+                        + mod.getStatus().toString());
+            }
+            System.out.print(line);
+        }
+
+        int currentSemester = StudyPlan.getCurrentSemester();
 
         ArrayList<ArrayList<Module>> planData = plan.getStudyPlan();
 
         for (int i = 0; i < planData.size(); i++) {
-            if (!sample && (i + 1 < current_semester)) {
+            if (!sample && (i + 1 < currentSemester)) {
                 System.out.println("Semester " + (i + 1) + " (Completed):");
             } else {
                 System.out.println("Semester " + (i + 1) + ":");
@@ -62,7 +73,6 @@ public class Ui {
 
             for (Module mod : semesterMods) {
                 String prereqsInfo = mod.getPrerequisitesDisplay();
-
                 System.out.println("  - " + mod.getModCode() + " (" + mod.getModName() + ")" + prereqsInfo);
             }
         }
@@ -181,6 +191,16 @@ public class Ui {
             return "None";
         }
 
+        if (node.isTextual()) {
+            String text = node.asText();
+            String cleaned = text.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
+            cleaned = cleaned.replaceAll("%", " (or any variant)");
+            if (cleaned.isEmpty()) {
+                return "None";
+            }
+            return cleaned;
+        }
+
         if (node.has("or")) {
             return prettifyArrayNode(node.get("or"), "OR");
         }
@@ -218,6 +238,11 @@ public class Ui {
             first = false;
         }
         result.append(")");
+
+        if (first) {
+            return "";
+        }
+
         return result.toString();
     }
 
@@ -238,7 +263,7 @@ public class Ui {
     }
 
     private boolean isValidModuleCode(String code) {
-        return code != null && code.matches("^[A-Z]{2,3}\\d{4}[A-Z]?$");
+        return code != null && code.matches("^[A-Z]{2,3}\\d{4}[A-Z]{0,2}$");
     }
 
     private boolean isBridgingModule(String code) {
@@ -267,3 +292,4 @@ public class Ui {
         }
     }
 }
+

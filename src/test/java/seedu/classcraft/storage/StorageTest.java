@@ -53,10 +53,13 @@ class StorageTest {
         Path path = Paths.get(TEST_FILE_PATH);
         assertTrue(Files.exists(path));
         var lines = Files.readAllLines(path);
-        assertEquals(8, lines.size());
+        assertEquals(9, lines.size());
+
         for (int i = 1; i <= 8; i++) {
             assertEquals(i + " -", lines.get(i - 1));
         }
+
+        assertEquals("SECURED -", lines.get(8));
     }
 
     @Test

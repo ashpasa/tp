@@ -28,6 +28,7 @@ public class ClassCraft {
         Ui ui = new Ui();
 
         StudyPlan currentStudyPlan = storage.restoreData(storage);
+        System.out.println("Data restored successfully from ./ClassCraftData/studyPlan.txt");
         Scanner in = new Scanner(System.in);
         String userInput;
 

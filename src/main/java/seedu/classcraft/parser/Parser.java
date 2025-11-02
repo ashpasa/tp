@@ -1,22 +1,22 @@
 package seedu.classcraft.parser;
 
+import seedu.classcraft.command.AddCommand;
+import seedu.classcraft.command.AddExemptedCommand;
+import seedu.classcraft.command.CalcCreditsCommand;
 import seedu.classcraft.command.CheckCommand;
 import seedu.classcraft.command.Command;
-import seedu.classcraft.command.AddCommand;
-import seedu.classcraft.command.CalcCreditsCommand;
-import seedu.classcraft.command.CurrentSemCommand;
-import seedu.classcraft.command.DeleteCommand;
 import seedu.classcraft.command.CommandList;
+import seedu.classcraft.command.DeleteCommand;
 import seedu.classcraft.command.ExitCommand;
 import seedu.classcraft.command.HelpCommand;
 import seedu.classcraft.command.InvalidCommand;
 import seedu.classcraft.command.PrereqCommand;
+import seedu.classcraft.command.SetCurrentSemCommand;
 import seedu.classcraft.command.SpecCommand;
-import seedu.classcraft.command.ViewSamplePlanCommand;
-import seedu.classcraft.command.ViewGradReqCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
-import seedu.classcraft.command.AddCompletedCommand;
+import seedu.classcraft.command.ViewGradReqCommand;
 import seedu.classcraft.command.ViewProgressCommand;
+import seedu.classcraft.command.ViewSamplePlanCommand;
 import seedu.classcraft.exceptions.EmptyInstruction;
 import seedu.classcraft.studyplan.ModuleStatus;
 import seedu.classcraft.ui.Ui;
@@ -40,6 +40,7 @@ public class Parser {
             Map.entry("help", 1),
             Map.entry("exit", 1),
             Map.entry("progress", 1),
+            Map.entry("check", 1),
             Map.entry("view", 2),
             Map.entry("plan", 2),
             Map.entry("add", 3),
@@ -48,8 +49,7 @@ public class Parser {
             Map.entry("spec", 2),
             Map.entry("prereq", 2),
             Map.entry("add-exempted", 2),
-            Map.entry("check", 1),
-            Map.entry("current_semester", 2)
+            Map.entry("set_current_sem", 2)
     );
 
 
@@ -69,7 +69,7 @@ public class Parser {
     public Parser(String userInput) {
         setLoggerLevel();
         assert userInput != null : "User input must not be null";
-        this.userInputString = userInput.trim(); //remove leading/trailing spaces
+        this.userInputString = userInput.trim();
         logger.log(Level.INFO, "Received user input: " + userInputString);
         parseInstructions();
     }
@@ -112,12 +112,6 @@ public class Parser {
 
             // @@author lingru (Start of changes for new commands)
             /*
-             * e.g. : add-completed CS1010
-             */
-            case "add-completed":
-                return parseAddWithStatus(ModuleStatus.COMPLETED, "add-completed");
-
-            /*
              * e.g. : add-exempted CS1231
              */
             case "add-exempted":
@@ -147,11 +141,14 @@ public class Parser {
             case "prereq":
                 String prereqModuleCode = parsePrereq();
                 return new PrereqCommand(prereqModuleCode);
+            case "set_current_sem":
+                int semesterToSet = parseSetCurrentSem();
+                if (semesterToSet == -1) {
+                    return new InvalidCommand();
+                }
+                return new SetCurrentSemCommand(semesterToSet);
             case "check":
                 return new CheckCommand();
-            case "current_semester":
-                String current_sem = parseCurrentSem();
-                return new CurrentSemCommand(current_sem);
             default:
                 return new InvalidCommand();
             }
@@ -176,6 +173,9 @@ public class Parser {
 
 
         instructions[0] = instructions[0].toLowerCase();
+        if (instructions[0].equals("set_current_sem")) {
+            instructions[0] = "set-current-sem";
+        }
 
         if (!isCommandFound(instructions)) {
             ui.showMessage("OOPS!!! I'm sorry, but I don't know what that means :-(\n" +
@@ -188,6 +188,7 @@ public class Parser {
             if (instructions.length == 1) {
                 if (!(instructions[0].equals("help") || instructions[0].equals("exit")
                         || instructions[0].equals("check")
+                        || instructions[0].equals("balance")
                         || instructions[0].equals("progress"))) {
                     throw new IllegalArgumentException("OOPS!!! The description of a " +
                             instructions[0] + " cannot be empty.");
@@ -208,6 +209,8 @@ public class Parser {
             } catch (EmptyInstruction e) {
                 ui.showMessage("OOPS!!! Too many arguments provided for command '" + commandType + "'.");
                 this.commandType = "invalid";
+            } catch (NullPointerException e) {
+                // This is expected if commandType is "invalid" or not in the map, do nothing.
             }
         } catch (EmptyInstruction | IllegalArgumentException e) {
             ui.showMessage(e.getMessage());
@@ -220,7 +223,6 @@ public class Parser {
      * Checks if the command is found in the CommandList enum.
      *
      * @param instructions Array of strings containing command and instructions,
-     *                     which checks the first element of the array.
      * @return boolean indicating if the command is found.
      */
     private boolean isCommandFound(String[] instructions) {
@@ -234,7 +236,9 @@ public class Parser {
      * Throws EmptyInstruction if the command is not valid.
      */
     private void handleSingleInstruction(String[] instructions) throws EmptyInstruction {
-        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("check")
+        if (!(instructions[0].equals("help") || instructions[0].equals("exit")
+                || instructions[0].equals("check") // from master
+                || instructions[0].equals("balance") // from bug-fixing
                 || instructions[0].equals("confirm") || instructions[0].equals("progress"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
             throw new EmptyInstruction(instructions[0]);
@@ -270,7 +274,6 @@ public class Parser {
      *
      * @return String array containing module code and semester information.
      */
-
     public String[] parseAdd() throws EmptyInstruction {
         String[] addModuleInformation = new String[2];
         String moduleCode = null;
@@ -495,7 +498,7 @@ public class Parser {
                 throw new EmptyInstruction("add");
             }
 
-            return new AddCompletedCommand(moduleCode, status);
+            return new AddExemptedCommand(moduleCode, status);
         } catch (Exception e) {
             ui.showMessage("Error: Invalid input format for '" + commandName
                     + "' (e.g. " + commandName + " CS1010).");
@@ -503,39 +506,25 @@ public class Parser {
         }
     }
 
-    public String parseCurrentSem() throws EmptyInstruction {
-        String currentSem;
+    // and setLoggerLevel from master. Discarded parseCurrentSem.
+    /**
+     * Parses the user input for set-current-sem command.
+     * Expects a single integer.
+     *
+     * @return int representing the semester, or -1 for error.
+     */
+    private int parseSetCurrentSem() {
         try {
-
-            String semester = userInstructions.trim();
-
-            if (semester.isEmpty()) {
-                logger.log(Level.WARNING, "Missing semester for current_semester command.");
-                ui.showMessage("Missing semester for current_semester command.");
-                throw new EmptyInstruction("current_semester");
+            int semester = Integer.parseInt(userInstructions.trim());
+            if (semester < 1 || semester > 8) {
+                ui.showMessage("Error: Semester number must be between 1 and 8.");
+                return -1;
             }
-
-            if (!(semester.matches("^[a-zA-Z0-9]+$"))) {
-                logger.log(Level.WARNING, "Invalid format for current_semester command, " +
-                        "may contain non-alphanumeric characters.");
-                ui.showMessage("Invalid format for current_semester command, " +
-                        "may contain non-alphanumeric characters.");
-                throw new EmptyInstruction("current_semester");
-            }
-
-            if (Integer.parseInt(semester) < 1 || Integer.parseInt(semester) > 8) {
-                logger.log(Level.WARNING, "Semester for current_semester command out of range.");
-                ui.showMessage("Semester for current_semester command out of range.");
-                throw new EmptyInstruction("current_semester");
-            }
-
-            currentSem = semester;
-
-        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
-            logger.log(Level.WARNING, "Error parsing current_semester command - Incorrect format " + e.getMessage());
-            throw new EmptyInstruction("current_semester");
+            return semester;
+        } catch (NumberFormatException e) {
+            ui.showMessage("Error: Invalid format. Please enter a number (e.g., set-current-sem 3).");
+            return -1;
         }
-        return currentSem;
     }
 
     /**
