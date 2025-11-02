@@ -381,7 +381,7 @@ class UiTest {
 
         String output = outContent.toString();
         assertTrue(output.contains("CS2040"));
-        assertTrue(output.contains("Prereqs: CS1010"));
+        assertTrue(output.contains("Prerequisites: CS1010"));
     }
 
     @Test
