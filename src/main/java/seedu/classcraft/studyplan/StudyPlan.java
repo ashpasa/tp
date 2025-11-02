@@ -1,11 +1,13 @@
 package seedu.classcraft.studyplan;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.storage.Storage;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -181,20 +183,13 @@ public class StudyPlan {
 
         Module newModule = moduleHandler.createModule(moduleCode);
 
-        try {
-            PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
-        } catch (StudyPlanException e) {
-            LOGGER.info("Prerequisite validation failed for " + moduleCode
-                    + " in semester " + semester + ": " + e.getMessage());
-            throw e;
-        }
+        PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
 
         if (isModAddedPrev) {
             storage.deleteModule(moduleCode, previousSemester);
         }
 
         addModule(newModule, semester);
-
         if (!isRestored) {
             storage.appendToFile(moduleCode, semester);
         }
@@ -212,6 +207,13 @@ public class StudyPlan {
         if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
             LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
             throw new StudyPlanException("Module " + moduleString + " does not exist");
+        }
+
+        List<String> dependentModules = checkForDependentModules(moduleString);
+        if (!dependentModules.isEmpty()) {
+            throw new StudyPlanException("Cannot delete " + moduleString + " because it is a prerequisite for: " +
+                    String.join(", ", dependentModules) + "\n\n" +
+                    "Please delete those modules first before deleting " + moduleString + ".");
         }
 
         if (modules.containsKey(moduleString)) {
@@ -233,6 +235,104 @@ public class StudyPlan {
             storage.deleteSecuredModule(moduleString);
             LOGGER.info("Removed " + moduleString + " from completed modules list.");
         }
+
+    }
+
+    /**
+     * Checks if the given module is a prerequisite for any other module in the study plan.
+     * Returns a list of modules that depend on the given module.
+     *
+     * @param moduleCode The module code to check
+     * @return List of dependent modules that have this module as a prerequisite
+     */
+    private List<String> checkForDependentModules(String moduleCode) {
+        List<String> dependentModules = new ArrayList<>();
+
+        for (Module module : getAllModules()) {
+            if (module.getModCode().equals(moduleCode)) {
+                continue;
+            }
+
+            if (isModuleDependentOn(module, moduleCode)) {
+                dependentModules.add(module.getModCode());
+            }
+        }
+        return dependentModules;
+    }
+
+    /**
+     * Checks if a module is dependent on another module as a prerequisite
+     */
+    private boolean isModuleDependentOn(Module module, String moduleCode) {
+        if (hasPrerequisiteInList(module.getPrerequisites(), moduleCode)) {
+            return true;
+        }
+
+        return hasPrerequisiteInTree(module.getPrereqTree(), moduleCode);
+    }
+
+    /**
+     * Checks if a prerequisite list contains the given module code
+     */
+    private boolean hasPrerequisiteInList(List<String> prerequisites, String moduleCode) {
+        if (prerequisites == null) {
+            return false;
+        }
+
+        return prerequisites.stream()
+                .anyMatch(prereq -> isPrerequisiteMatch(moduleCode, prereq));
+    }
+
+    /**
+     * Checks if a prereqTree (JsonNode) contains the given module code
+     */
+    private boolean hasPrerequisiteInTree(JsonNode prereqTree, String moduleCode) {
+        if (prereqTree == null || prereqTree.isNull() || !prereqTree.isTextual()) {
+            return false;
+        }
+
+        String prereqText = prereqTree.asText();
+        return isPrerequisiteMatch(moduleCode, prereqText);
+    }
+
+    /**
+     * Checks if moduleCode satisfies the prerequisite requirement.
+     * Handles both exact matches and wildcard patterns like "CS1010%"
+     *
+     * @param moduleCode The module code to check (e.g., "CS1010")
+     * @param prereq     The prerequisite requirement (e.g., "CS1010" or "CS1010%")
+     * @return true if moduleCode matches the prerequisite
+     */
+    private boolean isPrerequisiteMatch(String moduleCode, String prereq) {
+        String cleanPrereq = prereq.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
+
+        if (moduleCode.equals(cleanPrereq)) {
+            return true;
+        }
+
+        if (cleanPrereq.contains("%")) {
+            String baseCode = cleanPrereq.replace("%", "");
+            return moduleCode.startsWith(baseCode);
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets all modules in the study plan (both planned and completed)
+     *
+     * @return List of all modules
+     */
+    private List<Module> getAllModules() {
+        List<Module> allModules = new ArrayList<>();
+
+        for (ArrayList<Module> semester : studyPlan) {
+            allModules.addAll(semester);
+        }
+
+        allModules.addAll(completedModulesList);
+
+        return allModules;
     }
 
     /**

@@ -38,7 +38,7 @@ public class ModuleHandler {
      * @param moduleCode The module code of the module to be created.
      * @return The created Module object.
      */
-    public Module createModule(String moduleCode) throws Exception {
+    public Module createModule(String moduleCode) throws NUSmodsFetcherException {
         String modName = "placeholder";
         int modCreds = 0;
         String modDescription = "placeholder";
@@ -57,7 +57,6 @@ public class ModuleHandler {
 
         try {
             JsonNode rootJson = NUSmodsFetcher.fetchModuleJson(moduleCode);
-
             JsonNode prerequisiteNode = rootJson.get("prereqTree");
 
             if (prerequisiteNode != null && !prerequisiteNode.isNull()) {
