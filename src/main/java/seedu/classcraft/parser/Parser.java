@@ -1,9 +1,10 @@
 package seedu.classcraft.parser;
 
-import seedu.classcraft.command.BalanceCommand;
+import seedu.classcraft.command.CheckCommand;
 import seedu.classcraft.command.Command;
 import seedu.classcraft.command.AddCommand;
 import seedu.classcraft.command.CalcCreditsCommand;
+import seedu.classcraft.command.CurrentSemCommand;
 import seedu.classcraft.command.DeleteCommand;
 import seedu.classcraft.command.CommandList;
 import seedu.classcraft.command.ExitCommand;
@@ -19,6 +20,8 @@ import seedu.classcraft.command.ViewProgressCommand;
 import seedu.classcraft.exceptions.EmptyInstruction;
 import seedu.classcraft.studyplan.ModuleStatus;
 
+import java.net.URL;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +44,7 @@ public class Parser {
      * @param userInput The full user input string.
      */
     public Parser(String userInput) {
+        setLoggerLevel();
         assert userInput != null : "User input must not be null";
         this.userInputString = userInput.stripLeading();
         logger.log(Level.INFO, "Received user input: " + userInputString);
@@ -120,8 +124,11 @@ public class Parser {
             case "prereq":
                 String prereqModuleCode = parsePrereq();
                 return new PrereqCommand(prereqModuleCode);
-            case "balance":
-                return new BalanceCommand();
+            case "check":
+                return new CheckCommand();
+            case "current_semester":
+                String current_sem = parseCurrentSem();
+                return new CurrentSemCommand(current_sem);
             default:
                 return new InvalidCommand();
             }
@@ -152,7 +159,7 @@ public class Parser {
         try {
             if (instructions.length == 1) {
                 if (!(instructions[0].equals("help") || instructions[0].equals("exit")
-                        || instructions[0].equals("balance")
+                        || instructions[0].equals("check")
                         || instructions[0].equals("progress"))) {
                     throw new IllegalArgumentException("OOPS!!! The description of a " +
                             instructions[0] + " cannot be empty.");
@@ -186,7 +193,7 @@ public class Parser {
      * Throws EmptyInstruction if the command is not valid.
      */
     private void handleSingleInstruction(String[] instructions) throws EmptyInstruction {
-        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("balance")
+        if (!(instructions[0].equals("help") || instructions[0].equals("exit") || instructions[0].equals("check")
                 || instructions[0].equals("confirm") || instructions[0].equals("progress"))) {
             logger.log(Level.WARNING, "Detected empty description for command: " + instructions[0]);
             throw new EmptyInstruction(instructions[0]);
@@ -314,6 +321,7 @@ public class Parser {
     }
 
     // @@author ashpasa
+
     /**
      * Parses the user input for mc command.
      * Expects either a semester number or "total".
@@ -421,6 +429,60 @@ public class Parser {
             System.out.println("Error: Invalid input format for '" + commandName
                     + "' (e.g. " + commandName + " CS1010).");
             return new InvalidCommand();
+        }
+    }
+
+    public String parseCurrentSem() throws EmptyInstruction {
+        String currentSem;
+        try {
+
+            String[] currentSemInstructions = userInstructions.split("s/", 2);
+
+            if (currentSemInstructions.length < 2) {
+                logger.log(Level.WARNING, "Missing semester for current_semester command.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            String semester = currentSemInstructions[1].trim();
+
+            if (semester.isEmpty()) {
+                logger.log(Level.WARNING, "Missing semester for current_semester command.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            if (!(semester.matches("^[a-zA-Z0-9]+$"))) {
+                logger.log(Level.WARNING, "Invalid format for current_semester command, " +
+                        "may contain non-alphanumeric characters.");
+                throw new EmptyInstruction("current_semester");
+            }
+
+            currentSem = semester;
+
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            logger.log(Level.WARNING, "Error parsing current_semester command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("current_semester");
+        }
+        return currentSem;
+    }
+
+    /**
+     * Sets logger level depending on how the program is run.
+     * When running from a jar file, it disables logging.
+     * Otherwise, when running from an IDE, it displays all logging messages.
+     */
+    public void setLoggerLevel() {
+        String className = "/" + this.getClass().getName().replace('.', '/') + ".class";
+        URL resource = this.getClass().getResource(className);
+
+        if (resource == null) {
+            return;
+        }
+
+        String protocol = resource.getProtocol();
+        if (Objects.equals(protocol, "jar")) {
+            logger.setLevel(Level.OFF);
+        } else if (Objects.equals(protocol, "file")) {
+            logger.setLevel(Level.ALL);
         }
     }
 }
