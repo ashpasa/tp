@@ -1,7 +1,6 @@
 package seedu.classcraft.command;
 
 
-import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
