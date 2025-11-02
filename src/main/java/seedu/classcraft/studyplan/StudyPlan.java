@@ -3,7 +3,6 @@ package seedu.classcraft.studyplan;
 import com.fasterxml.jackson.databind.JsonNode;
 import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.storage.Storage;
-import seedu.classcraft.ui.Ui;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ public class StudyPlan {
     // @@author
 
     private ModuleHandler moduleHandler;
-    private Ui ui = new Ui();
 
     public StudyPlan(int totalSemesters) {
         setLoggerLevel();
@@ -62,6 +60,7 @@ public class StudyPlan {
         // @@author lingru
         this.completedModulesList = new ArrayList<>();
         this.completedModulesMap = new HashMap<>();
+        this.currentSemester = 1;
         // @@author
     }
 
@@ -71,6 +70,49 @@ public class StudyPlan {
 
     public static void setCurrentSemester(int currentSemester) {
         StudyPlan.currentSemester = currentSemester;
+    }
+
+    /**
+     * Sets the current semester.
+     * Moves all modules *before* this semester to COMPLETED status
+     * and updates storage accordingly.
+     *
+     * @param newCurrentSemester The semester to set as current (1-based).
+     * @param storage            Storage handler for persistence.
+     * @return The number of modules moved to COMPLETED.
+     * @throws StudyPlanException If semester is invalid.
+     */
+    public int setCurrentSemester(int newCurrentSemester, Storage storage) throws StudyPlanException {
+        if (newCurrentSemester < 1 || newCurrentSemester > studyPlan.size()) {
+            throw new StudyPlanException("Semester " + newCurrentSemester + " is invalid. " +
+                    "Must be between 1 and " + studyPlan.size());
+        }
+
+        this.currentSemester = newCurrentSemester;
+        int modulesCompletedCount = 0;
+
+        for (int i = 0; i < newCurrentSemester - 1; i++) {
+            ArrayList<Module> semesterModules = studyPlan.get(i);
+            int currentSemesterNumber = i + 1;
+
+            for (int j = semesterModules.size() - 1; j >= 0; j--) {
+                Module mod = semesterModules.get(j);
+
+                semesterModules.remove(j);
+                modules.remove(mod.getModCode());
+
+                mod.setStatus(ModuleStatus.COMPLETED);
+                completedModulesList.add(mod);
+                completedModulesMap.put(mod.getModCode(), mod);
+
+                storage.saveSecuredModule(mod);
+                // Delete from planned line
+                storage.deleteModule(mod.getModCode(), currentSemesterNumber);
+
+                modulesCompletedCount++;
+            }
+        }
+        return modulesCompletedCount;
     }
 
     public static int getTotalSemesters() {
@@ -161,11 +203,9 @@ public class StudyPlan {
      * @param moduleString The module code to be removed.
      * @param storage      Storage object for persistence.
      */
-
     public void removeModule(String moduleString, Storage storage) throws StudyPlanException {
         if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
             LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
-            ui.showMessage(moduleString + " does not exist in your study plan.");
             throw new StudyPlanException("Module " + moduleString + " does not exist");
         }
 
@@ -192,6 +232,7 @@ public class StudyPlan {
             Module modToRemove = completedModulesMap.get(moduleString);
             completedModulesList.remove(modToRemove);
             completedModulesMap.remove(moduleString);
+            storage.deleteSecuredModule(moduleString);
             LOGGER.info("Removed " + moduleString + " from completed modules list.");
         }
 
@@ -298,35 +339,60 @@ public class StudyPlan {
      * @author lingru
      * @param moduleCode The code of the module to add.
      * @param status     The status (COMPLETED or EXEMPTED).
+     * @param storage    Storage handler added.
+     * @param isRestored Flag to prevent re-saving on load.
      * @throws Exception If module fetching fails or module is already in the plan.
-     *                   Adds a module that is already completed or exempted to the study plan.
      */
-    public void addCompletedModule(String moduleCode, ModuleStatus status) throws Exception {
+
+    public void addCompletedModule(String moduleCode, ModuleStatus status,
+                                   Storage storage, boolean isRestored) throws Exception {
         if (status == ModuleStatus.PLANNED) {
             throw new IllegalArgumentException("Use addModule() for planned modules.");
         }
 
-        // Check if already exists in PLANNED modules
-        if (modules.containsKey(moduleCode)) {
-            throw new StudyPlanException("Module " + moduleCode
-                    + " is already PLANNED in Semester " + modules.get(moduleCode));
-        }
-
-        // Check if already exists in COMPLETED/EXEMPTED modules
         if (completedModulesMap.containsKey(moduleCode)) {
+            if (isRestored) {
+                return;
+            }
             throw new StudyPlanException("Module " + moduleCode + " is already marked as "
                     + completedModulesMap.get(moduleCode).getStatus());
         }
 
-        // Fetch module data
-        Module newModule = moduleHandler.createModule(moduleCode);
+        Module moduleToMove = null;
+        boolean wasMoved = false;
+        Integer sem = 0;
 
-        // Set the correct status
-        newModule.setStatus(status);
+        if (modules.containsKey(moduleCode)) {
+            LOGGER.info("Module " + moduleCode + " is PLANNED. Moving it to " + status.toString());
+            sem = modules.get(moduleCode);
+            ArrayList<Module> semesterList = studyPlan.get(sem - 1);
 
-        // Add to the completed lists
-        completedModulesList.add(newModule);
-        completedModulesMap.put(moduleCode, newModule);
+            for (int i = 0; i < semesterList.size(); i++) {
+                if (Objects.equals(semesterList.get(i).getModCode(), moduleCode)) {
+                    moduleToMove = semesterList.remove(i);
+                    wasMoved = true;
+                    break;
+                }
+            }
+
+            modules.remove(moduleCode);
+        }
+
+
+        if (moduleToMove == null) {
+            moduleToMove = moduleHandler.createModule(moduleCode);
+        }
+
+        moduleToMove.setStatus(status);
+        completedModulesList.add(moduleToMove);
+        completedModulesMap.put(moduleCode, moduleToMove);
+
+        if (!isRestored) {
+            storage.saveSecuredModule(moduleToMove);
+            if (wasMoved) {
+                storage.deleteModule(moduleCode, sem);
+            }
+        }
 
         LOGGER.info("Added " + moduleCode + " as " + status.toString());
     }
@@ -334,7 +400,6 @@ public class StudyPlan {
     /**
      * @author lingru
      * @return The progress percentage, rounded to two decimal places.
-     *                   calculates the student's degree progress percentage.
      */
     public double getDegreeProgressPercentage() {
         if (TOTAL_MCS_FOR_GRADUATION <= 0) {
@@ -351,9 +416,22 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
+     * @return The HashMap of completed/exempted modules.
+     */
+    public HashMap<String, Module> getCompletedModulesMap() {
+        return completedModulesMap;
+    }
+
+    /**
+     * @return The ArrayList of completed/exempted modules.
+     */
+    public ArrayList<Module> getCompletedModulesList() {
+        return completedModulesList;
+    }
+
+    /**
+     * @@author lingru
      * @return Total secured MCs.
-     *                   Gets the total number of secured MCs (from completed/exempted modules).
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -366,7 +444,6 @@ public class StudyPlan {
     /**
      * @author lingru
      * @return Total required MCs.
-     *                   Gets the total MCs required for graduation.
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
@@ -376,7 +453,6 @@ public class StudyPlan {
      * @author lingru
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
-     *                   Helper method to check if a module exists anywhere in the plan (planned or completed).
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || completedModulesMap.containsKey(moduleCode);
@@ -415,7 +491,7 @@ public class StudyPlan {
             samplePlan.addModule(ee2026, 2);
 
             // Semester 3
-            Module cs2040s = handler.createModule("CS2040C");
+            Module cs2040s = handler.createModule("CS2040S");
             samplePlan.addModule(cs2040s, 3);
 
             // Add other core/sample modules for Semesters 3 to 8 (to be added)
@@ -472,17 +548,20 @@ public class StudyPlan {
 
     /**
      * Calculates the total module credits in the entire study plan.
-     *
+     * This now includes BOTH planned and secured (completed/exempted) modules.
      * @return Total credits for the entire study plan
      */
     private int calculateTotalCredits() {
-        int totalCredits = 0;
+        int totalPlannedCredits = 0;
         for (int i = 0; i < studyPlan.size(); i++) {
             int semCreds = calculateSemCredits(i);
             assert semCreds >= 0 : "Semester credits should be non-negative.";
-            totalCredits += semCreds;
+            totalPlannedCredits += semCreds;
         }
-        return totalCredits;
+
+        int totalSecuredCredits = getTotalSecuredMCs();
+
+        return totalPlannedCredits + totalSecuredCredits;
     }
     // @@author
 
@@ -533,3 +612,4 @@ public class StudyPlan {
         }
     }
 }
+

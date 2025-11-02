@@ -1,7 +1,7 @@
 package seedu.classcraft.storage;
 
 import seedu.classcraft.studyplan.StudyPlan;
-import seedu.classcraft.ui.Ui;
+import seedu.classcraft.studyplan.Module;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,6 @@ public class Storage {
 
     private static Logger logger = Logger.getLogger(Storage.class.getName());
     private String dataFile;
-    private Ui ui = new Ui();
 
     /**
      * Constructor for Storage class.
@@ -59,7 +58,7 @@ public class Storage {
             lines.set(semester - 1, updatedLine);
             Files.write(filePath, lines);
         } catch (IOException e) {
-            ui.showMessage("Oh no! I was not able to update the file with the module " + e.getMessage());
+            System.out.println("Oh no! I was not able to update the file: " + e.getMessage());
         }
 
     }
@@ -86,20 +85,19 @@ public class Storage {
         }
 
         try {
-            if (f.createNewFile()) {
-                System.out.println("Yay! A file has been created successfully.");
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
-                    logger.log(Level.INFO, "Initializing new data file with semester headers.");
-                    for (int i = 1; i <= 8; i++) {
-                        bw.write(i + " -");
-                        bw.newLine();
-                    }
-                }
-            }
-        } catch (IOException e) {
-            ui.showMessage(" :{ an error occurred while creating the file: " + e.getMessage());
-        }
+            boolean fileExisted = !f.createNewFile();
 
+            if (!fileExisted) {
+                System.out.println("Yay! A file has been created successfully.");
+                initializeFile(f);
+            } else if (f.length() == 0) {
+                logger.log(Level.WARNING, "Data file exists but is empty. Re-initializing.");
+                initializeFile(f);
+            }
+
+        } catch (IOException e) {
+            System.out.println(" :{ an error occurred while creating/checking the file: " + e.getMessage());
+        }
     }
 
 
@@ -122,16 +120,15 @@ public class Storage {
             lines.set(semester - 1, updatedLine);
             Files.write(filePath, lines);
         } catch (IOException e) {
-            ui.showMessage("Oh no! I was not able to update the file: " + e.getMessage());
+            System.out.println("Oh no! I was not able to update the file: " + e.getMessage());
         }
 
     }
 
-
     /**
      * Restores study plan data from the data file.
-     * Creates a StudyPlan object and populates it with data read from the file.
-     * If the file format is invalid, it recreates the file and returns an empty StudyPlan.
+     * Pass 1: Loads SECURED modules (prerequisites)
+     * Pass 2: Loads PLANNED modules (semesters)
      *
      * @param storage The storage handler to read/write data.
      * @return A StudyPlan object populated with the restored data.
@@ -139,138 +136,167 @@ public class Storage {
     public StudyPlan restoreData(Storage storage) {
         int totalSemesters = 8;
         StudyPlan studyPlan = new StudyPlan(totalSemesters);
-        Path filePath = Paths.get(dataFile);
-
         try {
-            if (isFileFormatInvalid(filePath)) {
-                recreateFile(filePath);
-                return new StudyPlan(totalSemesters);
+            Path filePath = Paths.get(dataFile);
+            List<String> lines = Files.readAllLines(filePath);
+
+            for (String line : lines) {
+                String[] restorationParts = line.split("-");
+                if (restorationParts.length < 2) {
+                    continue;
+                }
+
+                String lineType = restorationParts[0].trim();
+                String modulesPart = restorationParts[1].trim();
+
+                if (modulesPart.isEmpty() || !lineType.equals("SECURED")) {
+                    continue;
+                }
+
+                String[] modules = modulesPart.split(",");
+                for (String moduleData : modules) {
+                    String moduleInfo = moduleData.trim();
+                    if (moduleInfo.isEmpty()) {
+                        continue;
+                    }
+
+                    try {
+                        String[] parts = moduleInfo.split(":");
+                        String moduleCode = parts[0];
+                        seedu.classcraft.studyplan.ModuleStatus status =
+                                seedu.classcraft.studyplan.ModuleStatus.valueOf(parts[1]);
+
+                        studyPlan.addCompletedModule(moduleCode, status, storage, true);
+
+                    } catch (Exception e) {
+                        logger.log(Level.WARNING, "Failed to restore secured module "
+                                + moduleInfo + ": " + e.getMessage());
+                    }
+                }
+                break;
             }
-            populateStudyPlan(filePath, studyPlan, storage);
-            System.out.println("Data restored successfully from " + dataFile);
+
+            for (String line : lines) {
+                String[] restorationParts = line.split("-");
+                if (restorationParts.length < 2) {
+                    continue;
+                }
+
+                String lineType = restorationParts[0].trim();
+                String modulesPart = restorationParts[1].trim();
+
+                if (modulesPart.isEmpty() || lineType.equals("SECURED")) {
+                    continue;
+                }
+
+                try {
+                    int semester = Integer.parseInt(lineType);
+                    String[] modules = modulesPart.split(",");
+                    for (String module : modules) {
+                        String moduleCode = module.trim();
+                        if (!moduleCode.isEmpty()) {
+                            studyPlan.addModule(moduleCode, semester, storage, true);
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    logger.log(Level.WARNING, "Skipping invalid line in data file: " + line);
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "Error while restoring planned module: " + e.getMessage(), e);
+                }
+            }
+
         } catch (IOException e) {
             logger.log(Level.WARNING, "Failed to read the data file: " + e.getMessage());
-            ui.showMessage("Oh no! I was not able to read the file: " + e.getMessage());
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Error while restoring data: " + e.getMessage());
-            throw new RuntimeException(e);
+            System.out.println("Oh no! I was not able to read the file: " + e.getMessage());
         }
         return studyPlan;
     }
 
 
-    private boolean isFileFormatInvalid(Path filePath) {
+    /**
+     * Helper method to write initial semester headers to a file.
+     *
+     * @param f The file to write to.
+     * @throws IOException If writing fails.
+     */
+    private void initializeFile(File f) throws IOException {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
+            logger.log(Level.INFO, "Initializing new data file with semester headers.");
+            for (int i = 1; i <= 8; i++) {
+                bw.write(i + " -");
+                bw.newLine();
+            }
+            bw.write("SECURED -");
+            bw.newLine();
+        }
+    }
+
+    /**
+     * Appends a secured module to the data file.
+     * Stores in the format "MODCODE:STATUS,"
+     *
+     * @param module The module to save.
+     */
+    public void saveSecuredModule(Module module) {
+        Path filePath = Paths.get(dataFile);
+        String moduleEntry = module.getModCode() + ":" + module.getStatus().toString() + ",";
         try {
             List<String> lines = Files.readAllLines(filePath);
-            if (lines.size() != 8) {
-                ui.showMessage("File has incorrect number of lines.\n" +
-                        "File format is invalid. Recreating a new file.");
-                return true;
-            }
 
+            int securedLineIndex = -1;
             for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i);
-                String[] restorationParts;
-                int countDash = line.length() - line.replace("-", "").length();
-                if (countDash > 1) {
-                    ui.showMessage("Line " + (i + 1) + " has multiple dashes.\n" +
-                            "File format is invalid. Recreating a new file.");
-                    return true;
+                if (lines.get(i).trim().startsWith("SECURED -")) {
+                    securedLineIndex = i;
+                    break;
                 }
-                if (countDash == 0) {
-                    ui.showMessage("Line " + (i + 1) + " is missing a dash.\n" +
-                            "File format is invalid. Recreating a new file.");
-                    return true;
-                }
-                restorationParts = line.split("-", 2);
-                if (restorationParts.length != 2) {
-                    ui.showMessage("Line " + (i + 1) + " is not properly formatted.\n +" +
-                            "File format is invalid. Recreating a new file.");
-                    return true;
-                }
-
-                String semesterStr = restorationParts[0].trim();
-                int expectedSemester = i + 1;
-                int actualSemester;
-                try {
-                    actualSemester = Integer.parseInt(semesterStr);
-                } catch (NumberFormatException e) {
-                    ui.showMessage("Semester number in line " + (i + 1) + " is not a valid integer.\n" +
-                            "File format is invalid. Recreating a new file.");
-                    return true;
-                }
-                if (actualSemester != expectedSemester) {
-                    ui.showMessage("Semester number in line " + (i + 1) + " is incorrect.\n" +
-                            "File format is invalid. Recreating a new file.");
-                    return true;
-                }
-
-                String[] modules = restorationParts[1].split(",");
-                for (String module : modules) {
-                    module = module.trim();
-                    if (module.split(" ").length > 1) {
-                        ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
-                                " contains invalid spaces.\n" +
-                                "File format is invalid. Recreating a new file.");
-                        return true;
-                    }
-                }
-
-                if (!restorationParts[1].matches("^[a-zA-Z0-9,\\s]*$")) {
-                    ui.showMessage("Line " + (i + 1) + " contains invalid characters.\n" +
-                            "File format is invalid. Recreating a new file.");
-                    return true;
-                }
-
             }
+
+            if (securedLineIndex == -1) {
+                lines.add("SECURED - " + moduleEntry);
+            } else {
+                String line = lines.get(securedLineIndex);
+                String updatedLine = line.concat(" " + moduleEntry);
+                lines.set(securedLineIndex, updatedLine);
+            }
+
+            Files.write(filePath, lines);
+
         } catch (IOException e) {
-            logger.log(Level.WARNING, "File format is incorrect " + e.getMessage());
-            ui.showMessage("Oh no! I was not able to read the file: " + e.getMessage() +
-                    "\nFile format is invalid. Recreating a new file.");
-            return true;
+            System.out.println("Oh no! I was not able to update the file with secured module: " + e.getMessage());
         }
-        return false;
     }
 
-
-    private void recreateFile(Path filePath) throws IOException {
-        Files.deleteIfExists(filePath);
-        createFile();
-    }
-
-
-    private void populateStudyPlan(Path filePath, StudyPlan studyPlan, Storage storage) {
-
+    /**
+     * Deletes a secured module from the data file.
+     *
+     * @param moduleToDelete The module code to delete.
+     */
+    public void deleteSecuredModule(String moduleToDelete) {
+        Path filePath = Paths.get(dataFile);
         try {
             List<String> lines = Files.readAllLines(filePath);
-            for (String line : lines) {
-                String[] restorationParts = line.trim().split("-");
-                int semester = Integer.parseInt(restorationParts[0].trim());
-                if (restorationParts.length == 1) {
-                    continue;
+            int securedLineIndex = -1;
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).trim().startsWith("SECURED -")) {
+                    securedLineIndex = i;
+                    break;
                 }
-                String modulesPart = restorationParts[1].trim();
-
-                String[] modules = modulesPart.split(",");
-                for (String module : modules) {
-                    if (module.isEmpty() || module.equals(" ")) {
-                        continue;
-                    }
-                    String moduleCode = module.trim();
-                    if (!(moduleCode.isEmpty() && moduleCode.matches("^[a-zA-Z0-9]+$"))) {
-                        studyPlan.addModule(moduleCode, semester, storage, true);
-                    }
-                }
-
             }
 
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Failed to populate study plan: " + e.getMessage());
-            ui.showMessage("Oh no! I was not able to read the file: " + e.getMessage());
+            if (securedLineIndex != -1) {
+                String line = lines.get(securedLineIndex);
+
+                String updatedLine = line.replace(" " + moduleToDelete + ":" + "COMPLETED" + ",", "");
+                updatedLine = updatedLine.replace(" " + moduleToDelete + ":" + "EXEMPTED" + ",", "");
+
+                lines.set(securedLineIndex, updatedLine);
+                Files.write(filePath, lines);
+            }
+
+        } catch (IOException e) {
+            System.out.println("Oh no! I was not able to update the file (delete secured): " + e.getMessage());
         }
-
     }
-
 
     /**
      * Sets logger level depending on how the program is run.

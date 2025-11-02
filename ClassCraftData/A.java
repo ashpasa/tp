@@ -1,0 +1,1 @@
+add-exempted cs1010
