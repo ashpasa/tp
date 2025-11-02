@@ -88,7 +88,7 @@ public class Storage {
             boolean fileExisted = !f.createNewFile();
 
             if (!fileExisted) {
-                System.out.println("Yay! A file created successfully.");
+                System.out.println("Yay! A file has been created successfully.");
                 initializeFile(f);
             } else if (f.length() == 0) {
                 logger.log(Level.WARNING, "Data file exists but is empty. Re-initializing.");
