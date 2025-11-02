@@ -4,6 +4,10 @@ import seedu.classcraft.storage.Storage;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.ui.Ui;
 
+
+/**
+ * CheckCommand class representing the command to check for semesters with high workload.
+ */
 public class CheckCommand extends Command {
     public CheckCommand() {
         super();
