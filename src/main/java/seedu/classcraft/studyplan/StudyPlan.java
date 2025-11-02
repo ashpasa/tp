@@ -169,12 +169,12 @@ public class StudyPlan {
             throw new StudyPlanException("Module " + moduleString + " does not exist");
         }
 
-            List<String> dependentModules = checkForDependentModules(moduleString);
-            if (!dependentModules.isEmpty()) {
-                throw new StudyPlanException("Cannot delete " + moduleString + " because it is a prerequisite for: " +
-                        String.join(", ", dependentModules) + "\n\n" +
-                        "Please delete those modules first before deleting " + moduleString + ".");
-            }
+        List<String> dependentModules = checkForDependentModules(moduleString);
+        if (!dependentModules.isEmpty()) {
+            throw new StudyPlanException("Cannot delete " + moduleString + " because it is a prerequisite for: " +
+                    String.join(", ", dependentModules) + "\n\n" +
+                    "Please delete those modules first before deleting " + moduleString + ".");
+        }
 
         if (modules.containsKey(moduleString)) {
             Integer sem = modules.get(moduleString);
@@ -259,7 +259,7 @@ public class StudyPlan {
      * Handles both exact matches and wildcard patterns like "CS1010%"
      *
      * @param moduleCode The module code to check (e.g., "CS1010")
-     * @param prereq The prerequisite requirement (e.g., "CS1010" or "CS1010%")
+     * @param prereq     The prerequisite requirement (e.g., "CS1010" or "CS1010%")
      * @return true if moduleCode matches the prerequisite
      */
     private boolean isPrerequisiteMatch(String moduleCode, String prereq) {
@@ -295,11 +295,11 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
      * @param moduleCode The code of the module to add.
      * @param status     The status (COMPLETED or EXEMPTED).
      * @throws Exception If module fetching fails or module is already in the plan.
      *                   Adds a module that is already completed or exempted to the study plan.
+     * @author lingru
      */
     public void addCompletedModule(String moduleCode, ModuleStatus status) throws Exception {
         if (status == ModuleStatus.PLANNED) {
@@ -332,9 +332,9 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
      * @return The progress percentage, rounded to two decimal places.
-     *                   calculates the student's degree progress percentage.
+     * calculates the student's degree progress percentage.
+     * @author lingru
      */
     public double getDegreeProgressPercentage() {
         if (TOTAL_MCS_FOR_GRADUATION <= 0) {
@@ -351,9 +351,9 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
      * @return Total secured MCs.
-     *                   Gets the total number of secured MCs (from completed/exempted modules).
+     * Gets the total number of secured MCs (from completed/exempted modules).
+     * @author lingru
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -364,19 +364,19 @@ public class StudyPlan {
     }
 
     /**
-     * @author lingru
      * @return Total required MCs.
-     *                   Gets the total MCs required for graduation.
+     * Gets the total MCs required for graduation.
+     * @author lingru
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
     }
 
     /**
-     * @author lingru
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
-     *                   Helper method to check if a module exists anywhere in the plan (planned or completed).
+     * Helper method to check if a module exists anywhere in the plan (planned or completed).
+     * @author lingru
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || completedModulesMap.containsKey(moduleCode);

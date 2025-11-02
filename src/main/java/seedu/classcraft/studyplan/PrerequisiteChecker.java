@@ -63,8 +63,8 @@ public class PrerequisiteChecker {
                 prereqString = prettifyPrereqTree(prereqTree);
             }
 
-            throw new StudyPlanException("Cannot add " + module.getModCode() + " to semester " + targetSemester + ".\n" +
-                    "Required prerequisites: " + prereqString + "\n\n" +
+            throw new StudyPlanException("Cannot add " + module.getModCode() + " to semester " + targetSemester +
+                    ".\n" + "Required prerequisites: " + prereqString + "\n\n" +
                     "You have not completed any prerequisite modules in earlier semesters.\n\n" +
                     "Please add the required prerequisite modules to an earlier semester first.");
         }
