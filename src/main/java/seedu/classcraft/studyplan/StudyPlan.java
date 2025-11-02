@@ -68,6 +68,11 @@ public class StudyPlan {
             throw new IllegalArgumentException("Semester " + semester + " is invalid.");
         }
 
+        if (modules.containsKey(module.getModCode())) {
+            throw new IllegalArgumentException("Module " + module.getModCode()
+                    + " is already PLANNED in Semester " + modules.get(module.getModCode()));
+        }
+
         // @@author lingru
         // Check if module is already marked as completed/exempted
         if (completedModulesMap.containsKey(module.getModCode())) {
@@ -108,7 +113,7 @@ public class StudyPlan {
         if (isModAddedPrev) {
             previousSemester = modules.get(moduleCode);
         }
-
+        
         Module newModule = moduleHandler.createModule(moduleCode);
 
         try {
@@ -138,34 +143,29 @@ public class StudyPlan {
      * @param moduleString The module code to be removed.
      * @param storage Storage object for persistence.
      */
-    public void removeModule(String moduleString, Storage storage) {
-        try {
-            if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
-                LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
-                throw new StudyPlanException("Module " + moduleString + " does not exist");
-            }
+    public void removeModule(String moduleString, Storage storage) throws StudyPlanException {
+        if (!modules.containsKey(moduleString) && !completedModulesMap.containsKey(moduleString)) {
+            LOGGER.warning("Module " + moduleString + " does not exist in study plan.");
+            throw new StudyPlanException("Module " + moduleString + " does not exist");
+        }
 
-            if (modules.containsKey(moduleString)) {
-                Integer sem = modules.get(moduleString);
-                for (int i = 0; i < studyPlan.get(sem - 1).size(); i++) {
-                    if (Objects.equals(studyPlan.get(sem - 1).get(i).getModCode(), moduleString)) {
-                        studyPlan.get(sem - 1).remove(i);
-                        break;
-                    }
+        if (modules.containsKey(moduleString)) {
+            Integer sem = modules.get(moduleString);
+            for (int i = 0; i < studyPlan.get(sem - 1).size(); i++) {
+                if (Objects.equals(studyPlan.get(sem - 1).get(i).getModCode(), moduleString)) {
+                    studyPlan.get(sem - 1).remove(i);
+                    break;
                 }
-                modules.remove(moduleString);
-                storage.deleteModule(moduleString, sem);
-                LOGGER.info("Removed " + moduleString + " from semester " + sem);
-
-            } else if (completedModulesMap.containsKey(moduleString)) {
-                Module modToRemove = completedModulesMap.get(moduleString);
-                completedModulesList.remove(modToRemove);
-                completedModulesMap.remove(moduleString);
-                LOGGER.info("Removed " + moduleString + " from completed modules list.");
             }
+            modules.remove(moduleString);
+            storage.deleteModule(moduleString, sem);
+            LOGGER.info("Removed " + moduleString + " from semester " + sem);
 
-        } catch (StudyPlanException e) {
-            LOGGER.log(Level.SEVERE, "Error occurred when removing " + moduleString, e);
+        } else if (completedModulesMap.containsKey(moduleString)) {
+            Module modToRemove = completedModulesMap.get(moduleString);
+            completedModulesList.remove(modToRemove);
+            completedModulesMap.remove(moduleString);
+            LOGGER.info("Removed " + moduleString + " from completed modules list.");
         }
     }
 
