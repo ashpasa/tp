@@ -49,7 +49,7 @@ public class Parser {
             Map.entry("spec", 2),
             Map.entry("prereq", 2),
             Map.entry("add-exempted", 2),
-            Map.entry("ssetcurrent", 2)
+            Map.entry("set-current", 2)
     );
 
 
@@ -141,7 +141,7 @@ public class Parser {
             case "prereq":
                 String prereqModuleCode = parsePrereq();
                 return new PrereqCommand(prereqModuleCode);
-            case "setcurrent":
+            case "set-current":
                 String semesterToSet = parseCurrentSem();
                 return new SetCurrentSemesterCommand(semesterToSet);
             case "check":
@@ -269,8 +269,8 @@ public class Parser {
      */
     public String[] parseAdd() throws EmptyInstruction {
         String[] addModuleInformation = new String[2];
-        String moduleCode = null;
-        String semester = null;
+        String moduleCode;
+        String semester;
 
         try {
             String normalized = userInstructions.trim().replaceAll("\\s+", " ");
@@ -500,7 +500,7 @@ public class Parser {
     }
 
     /**
-     * Parses the user input for the setcurrent command.
+     * Parses the user input for the set-current command.
      * Validates the inputs before setting the currentSemester attribute in StudyPlan.
      *
      * @return returns a String containing the current semester
@@ -511,31 +511,30 @@ public class Parser {
         String currentSem;
         try {
 
-            String[] currentSemInstructions = userInstructions.split("s/", 2);
-
-            if (currentSemInstructions.length < 2) {
-                logger.log(Level.WARNING, "Missing semester for setcurrent command.");
-                throw new EmptyInstruction("setcurrent");
-            }
-
-            String semester = currentSemInstructions[1].trim();
+            String semester = userInstructions.trim();
 
             if (semester.isEmpty()) {
-                logger.log(Level.WARNING, "Missing semester for setcurrent command.");
-                throw new EmptyInstruction("setcurrent");
+                ui.showMessage("Semester is missing.\n" +
+                        "Please make sure your input contains semester information.");
+                logger.log(Level.WARNING, "Missing semester for set-current command.");
+                throw new EmptyInstruction("set-current");
             }
 
-            if (!(semester.matches("^[a-zA-Z0-9]+$"))) {
-                logger.log(Level.WARNING, "Invalid format for setcurrent command, " +
+            if (!(semester.matches("^[1-8]$"))) {
+                ui.showMessage("Invalid semester format.\n" +
+                        "Please ensure semester is a number between 1 and 8.");
+                logger.log(Level.WARNING, "Invalid format for set-current command, " +
                         "may contain non-alphanumeric characters.");
-                throw new EmptyInstruction("setcurrent");
+                throw new EmptyInstruction("set-current");
             }
 
             currentSem = semester;
 
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
-            logger.log(Level.WARNING, "Error parsing setcurrent command - Incorrect format " + e.getMessage());
-            throw new EmptyInstruction("setcurrent");
+            ui.showMessage("Error: Invalid input format. Please enter input in the correct format "
+                    + "(e.g., set-current 3).");
+            logger.log(Level.WARNING, "Error parsing set-current command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("set-current");
         }
         return currentSem;
     }
