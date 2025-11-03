@@ -10,7 +10,7 @@ able to plan your semesters effectively, ensuring you meet all necessary require
 - [Quick Start](#quick-start)
 - [Features](#features)
     - [Add a Module](#add-a-module-add)
-    - [Set Current Semester](#set-current-semester-setcurrent)
+    - [Set Current Semester](#set-current-semester-set-current)
     - [Add an Exempted Module](#add-an-exempted-module-add-exempted)
     - [Delete a Module](#delete-a-module-delete)
     - [View Current Study Plan](#view-current-study-plan-view-information)
