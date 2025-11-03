@@ -98,9 +98,6 @@ public class StudyPlan {
             for (int j = semesterModules.size() - 1; j >= 0; j--) {
                 Module mod = semesterModules.get(j);
 
-                semesterModules.remove(j);
-                modules.remove(mod.getModCode());
-
                 mod.setStatus(ModuleStatus.COMPLETED);
                 completedModulesList.add(mod);
                 completedModulesMap.put(mod.getModCode(), mod);
