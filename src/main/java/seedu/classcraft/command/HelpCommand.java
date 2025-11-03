@@ -20,7 +20,7 @@ public class HelpCommand extends Command {
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
-        String userHelp = "Hi there, do you require help?\n"
+        String userHelp = "Hi there, do you require help? \n"
                 + "Here are the list of commands you can use:\n\n"
                 + "Basic Commands:\n\n"
                 + "1. add - Adds a Module to your plan.\n" +

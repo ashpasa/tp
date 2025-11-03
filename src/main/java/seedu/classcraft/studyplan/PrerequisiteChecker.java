@@ -53,19 +53,15 @@ public class PrerequisiteChecker {
         if (!satisfied) {
             logger.log(Level.WARNING, "Prerequisites not satisfied for module {0}", module.getModCode());
 
-            // Extract human-readable prerequisite string for error message
-            String prereqString = "";
-            if (prereqTree.isTextual()) {
-                // Handle plain text prerequisites like "CS1010%:D"
-                prereqString = formatWildcardPrerequisite(prereqTree.asText());
-            } else {
-                // Handle structured prerequisites
-                prereqString = prettifyPrereqTree(prereqTree);
-            }
+            // Build detailed error message showing what's completed
+            String prereqString = prettifyPrereqTree(prereqTree);
+            String completedMessage = completedModules.isEmpty()
+                    ? "You have not completed any prerequisite modules."
+                    : "Completed modules: " + String.join(", ", completedModules);
 
             throw new StudyPlanException("Cannot add " + module.getModCode() + " to semester " + targetSemester +
-                    ".\n" + "Required prerequisites: " + prereqString + "\n\n" +
-                    "You have not completed any prerequisite modules in earlier semesters.\n\n" +
+                    ".\n\nRequired prerequisites: " + prereqString + "\n\n" +
+                    completedMessage + "\n\n" +
                     "Please add the required prerequisite modules to an earlier semester first.");
         }
 
@@ -92,6 +88,10 @@ public class PrerequisiteChecker {
             return true;
         }
 
+        if (node.isObject() && node.has("nOf")) {
+            return evaluateNOfNode(node.get("nOf"), completedModules);
+        }
+
         if (node.isObject() && node.has("or")) {
             boolean result = evaluateOrNode(node.get("or"), completedModules);
             logger.log(Level.FINER, "OR node evaluation result: {0}", result);
@@ -113,6 +113,41 @@ public class PrerequisiteChecker {
         }
 
         return false;
+    }
+
+    private static boolean evaluateNOfNode(JsonNode nOfNode, Set<String> completedModules) {
+        int requiredCount = nOfNode.get(0).asInt();
+        JsonNode moduleList = nOfNode.get(1);
+        int completedCount = countCompletedModules(moduleList, completedModules);
+        return completedCount >= requiredCount;
+    }
+
+    private static int countCompletedModules(JsonNode moduleList, Set<String> completedModules) {
+        int count = 0;
+        for (JsonNode mod : moduleList) {
+            if (isNodeCompleted(mod, completedModules)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static boolean isNodeCompleted(JsonNode mod, Set<String> completedModules) {
+        String modCode = extractModuleCode(mod);
+        if (modCode.isEmpty()) {
+            return false;
+        }
+        return completedModules.stream().anyMatch(c -> c.startsWith(modCode));
+    }
+
+    private static String extractModuleCode(JsonNode mod) {
+        if (mod.isTextual()) {
+            return stripGradeRequirement(mod.asText());
+        }
+        if (mod.has("moduleCode")) {
+            return mod.get("moduleCode").asText();
+        }
+        return "";
     }
 
     private static boolean evaluateOrNode(JsonNode orNode, Set<String> completedModules) {
@@ -268,6 +303,21 @@ public class PrerequisiteChecker {
     private static String prettifyPrereqTree(JsonNode node) {
         if (node == null || node.isNull()) {
             return "";
+        }
+
+        if (node.has("nOf")) {
+            JsonNode nOfNode = node.get("nOf");
+            int requiredCount = nOfNode.get(0).asInt();
+            JsonNode moduleList = nOfNode.get(1);
+            List<String> prereqDescs = new ArrayList<>();
+            for (JsonNode mod : moduleList) {
+                if (mod.isTextual()) {
+                    prereqDescs.add(prettifyModuleCode(mod.asText()));
+                } else if (mod.has("moduleCode")) {
+                    prereqDescs.add(prettifyModuleCode(mod.get("moduleCode").asText()));
+                }
+            }
+            return "Need " + requiredCount + " of these: " + String.join(" OR ", prereqDescs);
         }
 
         if (node.has("or")) {
