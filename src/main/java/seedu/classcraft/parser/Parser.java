@@ -11,7 +11,7 @@ import seedu.classcraft.command.ExitCommand;
 import seedu.classcraft.command.HelpCommand;
 import seedu.classcraft.command.InvalidCommand;
 import seedu.classcraft.command.PrereqCommand;
-import seedu.classcraft.command.SetCurrentSemCommand;
+import seedu.classcraft.command.SetCurrentSemesterCommand;
 import seedu.classcraft.command.SpecCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
 import seedu.classcraft.command.ViewGradReqCommand;
@@ -49,7 +49,7 @@ public class Parser {
             Map.entry("spec", 2),
             Map.entry("prereq", 2),
             Map.entry("add-exempted", 2),
-            Map.entry("ssetcurrent", 2)
+            Map.entry("set-current", 2)
     );
 
 
@@ -141,12 +141,9 @@ public class Parser {
             case "prereq":
                 String prereqModuleCode = parsePrereq();
                 return new PrereqCommand(prereqModuleCode);
-            case "setcurrent":
-                int semesterToSet = parseSetCurrentSem();
-                if (semesterToSet == -1) {
-                    return new InvalidCommand();
-                }
-                return new SetCurrentSemCommand(semesterToSet);
+            case "set-current":
+                String semesterToSet = parseCurrentSem();
+                return new SetCurrentSemesterCommand(semesterToSet);
             case "check":
                 return new CheckCommand();
             default:
@@ -272,8 +269,8 @@ public class Parser {
      */
     public String[] parseAdd() throws EmptyInstruction {
         String[] addModuleInformation = new String[2];
-        String moduleCode = null;
-        String semester = null;
+        String moduleCode;
+        String semester;
 
         try {
             String normalized = userInstructions.trim().replaceAll("\\s+", " ");
@@ -502,25 +499,44 @@ public class Parser {
         }
     }
 
-    // and setLoggerLevel from master. Discarded parseCurrentSem.
     /**
-     * Parses the user input for set-current-sem command.
-     * Expects a single integer.
+     * Parses the user input for the set-current command.
+     * Validates the inputs before setting the currentSemester attribute in StudyPlan.
      *
-     * @return int representing the semester, or -1 for error.
+     * @return returns a String containing the current semester
+     *                  Catches EmptyInstruction exceptions and sets commandType to "invalid"
+     *                  if any required instructions/its components are missing.
      */
-    private int parseSetCurrentSem() {
+    public String parseCurrentSem() throws EmptyInstruction {
+        String currentSem;
         try {
-            int semester = Integer.parseInt(userInstructions.trim());
-            if (semester < 1 || semester > 8) {
-                ui.showMessage("Error: Semester number must be between 1 and 8.");
-                return -1;
+
+            String semester = userInstructions.trim();
+
+            if (semester.isEmpty()) {
+                ui.showMessage("Semester is missing.\n" +
+                        "Please make sure your input contains semester information.");
+                logger.log(Level.WARNING, "Missing semester for set-current command.");
+                throw new EmptyInstruction("set-current");
             }
-            return semester;
-        } catch (NumberFormatException e) {
-            ui.showMessage("Error: Invalid format. Please enter a number (e.g., set-current-sem 3).");
-            return -1;
+
+            if (!(semester.matches("^[1-8]$"))) {
+                ui.showMessage("Invalid semester format.\n" +
+                        "Please ensure semester is a number between 1 and 8.");
+                logger.log(Level.WARNING, "Invalid format for set-current command, " +
+                        "may contain non-alphanumeric characters.");
+                throw new EmptyInstruction("set-current");
+            }
+
+            currentSem = semester;
+
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            ui.showMessage("Error: Invalid input format. Please enter input in the correct format "
+                    + "(e.g., set-current 3).");
+            logger.log(Level.WARNING, "Error parsing set-current command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("set-current");
         }
+        return currentSem;
     }
 
     /**

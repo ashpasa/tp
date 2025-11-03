@@ -24,6 +24,8 @@ class UiTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private ObjectMapper objectMapper;
+    private String line = "=============================================================" +
+            "====================================================================" + System.lineSeparator();
 
     @BeforeEach
     void setUp() {
@@ -60,7 +62,7 @@ class UiTest {
 
         String output = outContent.toString();
         assertTrue(output.contains(testMessage));
-        assertTrue(output.contains("_____________________________________________________"));
+        assertTrue(output.contains(line));
     }
 
     @Test
@@ -68,7 +70,7 @@ class UiTest {
     void testPrintEmptyMessage() {
         ui.printMessage("");
         String output = outContent.toString();
-        assertTrue(output.contains("_____________________________________________________"));
+        assertTrue(output.contains(line));
     }
 
     @Test
@@ -92,7 +94,7 @@ class UiTest {
 
         String output = outContent.toString();
         assertTrue(output.contains("ERROR: " + errorMessage));
-        assertTrue(output.contains("============================================================"));
+        assertTrue(output.contains(line));
     }
 
     @Test
@@ -121,7 +123,7 @@ class UiTest {
 
         String output = outContent.toString();
         assertTrue(output.contains(message));
-        assertTrue(output.contains("============================================================"));
+        assertTrue(output.contains(line));
     }
 
     @Test

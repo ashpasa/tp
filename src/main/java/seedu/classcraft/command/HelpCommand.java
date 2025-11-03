@@ -20,7 +20,7 @@ public class HelpCommand extends Command {
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
-        String userHelp = "Hi there, do you require help?\n"
+        String userHelp = "Hi there, do you require help? \n"
                 + "Here are the list of commands you can use:\n\n"
                 + "Basic Commands:\n\n"
                 + "1. add - Adds a Module to your plan.\n" +
@@ -34,14 +34,13 @@ public class HelpCommand extends Command {
                 + "Advanced Commands:\n\n"
                 + "7. mc - Calculate MCs for a semester or total.\n" +
                 "   Format: mc {SEMESTER} (SEMESTER: 1 to 8 or total)\n\n"
-                + "8. add-completed - Adds a module as already completed.\n   Format: add-completed {MODULE_CODE}\n\n"
-                + "9. add-exempted - Adds a module as exempted.\n   Format: add-exempted {MODULE_CODE}\n\n"
-                + "10.progress - View your current degree progress.\n   Format: progress\n\n"
-                + "11.spec - View modules required for a CEG specialisation.\n   Format: spec {SPECIALISATION} "
+                + "8. add-exempted - Adds a module as exempted.\n   Format: add-exempted {MODULE_CODE}\n\n"
+                + "9. progress - View your current degree progress.\n   Format: progress\n\n"
+                + "10.spec - View modules required for a CEG specialisation.\n   Format: spec {SPECIALISATION} "
                 + "(SPECIALISATION: ae,4.0,iot,robotics,st)\n\n"
-                + "12.check - Checks workload distribution of study plan.\n   Format: check\n\n"
-                + "13.setcurrent - Indicates the current semester, so that modules from previous semesters are" +
-                " marked as completed.\n   Format: current_semester {SEMESTER} (SEMESTER: 1 to 8)\n";
+                + "11.check - Checks workload distribution of study plan.\n   Format: check\n\n"
+                + "12.set-current - Indicates the current semester, so that modules from previous semesters are" +
+                " marked as completed.\n   Format: set-current {SEMESTER} (SEMESTER: 1 to 8)\n";
 
         ui.showMessage(userHelp);
     }
