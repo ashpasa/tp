@@ -338,12 +338,12 @@ public class StudyPlan {
     }
 
     /**
+     * @author lingru
      * @param moduleCode The code of the module to add.
      * @param status     The status (COMPLETED or EXEMPTED).
      * @param storage    Storage handler added.
      * @param isRestored Flag to prevent re-saving on load.
      * @throws Exception If module fetching fails or module is already in the plan.
-     * @author lingru
      */
 
     public void addExemptedModule(String moduleCode, ModuleStatus status,
@@ -400,8 +400,8 @@ public class StudyPlan {
     }
 
     /**
-     * @return The progress percentage, rounded to two decimal places.
      * @author lingru
+     * @return The progress percentage, rounded to two decimal places.
      */
     public double getDegreeProgressPercentage() {
         if (TOTAL_MCS_FOR_GRADUATION <= 0) {
@@ -432,8 +432,8 @@ public class StudyPlan {
     }
 
     /**
+     * @author lingru
      * @return Total secured MCs.
-     * @@author lingru
      */
     public int getTotalSecuredMCs() {
         int totalSecuredMCs = 0;
@@ -449,17 +449,17 @@ public class StudyPlan {
     }
 
     /**
-     * @return Total required MCs.
      * @author lingru
+     * @return Total required MCs.
      */
     public int getTotalMcsForGraduation() {
         return TOTAL_MCS_FOR_GRADUATION;
     }
 
     /**
+     * @author lingru
      * @param moduleCode The module code to check.
      * @return true if the module exists, false otherwise.
-     * @author lingru
      */
     public boolean hasModule(String moduleCode) {
         return modules.containsKey(moduleCode) || exemptedModulesMap.containsKey(moduleCode);
