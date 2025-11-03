@@ -206,7 +206,7 @@ If you do choose to edit the file, please ensure that you have a backup copy of 
 | Command             | Format                           | Description                     |
 |---------------------|----------------------------------|---------------------------------|
 | Add Module          | add n/{MODULE_CODE} s/{SEMESTER} | Add a module to your study plan |
-| Set Current Semester| set-current SEMESTER           | Set the current Semester        |
+| Set Current Semester| set-current {SEMESTER}           | Set the current Semester        |
 | Add Exempted Module | add-exempted {MODULE_CODE}       | Add a module to your study plan |
 | Delete Module       | delete {MODULE_CODE}             | Remove a module from your plan  |
 | View Plan           | view plan                        | Show your current study plan    |

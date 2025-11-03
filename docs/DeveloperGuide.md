@@ -67,8 +67,6 @@ the `Parser` class processes the input string to identify the command type and i
 respective arguments. It checks whether the command is a single-word or double-word command
 and extracts the necessary information, and ensures that invalid inputs are handled gracefully.
 
-
-
 ### Storage component
 
 The `Storage` class, under the `storage` package, is responsible for saving and loading the user's study plan to and
@@ -267,6 +265,23 @@ and includes a factory method to generate a pre-set sample plan.
   factory method (`createSampleStudyPlan`) centralizes the knowledge of how a plan is structured and
   ensures that the sample plan is created using the same internal logic (`addModule`,
   `ModuleHandler`) as a user-generated plan.
+
+### **Checking Module Credits**
+
+This feature allows the user to check either the number or module credits taken in a semester, or the module credits taken in the entire study plan.
+
+* **Implementation:** Each `Module` object within the study plan has a modCreds attribute that stores the number of module credits it is worth. These values are retrieved from the NUSMods API by the `NUSmodsFetcher` class. The module credits taken, either in a semester or in the entire study plan, is calculated by simply summing up these values which are stored as integers.
+
+* **Key Methods:**
+    * `calculateSemCredits(int semesterIndex)`: Calculates the total number of module credits in a semester based on the semester's index in the ArrayList
+    * `calculateTotalCredits()`: Calculates the total number of module credits taken in the entire study plan
+
+### **Checking Workload Balance**
+
+This feature allows the user to compare the workload between different semesters and receive a message if the workload is drastically unbalanced. The calculation ignores semesters that have already passed (i.e. semester number is less than the current semester indicated by the user).
+
+* **Key Method:**
+    * `checkStudyPlan()`: Compares the number of module credits between different semesters and prints a warning if any semester has more than 5 module credits excess of the average workload (remainin module credits divided by uncompleted semesters)
 
 ### **Viewing Degree Progress**
 
