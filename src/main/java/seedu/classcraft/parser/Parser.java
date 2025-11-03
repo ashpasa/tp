@@ -49,7 +49,7 @@ public class Parser {
             Map.entry("spec", 2),
             Map.entry("prereq", 2),
             Map.entry("add-exempted", 2),
-            Map.entry("set_current_sem", 2)
+            Map.entry("ssetcurrent", 2)
     );
 
 
@@ -141,7 +141,7 @@ public class Parser {
             case "prereq":
                 String prereqModuleCode = parsePrereq();
                 return new PrereqCommand(prereqModuleCode);
-            case "set_current_sem":
+            case "setcurrent":
                 int semesterToSet = parseSetCurrentSem();
                 if (semesterToSet == -1) {
                     return new InvalidCommand();
@@ -173,10 +173,6 @@ public class Parser {
 
 
         instructions[0] = instructions[0].toLowerCase();
-        if (instructions[0].equals("set_current_sem")) {
-            instructions[0] = "set-current-sem";
-        }
-
         if (!isCommandFound(instructions)) {
             ui.showMessage("OOPS!!! I'm sorry, but I don't know what that means :-(\n" +
                     "Please type 'help' to see the list of available commands.");
