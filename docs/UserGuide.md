@@ -60,6 +60,12 @@ and `SEMESTER` is the semester number (1-8), where you want to add the module to
 Example: `add n/CS2113 s/1`, `add s/2 n/CS2040C`, `add n/MA1511s/3`, `add s/4n/GEA1000`
 
 
+### Set current semester: `setcurrent`
+
+Indicates the current semester, so that modules from previous semesters are marked as completed.
+
+Format: `setcurrent s/{SEMESTER}`
+
 ### Add an Exempted Module: `add-exempted`
 
 Add an exempted module, whose participation counts toward course completion progress.
