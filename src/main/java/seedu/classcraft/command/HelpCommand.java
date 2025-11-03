@@ -40,7 +40,7 @@ public class HelpCommand extends Command {
                 + "(SPECIALISATION: ae,4.0,iot,robotics,st)\n\n"
                 + "11. check - Checks workload distribution of study plan.\n   Format: check\n\n"
                 + "12. set-current - Indicates the current semester, so that modules from previous semesters are" +
-                " marked as completed.\n   Format: set-current s/{SEMESTER} (SEMESTER: 1 to 8)\n\n";
+                " marked as completed.\n   Format: set-current {SEMESTER} (SEMESTER: 1 to 8)\n\n";
 
         ui.showMessage(userHelp);
     }
