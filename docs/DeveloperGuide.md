@@ -43,9 +43,7 @@ The bulk of ClassCraft's functionality is handled by the following components:
 The `command` package contains all the commands that can be carried out by the user.
 Each command is represented by a class that extends the abstract `Command` class.
 
-This is how the 'AddCommnand' class interacts with other components:
-
-![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
+This is how the 'AddCommand' class interacts with other components:
 
 When a command is executed, it interacts with the `Studyplan`, `UI`, and `Storage` components to perform its function.
 
@@ -61,11 +59,24 @@ The various methods then return the respective parts of the the `.json` file as 
 
 ### Parser component
 
-`Parser.java` handles the parsing of user inputs by receiving the input string from the `Ui` component and triggering the corresponding `command`. This is done primarily by separating the user's input by its whitespaces, and checking each substring against a stored list of command words.
+The `Parser` class, under `Parser` package 
+is responsible for parsing user input into commands that can be executed by the application.
+
+When the user inputs a command, a new instance of parser is created, and 
+the `Parser` class processes the input string to identify the command type and its
+respective arguments. It checks whether the command is a single-word or double-word command
+and extracts the necessary information, and ensures that invalid inputs are handled gracefully.
 
 ### Storage component
 
-`Storage.java` handles the storage of the study plan between uses of ClassCraft, by checking if a dedicated text file exists for saving the study plan. If a `studyPlan.txt` file exists in the `ClassCraftData` folder, the programme will attempt to parse the text file contents and reload the stored study plan. If there exists no such text file, or if the text file is incorrectly formatted, the programme instead creates a new text file.
+The `Storage` class, under the `storage` package, is responsible for saving and loading the user's study plan to and
+from a local file.
+
+It provides methods to create the storage file if it does not exist, restore data from the file into the application's
+study plan, and update the file when modules are added or deleted.
+
+It also ensures that the data format is maintained correctly when reading from the file, 
+and recreates the data file if it is found to be corrupted.
 
 ### Studyplan component
 
@@ -79,6 +90,8 @@ The various methods then return the respective parts of the the `.json` file as 
 semester and the inner 'layer' is the respective modules taken in that semester.
 
 A hashmap is used to store KEY:VALUE pairs of MODULE_CODE:SEMESTER for easy access to edit the 2D ArrayList.
+![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
+
 
 #### Design Considerations
 We decided to use a 2D array together with a Hashmap to store the modules and semesters, as we believe that it offers
@@ -96,6 +109,7 @@ When a command is executed, it interacts with the `Ui` component to display mess
 ### **Parsing user input to commands**
 
 User inputs are parsed into commands by the **`Parser`** class.
+
 
 * **Implementation:** A new parser object is instantiated in `ClassCraft.java` to handle user inputs,
   which calls the parser constructor in `Parser.java`, passing the raw user input string to parseInstructions().
@@ -120,19 +134,29 @@ User inputs are parsed into commands by the **`Parser`** class.
     * `parseSpec()` : Parses arguments for the `SpecCommand`, extracting the specialization.
     * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
     * `parseAddWithStatus()`: Parses arguments for the `AddCompletedCommand`, extracting the module code and status.
-    * `parseCurrentSem()`: Parses arguments for the `CurrentSemCommand`, extracting the current semester.
+    * `parseCurrentSem()`: Parses arguments for the `SetCurrentSemesterCommand`, extracting the current semester.
+
+#### Design Considerations
+
+- **Alternative 1** (current choice) : Use a dedicated Parser class 
+with methods like parseInstructions(), parseAdd(), etc.
+  - *Pros:* Modular, extensible, clear separation of concerns.
+  - *Cons:* Slightly more complex structure, with multiple methods.
+- **Alternative 2** : Implement parsing logic directly within the main application class (ClassCraft).
+  - *Pros:* Simpler structure, fewer classes.
+  - *Cons:* Less modular, harder to maintain and extend as new commands are added.
+
 
 ### **Command Classes**
-
-![UML diagram of the Sequence Diagram Front](/UMLdiagrams/Sequence_Diagram_Front.png)
-![UML diagram of the Sequence Diagram Back](/UMLdiagrams/Sequence_Diagram_Back.png)
 
 Each command class extends the abstract `Command` class.
 
 * **Implementation:** Each command class is responsible for a specific user action, such as
   adding or deleting modules, viewing plans, calculating credits, etc.
+
 * Command abstract class contains an abstract method `execute(StudyPlan studyPlan, Ui ui, Storage storage)` that each
   command class must implement to define its specific behavior.
+
 * **Key Command Classes:**
     * `AddCommand`: Adds a module to a specified semester in the study plan.
     * `DeleteCommand`: Removes a module from the study plan.
@@ -143,6 +167,14 @@ Each command class extends the abstract `Command` class.
     * `AddExemptedCommand`: Indicates module exemptions that the user has.
     * `CurrentSemCommand`: Sets the current semester the user is in (to determine completed modules and degree progress).
     * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
+  
+#### Design Considerations
+- **Alternative 1** (current choice) : One class per command implementing an abstract execute(...) method. 
+  - *Pros:* Easy to add new commands, adheres to the Command design pattern.
+  - *Cons:* More classes to manage, slightly increased complexity.
+- **Alternative 2** : Centralized command handler with large conditional blocks.
+  - *Pros:* Fewer classes, simpler structure.
+  - *Cons:* Harder to maintain and extend, violates single responsibility principle.
 
 ### **Fetching of module data from NUSMods API**
 
@@ -175,7 +207,7 @@ Certain modules in the NUSMods API store their prerequisite data in a unique for
 
 ### **Storing current study plan**
 
-The current study plan created by the user is stored into a local txt
+The current study plan created by the user is stored into a local ".txt" file.
 file using the **`Storage`** class, and restored upon application launch.
 
 * **Implementation:** The `Storage` class handles reading from and writing to the local file.
@@ -195,6 +227,15 @@ file using the **`Storage`** class, and restored upon application launch.
     * `deleteModule()`: Reads the stored plan and loops through each semester to find the
       specified module code and remove the specified module code.
         * Used in studyPlan's `deleteModule()` method to update the storage file.
+
+#### Design Considerations
+- **Alternative 1** (current choice) : Encapsulate file handling in a Storage class with methods
+- like createFile(), restoreData().
+  - *Pros:* Promotes single responsibility, easier future upgrades.
+  - *Cons:* Increased code complexity and performance overhead.
+- **Alternative 2** : Direct file reads and writes scattered in application logic.
+  - *Pros:* Simpler structure and less overhead.
+  - *Cons:* Harder to maintain and error-prone.
 
 ### **Storing and Displaying Graduation Requirements**
 
@@ -302,20 +343,40 @@ streamlined and guided approach to academic planning.
 
 ## User Stories
 
-| Version |    As a ...    | I want to ...                                                   | So that I can ...                                             |
-|:-------:|:--------------:|:----------------------------------------------------------------|:--------------------------------------------------------------|
-|  v1.0   |    new user    | see usage instructions                                          | refer to them when I forget how to use the application        |
-|  v1.0   |  CEG student   | view the sample study plan                                      | have a baseline and understand how to structure my own plan   |
-|  v1.0   |  CEG student   | view the CEG default graduation requirements                    | know which core modules I must take for graduation            |
-|  v1.0   |  CEG student   | add a module to a specific semester                             | customize my study plan quickly                               |
-|  v1.0   |  CEG student   | remove a module from a specific semester                        | adjust my plan if my enrolment changes                        |
-|  v2.0   | Long time user | retrieve created study plan                                     | I can refer to it in the future for module planning           |
-|  v2.0:  | Potential user | generate a 4 year CEG study plan                                | I can find out the potential Specialisations/TE that i can do |
-|  v2.0   |  Expert user   | find out what modules are needed for an intended specialisation | I complete my specialisation in a reasonable time             |
-|  v2.0   |    New user    | Find out the prerequisites of a specific module                 | I know when the earliest I can complete the module is         |
+| Version | As a ...       | I want to ...                                                   | So that I can ...                                           |
+|---------|----------------|-----------------------------------------------------------------|-------------------------------------------------------------|
+| v1.0    | new user       | see usage instructions                                          | refer to them when I forget how to use the application      |
+| v1.0    | CEG student    | view the sample study plan                                      | have a baseline and understand how to structure my own plan |
+| v1.0    | CEG student    | view the CEG default graduation requirements                    | know which core modules I must take for graduation          |
+| v1.0    | CEG student    | add a module to a specific semester                             | customize my study plan quickly                             |
+| v1.0    | CEG student    | remove a module from a specific semester                        | adjust my plan if my enrolment changes                      |
+| v2.0    | Long time user | retrieve created study plan                                     | refer to it in the future for module planning               |
+| v2.0    | Potential user | generate a 4 year CEG study plan                                | find out the potential Specialisations/TE that i can do     |
+| v2.0    | Expert user    | find out what modules are needed for an intended specialisation | complete my specialisation in a reasonable time             |
+| v2.0    | New user       | find out the prerequisites of a specific module                 | know when the earliest I can complete the module is         |
+| v2.0    | CEG student    | find the number of module credits I have per semester           | know how I can balance my workload better                   |
 
 ---
+## Use cases
 
+**Actors:** CEG Student (User)
+
+**System** ClassCraft
+
+**Use case: Add a Module to Study Plan**
+1) User inputs the `add` command with module code and semester.
+2) System validates the module code via NUSMods API.
+3) System checks if the module already exists in the study plan.
+4) If valid and not duplicate, System adds the module to the specified semester.
+5) System confirms addition to the User.
+
+**Use case: View Specialisation Requirements**
+1) User inputs the `spec` command with the desired specialisation.
+2) System retrieves the list of modules required for that specialisation from internal data.
+3) System displays the list of modules to the User.
+
+
+---
 ## Non-Functional Requirements
 
 * **Reliability:** The application must correctly fetch and parse module data from the **NUSMods**
@@ -339,6 +400,7 @@ streamlined and guided approach to academic planning.
 
 ## Instructions for manual testing
 
+### Intial Setup and basic comamnds
 1. **Start the application:** Compile and run the `ClassCraft` application.
 2. **View Sample Plan:** Enter the command to view the sample study plan (e.g., `view sample`).
    Verify that the output shows modules like `CS1010` and `EE2026` across different semesters.
@@ -349,5 +411,24 @@ streamlined and guided approach to academic planning.
    again and confirm the module is placed in the specified semester.
 5. **Delete a Module:** Enter a command to delete a module (e.g., `delete CS3230`). View the study
    plan and confirm the module is removed.
+
+
+### Storage 
+
+All data is stored in `ClassCraftData/studyPlan.txt` by default.
+
+If the file or directory does not exist, it will be created automatically upon application startup.
+
+If you wish to reset your study plan, you can delete the `studyPlan.txt` file.
+ 
+If the file is edited manually, ensure that the format is maintained as
+ 
+`{SEMESTER_NUMBER}:COMPLETED - {MODULE_CODE1}, {MODULE_CODE2}, ...`
+
+(":COMPLETED" is only necessary if the modules in that semester have been completed)
+ 
+`EXEMPTED - {MODULE_CODE1}, {MODULE_CODE2}, ...`
+ 
+
 
     
