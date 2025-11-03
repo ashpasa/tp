@@ -61,6 +61,8 @@ The various methods then return the respective parts of the the `.json` file as 
 
 ### Parser component
 
+`Parser.java` handles the parsing of user inputs by receiving the input string from the `Ui` component and triggering the corresponding `command`. This is done primarily by separating the user's input by its whitespaces, and checking each substring against a stored list of command words.
+
 ### Storage component
 
 `Storage.java` handles the storage of the study plan between uses of ClassCraft, by checking if a dedicated text file exists for saving the study plan. If a `studyPlan.txt` file exists in the `ClassCraftData` folder, the programme will attempt to parse the text file contents and reload the stored study plan. If there exists no such text file, or if the text file is incorrectly formatted, the programme instead creates a new text file.
@@ -222,6 +224,23 @@ and includes a factory method to generate a pre-set sample plan.
   factory method (`createSampleStudyPlan`) centralizes the knowledge of how a plan is structured and
   ensures that the sample plan is created using the same internal logic (`addModule`,
   `ModuleHandler`) as a user-generated plan.
+
+### **Checking Module Credits**
+
+This feature allows the user to check either the number or module credits taken in a semester, or the module credits taken in the entire study plan.
+
+* **Implementation:** Each `Module` object within the study plan has a modCreds attribute that stores the number of module credits it is worth. These values are retrieved from the NUSMods API by the `NUSmodsFetcher` class. The module credits taken, either in a semester or in the entire study plan, is calculated by simply summing up these values which are stored as integers.
+
+* **Key Methods:**
+    * `calculateSemCredits(int semesterIndex)`: Calculates the total number of module credits in a semester based on the semester's index in the ArrayList
+    * `calculateTotalCredits()`: Calculates the total number of module credits taken in the entire study plan
+
+### **Checking Workload Balance**
+
+This feature allows the user to compare the workload between different semesters and receive a message if the workload is drastically unbalanced. The calculation ignores semesters that have already passed (i.e. semester number is less than the current semester indicated by the user).
+
+* **Key Method:**
+    * `checkStudyPlan()`: Compares the number of module credits between different semesters and prints a warning if any semester has more than 5 module credits excess of the average workload (remainin module credits divided by uncompleted semesters)
 
 ### **Viewing Degree Progress**
 
