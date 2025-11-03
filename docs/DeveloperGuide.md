@@ -43,7 +43,7 @@ The bulk of ClassCraft's functionality is handled by the following components:
 The `command` package contains all the commands that can be carried out by the user.
 Each command is represented by a class that extends the abstract `Command` class.
 
-This is how the 'AddCommnand' class interacts with other components:
+This is how the 'AddCommand' class interacts with other components:
 
 ![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
 
@@ -116,7 +116,7 @@ User inputs are parsed into commands by the **`Parser`** class.
     * `parseSpec()` : Parses arguments for the `SpecCommand`, extracting the specialization.
     * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
     * `parseAddWithStatus()`: Parses arguments for the `AddCompletedCommand`, extracting the module code and status.
-    * `parseCurrentSem()`: Parses arguments for the `CurrentSemCommand`, extracting the current semester.
+    * `parseCurrentSem()`: Parses arguments for the `SetCurrentSemesterCommand`, extracting the current semester.
 
 ### **Command Classes**
 
@@ -137,7 +137,7 @@ Each command class extends the abstract `Command` class.
     * `SpecCommand`: Displays specialization information that user can take if they have chosen a specialization.
     * `PrereqCommand`: Displays prerequisite information for a specified module.
     * `AddCompletedCommand`: Adds modules with a specific status, eg. completed/exempted
-    * `CurrentSemCommand`: Sets the current semester the user is in
+    * `SetCurrentSemesterCommand`: Sets the current semester the user is in
     * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
 
 ### **Storing current study plan**
