@@ -11,15 +11,14 @@ able to plan your semesters effectively, ensuring you meet all necessary require
 Given below are my contributions to the project.
 
 - **New Feature:** Added ModuleHandler and Module Class
-- **New Feature:** Added the ability to view modules required for a specialisation and the ability to view semesters
-  with unusually high workload.
-    - What it does: Prints out modules required for any of the 5 CEG specialisations.
-    - What it does: Indicates to the user any semesters with an unusually high workload.
-- **New Feature:** Added a command to view modules for a CEG specialisation.
-- **New Feature:** Added a command to flag out high workload semesters.
+- **New Feature:** Added the command `spec` to view modules required for a specialisation, the command `check` to view 
+semesters with unusually high workload, and to set the current semester in the study plan
+    - What it does: `spec` Prints out modules required for any of the 5 CEG specialisations.
+    - What it does: `check` Indicates to the user any semesters with an unusually high workload.
+    - What it does: `set-current` Allows the user to set the current semester in the study plan.
 
 
-- **Code Contributed:**
+- **Code Contributed:** [RepoSense link](https://nus-cs2113-ay2526s1.github.io/tp-dashboard/?search=&sort=groupTitle&sortWithin=title&timeframe=commit&mergegroup=&groupSelect=groupByRepos&breakdown=true&checkedFileTypes=docs~functional-code~test-code~other&since=2025-09-19T00%3A00%3A00&filteredFileName=&tabOpen=true&tabType=authorship&tabAuthor=Yeoh-Soo-Leong&tabRepo=AY2526S1-CS2113-T10-2%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=docs~functional-code~test-code~other&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false)
 
 
 - **Project management:**
@@ -34,10 +33,12 @@ Given below are my contributions to the project.
     - User Guide:
         - Added documentation for the feature `spec`
         - Added documentation for the feature `check`
+        - Added documentation for the feature `set-current`
     - Developer Guide:
         - Added implementation details of the `spec` feature
         - Added implementation details of the `check` feature
-          - Contributed to the creation of Class and Sequence Diagrams
+        - Added implementation details of the `set-current` feature
+        - Contributed to the creation of Class and Sequence Diagrams
 
 
 - **Community:**
