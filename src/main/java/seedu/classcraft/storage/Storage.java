@@ -1,7 +1,10 @@
 package seedu.classcraft.storage;
 
 import seedu.classcraft.exceptions.StudyPlanException;
-import seedu.classcraft.studyplan.*;
+import seedu.classcraft.studyplan.ModuleHandler;
+import seedu.classcraft.studyplan.ModuleStatus;
+import seedu.classcraft.studyplan.PrerequisiteChecker;
+import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.studyplan.Module;
 import seedu.classcraft.ui.Ui;
 
@@ -27,11 +30,11 @@ import java.util.logging.Level;
 public class Storage {
 
     private static Logger logger = Logger.getLogger(Storage.class.getName());
+    StudyPlan tempStudyPlan = new StudyPlan(8);
     private String dataFile;
     private Ui ui = new Ui();
     private StudyPlan studyPlan;
     private ModuleHandler moduleHandler = new ModuleHandler();
-    StudyPlan tempStudyPlan = new StudyPlan(8);
 
 
     /**
