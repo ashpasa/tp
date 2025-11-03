@@ -36,11 +36,11 @@ public class HelpCommand extends Command {
                 "   Format: mc {SEMESTER} (SEMESTER: 1 to 8 or total)\n\n"
                 + "8. add-exempted - Adds a module as exempted.\n   Format: add-exempted {MODULE_CODE}\n\n"
                 + "9. progress - View your current degree progress.\n   Format: progress\n\n"
-                + "10.spec - View modules required for a CEG specialisation.\n   Format: spec {SPECIALISATION} "
+                + "10. spec - View modules required for a CEG specialisation.\n   Format: spec {SPECIALISATION} "
                 + "(SPECIALISATION: ae,4.0,iot,robotics,st)\n\n"
-                + "11.check - Checks workload distribution of study plan.\n   Format: check\n\n"
-                + "12.set-current - Indicates the current semester, so that modules from previous semesters are" +
-                " marked as completed.\n   Format: set-current {SEMESTER} (SEMESTER: 1 to 8)\n";
+                + "11. check - Checks workload distribution of study plan.\n   Format: check\n\n"
+                + "12. setcurrent - Indicates the current semester, so that modules from previous semesters are" +
+                " marked as completed.\n   Format: setcurrent s/{SEMESTER} (SEMESTER: 1 to 8)\n\n";
 
         ui.showMessage(userHelp);
     }

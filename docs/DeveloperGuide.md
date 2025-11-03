@@ -43,7 +43,7 @@ The bulk of ClassCraft's functionality is handled by the following components:
 The `command` package contains all the commands that can be carried out by the user.
 Each command is represented by a class that extends the abstract `Command` class.
 
-This is how the 'AddCommnand' class interacts with other components:
+This is how the 'AddCommand' class interacts with other components:
 
 When a command is executed, it interacts with the `Studyplan`, `UI`, and `Storage` components to perform its function.
 
@@ -136,7 +136,7 @@ User inputs are parsed into commands by the **`Parser`** class.
     * `parseSpec()` : Parses arguments for the `SpecCommand`, extracting the specialization.
     * `parsePrereq()` : Parses arguments for the `PrereqCommand`, extracting the module code.
     * `parseAddWithStatus()`: Parses arguments for the `AddCompletedCommand`, extracting the module code and status.
-    * `parseCurrentSem()`: Parses arguments for the `CurrentSemCommand`, extracting the current semester.
+    * `parseCurrentSem()`: Parses arguments for the `SetCurrentSemesterCommand`, extracting the current semester.
 
 #### Design Considerations
 
@@ -336,7 +336,7 @@ streamlined and guided approach to academic planning.
 | v1.0    | CEG student    | add a module to a specific semester                             | customize my study plan quickly                             |
 | v1.0    | CEG student    | remove a module from a specific semester                        | adjust my plan if my enrolment changes                      |
 | v2.0    | Long time user | retrieve created study plan                                     | refer to it in the future for module planning               |
-| v2.0:   | Potential user | generate a 4 year CEG study plan                                | find out the potential Specialisations/TE that i can do     |
+| v2.0    | Potential user | generate a 4 year CEG study plan                                | find out the potential Specialisations/TE that i can do     |
 | v2.0    | Expert user    | find out what modules are needed for an intended specialisation | complete my specialisation in a reasonable time             |
 | v2.0    | New user       | find out the prerequisites of a specific module                 | know when the earliest I can complete the module is         |
 | v2.0    | CEG student    | find the number of module credits I have per semester           | know how I can balance my workload better                   |
