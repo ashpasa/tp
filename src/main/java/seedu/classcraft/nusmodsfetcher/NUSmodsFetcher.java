@@ -122,5 +122,41 @@ public abstract class NUSmodsFetcher {
         JsonNode root = fetchModuleJson(moduleCode);
         return extractField(root, "prerequisite");
     }
+
+    /**
+     * Fetches the semester(s) a module is offered in from NUSMods API.
+     * 
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods.
+     * @return An integer representing the semester(s) the module is offered in:
+     *         0 - not offered
+     *         1 - offered in Semester 1 only
+     *         2 - offered in Semester 2 only
+     *         3 - offered in both Semesters 1 and 2
+     * @throws NUSmodsFetcherException
+     */
+    public static int getSemesterOffered(String moduleCode) throws NUSmodsFetcherException {
+        JsonNode root = fetchModuleJson(moduleCode);
+        boolean offeredInSem1 = false;
+        boolean offeredInSem2 = false;
+        JsonNode semesterDataNode = root.path("semesterData");
+        if (semesterDataNode.isArray()) {
+            for (JsonNode sem : semesterDataNode) {
+                int semesterNum = sem.path("semester").asInt(-1);
+                switch(semesterNum) {
+                case 1:
+                    offeredInSem1 = true;
+                    break;
+                case 2:
+                    offeredInSem2 = true;
+                    break;
+                default:
+                    throw new NUSmodsFetcherException("Unexpected semester number: " + semesterNum);
+                }
+            }
+            return (offeredInSem1 && offeredInSem2) ? 3 : (offeredInSem1 ? 1 : (offeredInSem2 ? 2 : 0));
+        } else {
+            throw new NUSmodsFetcherException("semesterData is not an array for module: " + moduleCode);
+        }
+    }
 }
 // @@author
