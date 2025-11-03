@@ -3,6 +3,8 @@ package seedu.classcraft.nusmodsfetcher;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.net.URI;
 
 import seedu.classcraft.exceptions.NUSmodsFetcherException;
@@ -121,6 +123,31 @@ public abstract class NUSmodsFetcher {
     public static String getModulePrerequisites(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
         return extractField(root, "prerequisite");
+    }
+
+    public static int getSemesterOffered(String moduleCode) throws NUSmodsFetcherException {
+        JsonNode root = fetchModuleJson(moduleCode);
+        boolean offeredInSem1 = false;
+        boolean offeredInSem2 = false;
+        JsonNode semesterDataNode = root.path("semesterData");
+        if (semesterDataNode.isArray()) {
+            for (JsonNode sem : semesterDataNode) {
+                int semesterNum = sem.path("semester").asInt(-1);
+                switch(semesterNum) {
+                case 1:
+                    offeredInSem1 = true;
+                    break;
+                case 2:
+                    offeredInSem2 = true;
+                    break;
+                default:
+                    throw new NUSmodsFetcherException("Unexpected semester number: " + semesterNum);
+                }
+            }
+            return (offeredInSem1 && offeredInSem2) ? 3 : (offeredInSem1 ? 1 : (offeredInSem2 ? 2 : 0));
+        } else {
+            throw new NUSmodsFetcherException("semesterData is not an array for module: " + moduleCode);
+        }
     }
 }
 // @@author
