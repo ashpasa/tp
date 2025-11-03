@@ -166,6 +166,9 @@ public class Storage {
 
     private boolean isFileFormatInvalid(Path filePath) {
         int actualNoLines = 9;
+        int numberCompletedSem = 0;
+        int lastCompletedSem = 0;
+        int firstCompletedSem = 0;
         try {
             List<String> lines = Files.readAllLines(filePath);
             if (lines.size() != actualNoLines) {
@@ -197,6 +200,7 @@ public class Storage {
 
                 String semesterInfo = restorationParts[0].trim();
                 String semNumber = semesterInfo.split(":")[0].trim();
+
                 int expectedSemester = i + 1;
                 int actualSemester;
                 try {
@@ -229,6 +233,16 @@ public class Storage {
                     return true;
                 }
 
+                if (semesterInfo.contains("COMPLETED")) {
+                    numberCompletedSem++;
+                    if(numberCompletedSem == 0) {
+                        firstCompletedSem = i;
+                    }
+                    if((i < 7) && !(lines.get(i+1).contains("COMPLETED"))) {
+                        lastCompletedSem = i;
+                    }
+                }
+
             }
             String lastLine = lines.get(actualNoLines - 1);
             String[] restorationParts = lastLine.split("-", 2);
@@ -238,6 +252,13 @@ public class Storage {
                 return true;
             }
 
+            for (int j = firstCompletedSem; j <= lastCompletedSem; j++) {
+                if (!lines.get(j).contains("COMPLETED")) {
+                    ui.showMessage("Completed semesters are not in order.\n" +
+                            "File format is invalid. Recreating a new file.");
+                    return true;
+                }
+            }
 
         } catch (IOException e) {
             logger.log(Level.WARNING, "File format is incorrect " + e.getMessage());
