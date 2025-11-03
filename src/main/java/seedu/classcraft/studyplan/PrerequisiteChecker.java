@@ -19,6 +19,15 @@ import java.util.Set;
 public class PrerequisiteChecker {
 
     private static final Logger logger = Logger.getLogger(PrerequisiteChecker.class.getName());
+    private static boolean prereqRestoreSatisfied;
+
+    public static boolean isPrereqRestoreSatisfied() {
+        return prereqRestoreSatisfied;
+    }
+
+    public static void setPrereqRestoreSatisfied(boolean prereqRestoreSatisfied) {
+        PrerequisiteChecker.prereqRestoreSatisfied = prereqRestoreSatisfied;
+    }
 
     /**
      * Validates if prerequisites are satisfied before adding module.
@@ -27,7 +36,7 @@ public class PrerequisiteChecker {
      * @param targetSemester The semester number (1-based index) to which the module is being added.
      * @param studyPlan      The current study plan instance.
      */
-    public static void validatePrerequisites(Module module, int targetSemester, StudyPlan studyPlan)
+    public static void validatePrerequisites(Module module, int targetSemester, StudyPlan studyPlan, boolean isRestore)
             throws StudyPlanException {
         assert module != null : "Module cannot be null";
         assert studyPlan != null : "StudyPlan cannot be null";
@@ -40,6 +49,7 @@ public class PrerequisiteChecker {
         JsonNode prereqTree = module.getPrereqTree();
 
         if (prereqTree == null || prereqTree.isNull() || prereqTree.isMissingNode()) {
+            prereqRestoreSatisfied = true;
             logger.log(Level.FINE, "Module {0} has no prerequisites", module.getModCode());
             return;
         }
@@ -49,6 +59,11 @@ public class PrerequisiteChecker {
                 new Object[]{targetSemester, completedModules});
 
         boolean satisfied = evaluatePrereqTree(prereqTree, completedModules);
+
+        if (isRestore) {
+            prereqRestoreSatisfied = satisfied;
+            return;
+        }
 
         if (!satisfied) {
             logger.log(Level.WARNING, "Prerequisites not satisfied for module {0}", module.getModCode());
