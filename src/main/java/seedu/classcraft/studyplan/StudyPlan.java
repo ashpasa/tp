@@ -189,7 +189,7 @@ public class StudyPlan {
 
         Module newModule = moduleHandler.createModule(moduleCode);
 
-        PrerequisiteChecker.validatePrerequisites(newModule, semester, this);
+        PrerequisiteChecker.validatePrerequisites(newModule, semester, this, false);
 
         if (isModAddedPrev) {
             storage.deleteModule(moduleCode, previousSemester);

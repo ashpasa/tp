@@ -52,7 +52,7 @@ class PrerequisiteCheckerTest {
         Module module = createModule("CS1010", "Programming Methodology", 4);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 1, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 1, studyPlan,false)
         );
     }
 
@@ -64,7 +64,7 @@ class PrerequisiteCheckerTest {
                 emptyNode);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 1, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 1, studyPlan,false)
         );
     }
 
@@ -78,7 +78,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         StudyPlanException exception = assertThrows(StudyPlanException.class, () ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
 
         assertTrue(exception.getMessage().contains("Cannot add CS2040"));
@@ -97,7 +97,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -113,7 +113,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 4, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 4, studyPlan, false)
         );
     }
 
@@ -131,7 +131,7 @@ class PrerequisiteCheckerTest {
                 prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -147,7 +147,7 @@ class PrerequisiteCheckerTest {
                 prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -160,7 +160,7 @@ class PrerequisiteCheckerTest {
                 prereqTree);
 
         assertThrows(StudyPlanException.class, () ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -178,7 +178,7 @@ class PrerequisiteCheckerTest {
                 prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -198,7 +198,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -214,7 +214,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertThrows(StudyPlanException.class, () ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -227,7 +227,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertThrows(StudyPlanException.class, () ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -247,7 +247,7 @@ class PrerequisiteCheckerTest {
                 prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -266,7 +266,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -283,7 +283,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertThrows(StudyPlanException.class, () ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan,false)
         );
     }
 
@@ -300,7 +300,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -327,7 +327,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 1, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 1, studyPlan, false)
         );
     }
 
@@ -344,7 +344,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
     }
 
@@ -357,7 +357,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         StudyPlanException exception = assertThrows(StudyPlanException.class, () ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
 
         assertTrue(exception.getMessage().contains("Cannot add CS2040"));
@@ -372,7 +372,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         assertThrows(StudyPlanException.class, () ->
-                PrerequisiteChecker.validatePrerequisites(module, 1, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 1, studyPlan, false)
         );
     }
 
@@ -394,7 +394,7 @@ class PrerequisiteCheckerTest {
                 prereqTree);
 
         assertDoesNotThrow(() ->
-                PrerequisiteChecker.validatePrerequisites(mod3, 3, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(mod3, 3, studyPlan,false)
         );
     }
 
@@ -407,7 +407,7 @@ class PrerequisiteCheckerTest {
                 4, prereqTree);
 
         StudyPlanException exception = assertThrows(StudyPlanException.class, () ->
-                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan)
+                PrerequisiteChecker.validatePrerequisites(module, 2, studyPlan, false)
         );
 
         String message = exception.getMessage();
