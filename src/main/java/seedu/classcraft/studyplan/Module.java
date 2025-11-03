@@ -47,28 +47,12 @@ public class Module {
         return prerequisitesCount;
     }
 
-    public void setPrerequisitesCount(int prerequisitesCount) {
-        this.prerequisitesCount = prerequisitesCount;
-    }
-
     public String getModName() {
         return modName;
     }
 
-    public void setModName(String modName) {
-        this.modName = modName;
-    }
-
     public String getModCode() {
         return modCode;
-    }
-
-    public void setModCode(String modCode) {
-        this.modCode = modCode;
-    }
-
-    public void setModCreds(int modCreds) {
-        this.modCreds = modCreds;
     }
 
     public int getModCreds() {
@@ -77,10 +61,6 @@ public class Module {
 
     public String getModDescription() {
         return modDescription;
-    }
-
-    public void setModDescription(String modDescription) {
-        this.modDescription = modDescription;
     }
 
     public List<String> getPrerequisites() {
@@ -101,10 +81,6 @@ public class Module {
 
     public int getDefaultSemester() {
         return defaultSemester;
-    }
-
-    public void setDefaultSemester(int defaultSemester) {
-        this.defaultSemester = defaultSemester;
     }
 
     // @@author lingru
