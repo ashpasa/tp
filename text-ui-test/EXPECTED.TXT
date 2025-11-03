@@ -3,7 +3,7 @@ Input your command! Type 'help' if you need assistance.
 Parent directory created successfully.
 Yay! A file has been created successfully.
 Data restored successfully from ./ClassCraftData/studyPlan.txt
-============================================================
+=================================================================================================================================
 OOPS!!! I'm sorry, but I don't know what that means :-(
 Please type 'help' to see the list of available commands.
-============================================================
+=================================================================================================================================

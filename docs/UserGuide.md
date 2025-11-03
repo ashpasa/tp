@@ -10,6 +10,7 @@ able to plan your semesters effectively, ensuring you meet all necessary require
 - [Quick Start](#quick-start)
 - [Features](#features)
     - [Add a Module](#add-a-module-add)
+    - [Set Current Semester](#set-current-semester-setcurrent)
     - [Add an Exempted Module](#add-an-exempted-module-add-exempted)
     - [Delete a Module](#delete-a-module-delete)
     - [View Current Study Plan](#view-current-study-plan-view-information)
@@ -19,8 +20,9 @@ able to plan your semesters effectively, ensuring you meet all necessary require
     - [Specialisations](#view-modules-required-for-a-specialisation-spec-specialisation)
     - [Pre-Requisites](#view-pre-requisites-for-a-module-prereq-module_code)
     - [Calculate Module Credits](#calculate-module-credits-mc)
-    - [Balance Workload](#balance-study-plan-balance)
+    - [Check Workload](#check-study-plan-check)
     - [View Progress](#view-degree-progression-progress)
+    - [Set Current Semester](#set-current-semester-set-current)
     - [Help](#help-help)
     - [Exit](#exit-exit)
 - [Saving the Data](#saving-the-data)
@@ -60,6 +62,12 @@ and `SEMESTER` is the semester number (1-8), where you want to add the module to
 Example: `add n/CS2113 s/1`, `add s/2 n/CS2040C`, `add n/MA1511s/3`, `add s/4n/GEA1000`
 
 
+### Set current semester: `set-current`
+
+Indicates the current semester, so that modules from previous semesters are marked as completed.
+
+Format: `set-current {SEMESTER}`
+
 ### Add an Exempted Module: `add-exempted`
 
 Add an exempted module, whose participation counts toward course completion progress.
@@ -97,7 +105,7 @@ Displays a sample study plan for reference.
 
 Format: `view sample`
 
-### 3) View Sample Study Plan: `view plan`
+### 3) View Current Study Plan: `view plan`
 
 Displays current study plan, with modules chosen by the user, in their respective semester.
 
@@ -148,6 +156,12 @@ Calculates and displays the user's current degree progress as a percentage value
 
 Format: `progress`
 
+### Set current semester: `set-current`
+
+Sets the current semester for the user, and marks all previous semesters as completed.
+
+Format: `set-current {SEMESTER}`, where {SEMESTER} is an integer from 1 to 8
+
 ### Help: `help`
 
 Shows a list of available commands and their usage.
@@ -171,8 +185,12 @@ Improper editing of the data file may lead to data corruption or loss.
 
 If you wish to edit the file, please follow the format below:
 
-`{SEMESTER_NUMBER} - {MODULE_CODE1}, {MODULE_CODE2}, ...`
+`{SEMESTER_NUMBER}:COMPLETED - {MODULE_CODE1}, {MODULE_CODE2}, ...`
 e.g., `1 - CS1010, MA1511,`
+(":COMPLETED" is only necessary if the modules in that semester have been completed)
+
+`EXEMPTED - {MODULE_CODE1}, {MODULE_CODE2}, ...`
+e.g., `EXEMPTED - CS1231, GEQ1000,`
 
 where `SEMESTER_NUMBER` is an integer from 1 to 8 representing the semester,
 and `MODULE_CODE` is the code of a valid module in that semester.
@@ -185,21 +203,22 @@ If you do choose to edit the file, please ensure that you have a backup copy of 
 
 ## Command Summary
 
-| Command             | Format                          | Description                       |
-|---------------------|---------------------------------|-----------------------------------|
-| Add Module          | add n/MODULE_CODE s/SEMESTER    | Add a module to your study plan   |
-| Add Exempted Module | add n/MODULE_CODE s/SEMESTER    | Add a module to your study plan   |
-| Delete Module       | delete MODULE_CODE              | Remove a module from your plan    |
-| View Plan           | view plan                       | Show your current study plan      |
-| View Grad req       | view grad                       | Show graduation requirements      |
-| View Sample         | view sample                     | Show a sample study plan          |
-| Specialisation      | spec {SPEC}                     | Show specialisation information   |
-| Calculate MCs       | mc {SEMESTER}                   | Calculate module credits          |
-| Check               | check                           | Checks workload of study plan     |
-| Progress            | progress                        | View degree progress in %         |
-| Pre-Requisite       | prereq {MODULE_CODE}            | View Pre-Requisites               |
-| Help                | help                            | Show help information             |
-| Exit                | exit                            | Exit the application              |
+| Command             | Format                           | Description                     |
+|---------------------|----------------------------------|---------------------------------|
+| Add Module          | add n/{MODULE_CODE} s/{SEMESTER} | Add a module to your study plan |
+| Set Current Semester| set-current {SEMESTER}           | Set the current Semester        |
+| Add Exempted Module | add-exempted {MODULE_CODE}       | Add a module to your study plan |
+| Delete Module       | delete {MODULE_CODE}             | Remove a module from your plan  |
+| View Plan           | view plan                        | Show your current study plan    |
+| View Grad req       | view grad                        | Show graduation requirements    |
+| View Sample         | view sample                      | Show a sample study plan        |
+| Specialisation      | spec {SPEC}                      | Show specialisation information |
+| Calculate MCs       | mc {SEMESTER}                    | Calculate module credits        |
+| Check               | check                            | Checks workload of study plan   |
+| Progress            | progress                         | View degree progress in %       |
+| Pre-Requisite       | prereq {MODULE_CODE}             | View Pre-Requisites             |
+| Help                | help                             | Show help information           |
+| Exit                | exit                             | Exit the application            |
 
 
 

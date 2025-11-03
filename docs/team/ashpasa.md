@@ -15,22 +15,35 @@ Given below are my contributions to the project.
  + Added functionality to calculate and display module credits in specific semesters
  + Added functionality to calculate and display total module credits in the study plan
 
-- **Code Contributed**
+### **Code Contributed**
 
-- **Project Management**
+[Reposense Link](https://nus-cs2113-ay2526s1.github.io/tp-dashboard/?search=&sort=groupTitle&sortWithin=title&timeframe=commit&mergegroup=&groupSelect=groupByRepos&breakdown=true&checkedFileTypes=docs~functional-code~test-code~other&since=2025-09-19T00%3A00%3A00&filteredFileName=&tabOpen=true&tabType=zoom&zA=ashpasa&zR=AY2526S1-CS2113-T10-2%2Ftp%5Bmaster%5D&zACS=226.77907949790796&zS=2025-09-19T00%3A00%3A00&zFS=&zU=2025-11-03T23%3A59%3A59&zMG=false&zFTF=commit&zFGS=groupByRepos&zFR=false)
+
+### **Project Management**
  + Reviewed pull requests
+ + Delegated work to the other team members
+ + Tested for bugs and edge cases
 
-- **Enhancements to existing features:**
+### **Enhancements to existing features:**
  + Modified the data fetcher to return an integer instead of a string when retrieving module credits
  + Modified the _ModuleHandler_ to directly retrieve information from the fetcher
  + Wrote test cases for _NUSmodsFetcher_
  + Modified the sample study plan to include all compulsory modules for CEG students
 
-- **Documentation:**
+### **Documentation:**
+
+- **Code**
  + Wrote javadoc comments for _NUSmodsFetcher_
  + Standardised comment format
- + Added user guide details for `mc` and `progress` commands
- + Formatted developer guide and contributed to design section
 
-- **Community:**
+- **User Guide**
+ + Added user guide details for `mc` and `progress` commands
+ + Corrected command summary to accurately represent recognised commands
+
+- **Developer Guide**
+ + Formatted developer guide and contributed to diagrams
+ + Added documentation for components
+ + Added documentation for implementation of _Fetching of module data from NUSMods API_, _Checking Module Credits_, and _Checking Workload Balance_
+
+### **Community:**
  + Reported bugs and reviewed code for other teams in the course
