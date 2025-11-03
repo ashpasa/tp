@@ -123,6 +123,17 @@ public abstract class NUSmodsFetcher {
         return extractField(root, "prerequisite");
     }
 
+    /**
+     * Fetches the semester(s) a module is offered in from NUSMods API.
+     * 
+     * @param moduleCode The module code to fetch data for, as displayed on NUSMods.
+     * @return An integer representing the semester(s) the module is offered in:
+     *         0 - not offered
+     *         1 - offered in Semester 1 only
+     *         2 - offered in Semester 2 only
+     *         3 - offered in both Semesters 1 and 2
+     * @throws NUSmodsFetcherException
+     */
     public static int getSemesterOffered(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
         boolean offeredInSem1 = false;
