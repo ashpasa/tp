@@ -164,7 +164,7 @@ public class Storage {
             ui.showMessage("Oh no! I was not able to read the file: " + e.getMessage());
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error while restoring data: " + e.getMessage());
-            throw new RuntimeException(e);
+            ui.showMessage("An error occurred while restoring data: " + e.getMessage());
         }
         return studyPlan;
     }
@@ -181,6 +181,32 @@ public class Storage {
                         "File format is invalid. Recreating a new file.");
                 return true;
             }
+
+            String lastLineStore = lines.get(8);
+            String[] restorationPartsStore = lastLineStore.split("-", 2);
+            String[] modules = restorationPartsStore[1].split(",");
+            for (String module : modules) {
+                module = module.trim();
+                if (module.isEmpty()) {
+                    continue;
+                }
+                try {
+                    String[] parts = module.split(":");
+                    String moduleCode = parts[0].toUpperCase();
+                    ModuleStatus status = parts.length > 1 ? ModuleStatus.valueOf(parts[1]) :
+                            ModuleStatus.PLANNED;
+                    tempStudyPlan.addExemptedModule(moduleCode, status, this, true);
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "Failed to restore secured/exempted module "
+                            + module + ": " + e.getMessage());
+                }
+
+            }
+            for (String module : restorationPartsStore[1].split(",")) {
+                module = module.trim();
+
+            }
+
 
             for (int i = 0; i < actualNoLines - 1; i++) {
                 String line = lines.get(i);
@@ -219,31 +245,6 @@ public class Storage {
                     ui.showMessage("Semester number in line " + (i + 1) + " is incorrect.\n" +
                             "File format is invalid. Recreating a new file.");
                     return true;
-                }
-
-                String[] modules = restorationParts[1].split(",");
-                for (String module : modules) {
-                    module = module.trim();
-                    if (!module.isEmpty()) {
-                        Module newModule = moduleHandler.createModule(module);
-                        PrerequisiteChecker.validatePrerequisites(newModule,
-                                actualSemester, tempStudyPlan,true);
-                        if (!PrerequisiteChecker.isPrereqRestoreSatisfied()) {
-                            ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
-                                    " has invalid prerequisites.\n" +
-                                    "File format is invalid. Recreating a new file.");
-                            return true;
-                        }
-                        tempStudyPlan.addModule(newModule, actualSemester);
-
-
-                    }
-                    if (module.split(" ").length > 1) {
-                        ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
-                                " contains invalid spaces.\n" +
-                                "File format is invalid. Recreating a new file.");
-                        return true;
-                    }
                 }
 
                 if (!restorationParts[1].matches("^[a-zA-Z0-9,\\s]*$")) {
@@ -289,8 +290,6 @@ public class Storage {
             ui.showMessage("Oh no! I was not able to read the file: " + e.getMessage() +
                     "\nFile format is invalid. Recreating a new file.");
             return true;
-        } catch (StudyPlanException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
