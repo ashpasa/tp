@@ -19,6 +19,7 @@ public class StudyPlan {
     private static final Logger LOGGER = Logger.getLogger(StudyPlan.class.getName());
     private static int totalSemesters = 8;
     private static int currentSemester = 1;
+    private static int numModules = 0;
 
     /**
      * @@author lingru
@@ -68,9 +69,6 @@ public class StudyPlan {
         return currentSemester;
     }
 
-    public static void setCurrentSemester(int currentSemester) {
-        StudyPlan.currentSemester = currentSemester;
-    }
 
     /**
      * Sets the current semester.
@@ -82,7 +80,8 @@ public class StudyPlan {
      * @return The number of modules moved to COMPLETED.
      * @throws StudyPlanException If semester is invalid.
      */
-    public int setCurrentSemester(int newCurrentSemester, Storage storage) throws StudyPlanException {
+    public int setCurrentSemester(int newCurrentSemester, Storage storage, boolean isRestore) throws
+            StudyPlanException {
         if (newCurrentSemester < 1 || newCurrentSemester > studyPlan.size()) {
             throw new StudyPlanException("Semester " + newCurrentSemester + " is invalid. " +
                     "Must be between 1 and " + studyPlan.size());
@@ -92,11 +91,15 @@ public class StudyPlan {
         int prevSemester = this.currentSemester;
         this.currentSemester = newCurrentSemester;
 
+        if (!isRestore) {
+            storage.addCompletionStatus(newCurrentSemester);
+        }
+
         if (newCurrentSemester < prevSemester) {
             for (int i = newCurrentSemester - 1; i < prevSemester - 1; i++) {
                 int semCreds = calculateSemCredits(i);
                 assert semCreds >= 0 : "Semester credits should be non-negative.";
-                modulesCompletedCount++;
+                modulesCompletedCount += numModules;
             }
             return modulesCompletedCount;
         }
@@ -114,6 +117,7 @@ public class StudyPlan {
                 modulesCompletedCount++;
             }
         }
+
         return modulesCompletedCount;
     }
 
@@ -536,6 +540,7 @@ public class StudyPlan {
      * @return Total credits for the specified semester or entire study plan
      */
     public int calculateSemCredits(int semesterIndex) {
+        numModules = 0;
         if (semesterIndex == -1) {
             return calculateTotalCredits();
         }
@@ -549,6 +554,7 @@ public class StudyPlan {
         for (Module module : studyPlan.get(semesterIndex)) {
             assert module.getModCreds() >= 0 : "Module credits should be non-negative.";
             semesterCredits += module.getModCreds();
+            numModules++;
         }
         return semesterCredits;
     }
