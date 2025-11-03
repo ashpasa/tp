@@ -164,7 +164,7 @@ public class Storage {
             ui.showMessage("Oh no! I was not able to read the file: " + e.getMessage());
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error while restoring data: " + e.getMessage());
-            throw new RuntimeException(e);
+            ui.showMessage("An error occurred while restoring data: " + e.getMessage());
         }
         return studyPlan;
     }
@@ -182,7 +182,59 @@ public class Storage {
                 return true;
             }
 
-            for (int i = 0; i < actualNoLines - 1; i++) {
+            String lastLineStore = lines.get(8);
+            String[] restorationPartsStore = lastLineStore.split("-", 2);
+            if (!restorationPartsStore[0].trim().equals("EXEMPTED")) {
+                ui.showMessage("Last line does not start with 'EXEMPTED'.\n" +
+                        "File format is invalid. Recreating a new file.");
+                return true;
+            }
+
+            String[] modules = restorationPartsStore[1].split(",");
+            for (String module : modules) {
+                module = module.trim();
+                if (module.isEmpty()) {
+                    continue;
+                }
+                try {
+                    String[] parts = module.split(":");
+                    if (parts[0].trim().isEmpty()) {
+                        ui.showMessage("Module code in exempted modules cannot be empty.\n" +
+                                "File format is invalid. Recreating a new file.");
+                        return true;
+                    }
+                    if (parts.length != 2) {
+                        ui.showMessage("Module status in EXEMPTED modules is invalid.\n" +
+                                "File format is invalid. Recreating a new file.");
+                        return true;
+                    }
+                    if (!parts[1].contains("EXEMPTED")) {
+                        ui.showMessage("Module status in exempted modules is invalid.\n" +
+                                "File format is invalid. Recreating a new file.");
+                        return true;
+                    }
+
+                    String moduleCode = parts[0].toUpperCase();
+
+
+                    if (!moduleCode.matches("^[a-zA-Z0-9,\\s]*$")) {
+                        ui.showMessage("Line 9 contains invalid characters.\n" +
+                                "File format is invalid. Recreating a new file.");
+                        return true;
+                    }
+
+                    ModuleStatus status = parts.length > 1 ? ModuleStatus.valueOf(parts[1]) :
+                            ModuleStatus.PLANNED;
+                    tempStudyPlan.addExemptedModule(moduleCode, status, this, true);
+                } catch (Exception e) {
+                    ui.showMessage("Failed to restore exempted module ");
+                    logger.log(Level.WARNING, "Failed to restore exempted module "
+                            + module + ": " + e.getMessage());
+                }
+
+            }
+
+            for (int i = 0; i < actualNoLines - 2; i++) {
                 String line = lines.get(i);
                 String[] restorationParts;
                 int countDash = line.length() - line.replace("-", "").length();
@@ -221,13 +273,21 @@ public class Storage {
                     return true;
                 }
 
-                String[] modules = restorationParts[1].split(",");
-                for (String module : modules) {
+
+                if (!restorationParts[1].matches("^[a-zA-Z0-9,\\s]*$")) {
+                    ui.showMessage("Line " + (i + 1) + " contains invalid characters.\n" +
+                            "File format is invalid. Recreating a new file.");
+                    return true;
+                }
+
+
+                String[] modulesNonExempted = restorationParts[1].split(",");
+                for (String module : modulesNonExempted) {
                     module = module.trim();
                     if (!module.isEmpty()) {
                         Module newModule = moduleHandler.createModule(module);
                         PrerequisiteChecker.validatePrerequisites(newModule,
-                                actualSemester, tempStudyPlan,true);
+                                actualSemester, tempStudyPlan, true);
                         if (!PrerequisiteChecker.isPrereqRestoreSatisfied()) {
                             ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
                                     " has invalid prerequisites.\n" +
@@ -235,9 +295,8 @@ public class Storage {
                             return true;
                         }
                         tempStudyPlan.addModule(newModule, actualSemester);
-
-
                     }
+
                     if (module.split(" ").length > 1) {
                         ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
                                 " contains invalid spaces.\n" +
@@ -246,30 +305,18 @@ public class Storage {
                     }
                 }
 
-                if (!restorationParts[1].matches("^[a-zA-Z0-9,\\s]*$")) {
-                    ui.showMessage("Line " + (i + 1) + " contains invalid characters.\n" +
-                            "File format is invalid. Recreating a new file.");
-                    return true;
-                }
-
                 if (semesterInfo.contains("COMPLETED")) {
                     numberCompletedSem++;
                     if (numberCompletedSem == 0) {
                         firstCompletedSem = i;
                     }
-                    if ((i < 7) && !(lines.get(i + 1).contains("COMPLETED"))) {
+                    if (!(lines.get(i + 1).contains("COMPLETED"))) {
                         lastCompletedSem = i;
                     }
                 }
 
             }
-            String lastLine = lines.get(actualNoLines - 1);
-            String[] restorationParts = lastLine.split("-", 2);
-            if (!restorationParts[0].trim().equals("EXEMPTED")) {
-                ui.showMessage("Last line does not start with 'EXEMPTED'.\n" +
-                        "File format is invalid. Recreating a new file.");
-                return true;
-            }
+
 
             if (numberCompletedSem <= 0) {
                 return false;
@@ -289,8 +336,6 @@ public class Storage {
             ui.showMessage("Oh no! I was not able to read the file: " + e.getMessage() +
                     "\nFile format is invalid. Recreating a new file.");
             return true;
-        } catch (StudyPlanException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -303,11 +348,33 @@ public class Storage {
         createFile();
     }
 
-    public void populateStudyPlan(Storage storage, StudyPlan studyPlan) {
+    public void populateStudyPlan(Storage storage, StudyPlan studyPlan) throws IOException {
         Path dataFile = Paths.get(this.dataFile);
         int countCurrentSem = 1;
+        List<String> lines = Files.readAllLines(dataFile);
         try {
-            for (String line : Files.readAllLines(dataFile)) {
+            String lastLineStore = lines.get(8);
+            String[] restorationPartsStore = lastLineStore.split("-", 2);
+            String[] modules = restorationPartsStore[1].split(",");
+            for (String module : modules) {
+                module = module.trim();
+                if (module.isEmpty()) {
+                    continue;
+                }
+                try {
+                    String[] parts = module.split(":");
+                    String moduleCode = parts[0].toUpperCase();
+                    ModuleStatus status = parts.length > 1 ? ModuleStatus.valueOf(parts[1]) :
+                            ModuleStatus.PLANNED;
+                    studyPlan.addExemptedModule(moduleCode, status, this, true);
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "Failed to restore exempted module "
+                            + module + ": " + e.getMessage());
+                }
+
+            }
+            for (int i = 0; i < lines.size() - 1; i++) {
+                String line = lines.get(i);
                 if (!line.contains("-")) {
                     continue;
                 }
@@ -331,7 +398,7 @@ public class Storage {
                                     ModuleStatus.PLANNED;
                             studyPlan.addExemptedModule(moduleCode, status, storage, true);
                         } catch (Exception e) {
-                            logger.log(Level.WARNING, "Failed to restore secured/exempted module "
+                            logger.log(Level.WARNING, "Failed to restore exempted module "
                                     + module + ": " + e.getMessage());
                         }
                     }
