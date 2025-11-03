@@ -97,7 +97,7 @@ Displays a sample study plan for reference.
 
 Format: `view sample`
 
-### 3) View Sample Study Plan: `view plan`
+### 3) View Current Study Plan: `view plan`
 
 Displays current study plan, with modules chosen by the user, in their respective semester.
 
