@@ -151,7 +151,7 @@ public class Storage {
                 recreateFile(filePath);
                 return new StudyPlan(totalSemesters);
             }
-            populateStudyPlan(storage,studyPlan);
+            populateStudyPlan(storage, studyPlan);
             System.out.println("Data restored successfully from " + dataFile);
         } catch (IOException e) {
             logger.log(Level.WARNING, "Failed to read the data file: " + e.getMessage());
@@ -253,7 +253,6 @@ public class Storage {
     }
 
 
-
     public StudyPlan populateStudyPlan(Storage storage, StudyPlan studyPlan) {
         Path dataFile = Paths.get(this.dataFile);
         try {
@@ -285,7 +284,7 @@ public class Storage {
                         seedu.classcraft.studyplan.ModuleStatus status =
                                 seedu.classcraft.studyplan.ModuleStatus.valueOf(parts[1]);
 
-                        studyPlan.addCompletedModule(moduleCode, status, storage, true);
+                        studyPlan.addExemptedModule(moduleCode, status, storage, true);
 
                     } catch (Exception e) {
                         logger.log(Level.WARNING, "Failed to restore secured module "

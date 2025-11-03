@@ -41,11 +41,18 @@ public class SetCurrentSemesterCommand extends Command {
                 throw new IllegalArgumentException();
             }
 
+            int previousSemester = StudyPlan.getCurrentSemester();
+
             int modulesCompleted = studyPlan.setCurrentSemester(Integer.parseInt(currentSem), storage);
 
+            if (previousSemester > currentSemester) {
+                ui.showMessage("Successfully set current semester to " + currentSem);
+                ui.showMessage(modulesCompleted + " modules marked as NOT COMPLETED");
+            } else {
+                ui.showMessage("Successfully set current semester to " + currentSem);
+                ui.showMessage(modulesCompleted + " modules marked as COMPLETED");
+            }
 
-            ui.showMessage("Successfully set current semester to " + currentSem);
-            ui.showMessage(modulesCompleted + " modules marked as COMPLETED");
         } catch (IllegalArgumentException e) {
             // Handle invalid semester errors
             ui.printMessage("Invalid semester");
