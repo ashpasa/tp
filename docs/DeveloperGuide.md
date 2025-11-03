@@ -166,10 +166,10 @@ Each command class extends the abstract `Command` class.
     * `CalcCreditsCommand`: Calculates and displays the total modular credits for a specified semester.
     * `SpecCommand`: Displays specialization information that user can take if they have chosen a specialization.
     * `PrereqCommand`: Displays prerequisite information for a specified module.
-    * `AddCompletedCommand`: Adds modules with a specific status, eg. completed/exempted
-    * `SetCurrentSemesterCommand`: Sets the current semester the user is in
+    * `AddExemptedCommand`: Indicates module exemptions that the user has.
+    * `CurrentSemCommand`: Sets the current semester the user is in (to determine completed modules and degree progress).
     * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
-
+  
 #### Design Considerations
 - **Alternative 1** (current choice) : One class per command implementing an abstract execute(...) method. 
   - *Pros:* Easy to add new commands, adheres to the Command design pattern.
@@ -177,6 +177,35 @@ Each command class extends the abstract `Command` class.
 - **Alternative 2** : Centralized command handler with large conditional blocks.
   - *Pros:* Fewer classes, simpler structure.
   - *Cons:* Harder to maintain and extend, violates single responsibility principle.
+
+### **Fetching of module data from NUSMods API**
+
+ClassCraft relies on the NUSMods API to determine module information, such as module credits, module titles, as well as prerequisites.
+
+* **Implementation:** The `NUSmodsFetcher.java` fetches data directly from the NUSMods API and returns each module as a JsonNode object. Each method returns a field of a specified module's `.json` file as a string, with the exception of getModuleCredits(moduleCode), which returns the field as an integer.
+Each method first attempts to fetch the module `.json` file, and throws an `NUSmodsFetcher` exception if the creation of the JsonNode object fails (i.e. if the given module code is a module that does not exist in the API)
+
+* **Key Methods:**
+    * getModuleTitle(String moduleCode): Extracts the `"title"` field from the JsonNode and returns its value as a string
+    * getModuleCredits(String moduleCode): Extracts the `"moduleCredit"` field from the JsonNode and returns its value as an integer
+    * getDepartment(String moduleCode): Extracts the `"department"` field from the JsonNode and returns it as a string
+    * getFaculty(String moduleCode): Extracts the `"faculty"` field from the JsonNode and returns it as a string
+    * getModuleDescription(String moduleCode): Extracts the `"description"` field from the module JsonNode and returns it as a string
+    * getPrerequisites(String moduleCode): Extracts the `"prerequisite"` field from the JsonNode and returns it as a string
+
+* **Helper Methods:**
+    * fetchModuleJson(moduleCode): Fetches the module data from the NUSMods API and reformats it into a JsonNode object
+    * extractField(JsonNode root, String fieldName): Retrieves a specified field from the module JsonNode object
+
+#### Design Considerations
+
+Most of the key methods in `NUSmodsFetcher.java` return strings for ease of parsing within ClassCraft. The only exception, getModuleCredits(String moduleCode), returns an integer so that the value can be directly used for calculating workload.
+
+As the programme only fetches data from one source (NUSMods API), `NUSmodsFetcher` never requires more than one instance, and is implemented as an abstract class, and all of its methods are static.
+
+#### Disclaimer
+
+Certain modules in the NUSMods API store their prerequisite data in a unique format. We have tested extensively for these exceptional cases and implemented fixes for those we have identified, but due to the size of the database, please be informed that few modules may not have their prerequisites correctly identified by ClassCraft.
 
 ### **Storing current study plan**
 

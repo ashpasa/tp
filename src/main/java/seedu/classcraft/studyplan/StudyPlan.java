@@ -89,7 +89,7 @@ public class StudyPlan {
 
         int modulesCompletedCount = 0;
         int prevSemester = this.currentSemester;
-        this.currentSemester = newCurrentSemester;
+        StudyPlan.currentSemester = newCurrentSemester;
 
         if (!isRestore) {
             storage.addCompletionStatus(newCurrentSemester);
