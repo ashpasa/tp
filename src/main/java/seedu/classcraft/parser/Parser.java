@@ -504,8 +504,8 @@ public class Parser {
      * Validates the inputs before setting the currentSemester attribute in StudyPlan.
      *
      * @return returns a String containing the current semester
-     * Catches EmptyInstruction exceptions and sets commandType to "invalid"
-     * if any required instructions/its components are missing.
+     *                  Catches EmptyInstruction exceptions and sets commandType to "invalid"
+     *                  if any required instructions/its components are missing.
      */
     public String parseCurrentSem() throws EmptyInstruction {
         String currentSem;
