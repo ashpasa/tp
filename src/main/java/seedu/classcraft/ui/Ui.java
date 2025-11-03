@@ -12,7 +12,8 @@ import java.util.logging.Level;
 
 public class Ui {
     private static final Logger logger = Logger.getLogger(Ui.class.getName());
-    private String line = "_____________________________________________________" + System.lineSeparator();
+    private String line = "=============================================================" +
+            "====================================================================" + System.lineSeparator();
 
     public Ui() {
         setLoggerLevel();
@@ -122,9 +123,9 @@ public class Ui {
         assert errorMessage != null : "Error message cannot be null";
         logger.log(Level.WARNING, "Displaying error: {0}", errorMessage);
 
-        System.out.println("============================================================");
+        System.out.print(line);
         System.out.println("ERROR: " + errorMessage);
-        System.out.println("============================================================");
+        System.out.print(line);
     }
 
     /**
@@ -133,9 +134,9 @@ public class Ui {
      * @param message The message to be displayed.
      */
     public void showMessage(String message) {
-        System.out.println("============================================================");
+        System.out.print(line);
         System.out.println(message);
-        System.out.println("============================================================");
+        System.out.print(line);
     }
 
     /**
@@ -149,7 +150,7 @@ public class Ui {
         assert moduleCode != null : "Module code cannot be null";
         logger.log(Level.INFO, "Displaying prerequisites for: {0}", moduleCode);
 
-        System.out.print("============================================================\n");
+        System.out.print(line);
         System.out.println("Module: " + moduleCode + " - " + moduleTitle);
         System.out.print(line);
 
@@ -165,7 +166,7 @@ public class Ui {
             System.out.println("Note: You need to satisfy these prerequisites before taking this module.");
         }
 
-        System.out.print("============================================================");
+        System.out.print(line);
     }
 
     /**
@@ -191,14 +192,12 @@ public class Ui {
             return "None";
         }
 
+        if (node.has("nOf")) {
+            return handleNOfNode(node);
+        }
+
         if (node.isTextual()) {
-            String text = node.asText();
-            String cleaned = text.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
-            cleaned = cleaned.replaceAll("%", " (or any variant)");
-            if (cleaned.isEmpty()) {
-                return "None";
-            }
-            return cleaned;
+            return formatTextualNode(node.asText());
         }
 
         if (node.has("or")) {
@@ -209,16 +208,50 @@ public class Ui {
             return prettifyArrayNode(node.get("and"), "AND");
         }
 
-        if (node.isTextual()) {
-            return prettifyModuleNode(node.asText());
-        }
-
         if (node.has("moduleCode")) {
             return prettifyModuleNode(node.get("moduleCode").asText());
         }
 
-        return "";
+        return "None";
     }
+
+    private String handleNOfNode(JsonNode node) {
+        JsonNode nOfNode = node.get("nOf");
+        if (!nOfNode.isArray() || nOfNode.size() != 2) {
+            return "None";
+        }
+
+        int count = nOfNode.get(0).asInt();
+        JsonNode modules = nOfNode.get(1);
+        ArrayList<String> displayList = buildModuleList(modules);
+        return "Need " + count + " of these: " + String.join(" OR ", displayList);
+    }
+
+    private ArrayList<String> buildModuleList(JsonNode modules) {
+        ArrayList<String> displayList = new ArrayList<>();
+        for (JsonNode mod : modules) {
+            String display = getModuleDisplay(mod);
+            displayList.add(display);
+        }
+        return displayList;
+    }
+
+    private String getModuleDisplay(JsonNode mod) {
+        if (mod.isTextual()) {
+            return prettifyModuleNode(mod.asText());
+        }
+        if (mod.has("moduleCode")) {
+            return prettifyModuleNode(mod.get("moduleCode").asText());
+        }
+        return prettifyPrereqTree(mod);
+    }
+
+    private String formatTextualNode(String text) {
+        String cleaned = text.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
+        cleaned = cleaned.replaceAll("%", " (or any variant)");
+        return cleaned.isEmpty() ? "None" : cleaned;
+    }
+
 
     private String prettifyArrayNode(JsonNode arrayNode, String joinWord) {
         if (arrayNode == null || !arrayNode.isArray()) {

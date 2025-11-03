@@ -18,28 +18,34 @@ import java.util.List;
  */
 public class SpecCommand extends Command {
     private static final String SPEC_DATA =
-        "{\"ae\": {\"prereq\": [\"EE3408C\",\"EE3431C\",\"EE4218\",\"EE4407\",\"EE4415\",\"EE5507\","
-                + "\"CG3207\",\"EE4409\",\"EE4435\",\"EE4436\",\"EE4437\",\"EE4438\"],\"EE2026\": [\"EE4415\"],"
-                + "\"CG2027\": [\"EE3408C\",\"EE4407\",\"EE4409\",\"EE4435\",\"EE4436\",\"EE4437\",\"EE4438\"],"
-                + "\"CG2028\": [\"EE4218\",\"CG3207\"],\"EE3408C\": [\"EE5507\"]},\"4.0\": {\"prereq\": [\"EE3331C\","
-                + "\"ME2142\",\"EE3306\",\"EE4211\",\"EE4212\",\"EE4302\",\"EE4307\",\"EE4311\",\"EE4312\","
-                + "\"EE4314\",\"EE4315\",\"ME3242\",\"ME4262\",\"ME4248\",\"ME4246\",\"ME5405\",\"CN4227R\","
-                + "\"CN4221R\",\"RB4301\"],\"CG2023\": [\"EE3331C\"],\"EE3331C\": [\"EE4302\",\"EE4307\",\"ME5405\"],"
-                + "\"EE2211\": [\"EE4211\"],\"EE2012/ST2334\": [\"EE4211\"]},\"iot\": {\"prereq\": [\"CS3237\","
-                + "\"EE4211\",\"EE4409\",\"CG4002\",\"CS4222\",\"EE4204\",\"EE4216\",\"EE4218\",\"CS3244\","
-                + "\"EE4002D\",\"EE4002R\",\"CP4106\"],\"CG2028\": [\"CS3237\",\"EE4218\"],\"CG2027\": [\"EE4409\"],"
-                + "\"EE2211\": [\"EE4211\"],\"EE2012/ST2334\": [\"EE4211\",\"CS4222\",\"EE4204\",\"CS3244\"],"
-                + "\"CS2113\": [\"CG4002\"],\"EE4204\": [\"CS4222\"],\"EE2026\": [\"EE4216\"]},\"robotics\": {"
-                + "\"prereq\": [\"BN4203\",\"BN4601\",\"EE3305\",\"ME3243\",\"EE4305\",\"EE4308\",\"EE4309\","
-                + "\"EE4705\",\"EE4311\",\"EE4312\",\"EE4314\",\"ME4242\",\"ME4245\",\"ME5406\",\"MLE4228\","
-                + "\"RB4301\"],\"EE3331C\": [\"EE4308\",\"EE3331C\",\"ME4245\"],\"EE2211\": [\"EE4314\",\"EE4705\"]},"
-                + "\"st\": {\"prereq\": [\"EE3105\",\"EE4002D\",\"EE4002R\",\"EE3131C\",\"EE3104C\",\"EE3331C\","
-                + "\"EE4115\",\"EE4218\",\"EE4314\",\"EE4503\",\"EE4101\"],\"CG2023\": [\"EE3131C\",\"EE3331C\","
-                + "\"EE4115\"],\"PC2020\": [\"EE3104C\",\"EE4101\"],\"EE2211\": [\"EE4115\",\"EE4314\"],"
-                + "\"CG2028\": [\"EE4218\"]}}";
+            "{\"ae\": {\"prereq\": [\"EE3408C\",\"EE3431C\",\"EE4218\",\"EE4407\",\"EE4415\",\"EE5507\","
+                    + "\"CG3207\",\"EE4409\",\"EE4435\",\"EE4436\",\"EE4437\",\"EE4438\"],\"EE2026\": [\"EE4415\"],"
+                    + "\"CG2027\": [\"EE3408C\",\"EE4407\",\"EE4409\",\"EE4435\",\"EE4436\",\"EE4437\",\"EE4438\"],"
+                    + "\"CG2028\": [\"EE4218\",\"CG3207\"],\"EE3408C\": [\"EE5507\"]},\"4.0\": {\"prereq\": " +
+                    "[\"EE3331C\","
+                    + "\"ME2142\",\"EE3306\",\"EE4211\",\"EE4212\",\"EE4302\",\"EE4307\",\"EE4311\",\"EE4312\","
+                    + "\"EE4314\",\"EE4315\",\"ME3242\",\"ME4262\",\"ME4248\",\"ME4246\",\"ME5405\",\"CN4227R\","
+                    + "\"CN4221R\",\"RB4301\"],\"CG2023\": [\"EE3331C\"],\"EE3331C\": [\"EE4302\",\"EE4307\"," +
+                    "\"ME5405\"],"
+                    + "\"EE2211\": [\"EE4211\"],\"EE2012/ST2334\": [\"EE4211\"]},\"iot\": {\"prereq\": [\"CS3237\","
+                    + "\"EE4211\",\"EE4409\",\"CG4002\",\"CS4222\",\"EE4204\",\"EE4216\",\"EE4218\",\"CS3244\","
+                    + "\"EE4002D\",\"EE4002R\",\"CP4106\"],\"CG2028\": [\"CS3237\",\"EE4218\"],\"CG2027\": " +
+                    "[\"EE4409\"],"
+                    + "\"EE2211\": [\"EE4211\"],\"EE2012/ST2334\": [\"EE4211\",\"CS4222\",\"EE4204\",\"CS3244\"],"
+                    + "\"CS2113\": [\"CG4002\"],\"EE4204\": [\"CS4222\"],\"EE2026\": [\"EE4216\"]},\"robotics\": {"
+                    + "\"prereq\": [\"BN4203\",\"BN4601\",\"EE3305\",\"ME3243\",\"EE4305\",\"EE4308\",\"EE4309\","
+                    + "\"EE4705\",\"EE4311\",\"EE4312\",\"EE4314\",\"ME4242\",\"ME4245\",\"ME5406\",\"MLE4228\","
+                    + "\"RB4301\"],\"EE3331C\": [\"EE4308\",\"EE3331C\",\"ME4245\"],\"EE2211\": [\"EE4314\"," +
+                    "\"EE4705\"]},"
+                    + "\"st\": {\"prereq\": [\"EE3105\",\"EE4002D\",\"EE4002R\",\"EE3131C\",\"EE3104C\",\"EE3331C\","
+                    + "\"EE4115\",\"EE4218\",\"EE4314\",\"EE4503\",\"EE4101\"],\"CG2023\": [\"EE3131C\",\"EE3331C\","
+                    + "\"EE4115\"],\"PC2020\": [\"EE3104C\",\"EE4101\"],\"EE2211\": [\"EE4115\",\"EE4314\"],"
+                    + "\"CG2028\": [\"EE4218\"]}}";
 
     public String specToQuery;
     private final ObjectMapper mapper = new ObjectMapper();
+    private String line = "=============================================================" +
+            "====================================================================" + System.lineSeparator();
 
     /**
      * SpecCommand constructor to create a SpecCommand object.
@@ -68,7 +74,7 @@ public class SpecCommand extends Command {
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws IOException {
         try {
             JsonNode specNode = mapper.readTree(SPEC_DATA);
-            System.out.println("============================================================");
+            System.out.print(line);
             System.out.println("These are all the mods that count towards your specialisation");
             printJsonArray(specNode.get(specToQuery).get("prereq"));
 
@@ -81,7 +87,7 @@ public class SpecCommand extends Command {
                     printJsonArray(specNode.get(specToQuery).get(key));
                 }
             }
-            System.out.println("============================================================");
+            System.out.print(line);
         } catch (IOException e) {
             System.out.println("Error reading specialisations file");
         }
