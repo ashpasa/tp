@@ -60,7 +60,7 @@ public class StudyPlan {
         // @@author lingru
         this.completedModulesList = new ArrayList<>();
         this.completedModulesMap = new HashMap<>();
-        this.currentSemester = 1;
+        StudyPlan.currentSemester = 1;
         // @@author
     }
 
@@ -88,7 +88,7 @@ public class StudyPlan {
                     "Must be between 1 and " + studyPlan.size());
         }
 
-        this.currentSemester = newCurrentSemester;
+        StudyPlan.currentSemester = newCurrentSemester;
         int modulesCompletedCount = 0;
 
         for (int i = 0; i < newCurrentSemester - 1; i++) {
