@@ -147,6 +147,9 @@ Example: `mc 4`
 ### Check Study Plan: `check`
 
 Checks the workload of the study plan and detects any semesters with unusually high workload.
+>This function checks the workload of each semester compared to the average workload of the remaining semesters.
+> 
+> i.e. if the average workload is only 4 MCs, a sem with 12 MCs would be flagged as high workload.
 
 Format: `check`
 
