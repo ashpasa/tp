@@ -29,11 +29,10 @@ Here are my contributions to the project
 ### Documentation
 
 #### User Guide
-* Added documentation for the features `add`, `delete`, `help`, `exit`, comamnds.
+* Added documentation for the features `add`, `delete`, `help`, `exit`, commands.
+* Helped with user stories and sections on "Saving the Data" and "Editing the Data File"
 
 #### Developer Guide
-* Added implementation details for "Parsing User Input" and "Data Persistence with Storage Class".
-* Contributed to sequence diagrams 
+* Added implementation details for "Parsing user input to commands",  "Command Classes" and Storing current study plan"
 
-### Community
-- PRs reviewed
+
