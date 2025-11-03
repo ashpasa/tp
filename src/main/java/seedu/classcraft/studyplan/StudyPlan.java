@@ -191,6 +191,22 @@ public class StudyPlan {
 
         PrerequisiteChecker.validatePrerequisites(newModule, semester, this, false);
 
+        int semesterOffered = newModule.getSemesterTaught();
+
+        if (semesterOffered == 0) {
+            throw new StudyPlanException("Module " + newModule.getModCode() +
+                    " is not offered in any semester.");
+        }
+
+        boolean isValidSemester = isModuleValidForSemester(semester, semesterOffered);
+
+        if (!isValidSemester) {
+            String offeringPattern = getOfferingDescription(semesterOffered);
+            throw new Exception("Module " + newModule.getModCode() +
+                    " is offered in " + offeringPattern +
+                    ", not in semester " + semester + ".");
+        }
+
         if (isModAddedPrev) {
             storage.deleteModule(moduleCode, previousSemester);
         }
@@ -201,6 +217,52 @@ public class StudyPlan {
         }
 
         LOGGER.info("Added " + moduleCode + " to semester " + semester);
+    }
+
+    /**
+     * Checks if a module can be added to a specific semester.
+     * sem 1 = all odd semesters (1,3,5,7)
+     * sem 2 = all even semesters (2,4,6,8)
+     * sem 12 = both odd and even
+     * sem 0 = not offered
+     */
+    private boolean isModuleValidForSemester(int targetSemester, int semesterOffered) {
+        if (semesterOffered == 0) {
+            return false;
+        }
+
+        if (semesterOffered == 3) {
+            return true; // Offered in all semesters
+        }
+
+        // Check if targetSemester matches offering pattern
+        if (semesterOffered == 1) {
+            // Offered only in odd semesters
+            return targetSemester % 2 == 1; // 1,3,5,7
+        }
+
+        if (semesterOffered == 2) {
+            // Offered only in even semesters
+            return targetSemester % 2 == 0; // 2,4,6,8
+        }
+
+        return false;
+    }
+
+    /**
+     * Converts semester code to user-friendly description
+     */
+    private String getOfferingDescription(int semesterOffered) {
+        switch(semesterOffered) {
+        case 1:
+            return "odd semesters only (1, 3, 5, 7)";
+        case 2:
+            return "even semesters only (2, 4, 6, 8)";
+        case 12:
+            return "all semesters";
+        default:
+            return "specific semesters";
+        }
     }
 
     /**
