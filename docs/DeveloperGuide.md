@@ -68,6 +68,7 @@ respective arguments. It checks whether the command is a single-word or double-w
 and extracts the necessary information, and ensures that invalid inputs are handled gracefully.
 
 
+
 ### Storage component
 
 The `Storage` class, under the `storage` package, is responsible for saving and loading the user's study plan to and
@@ -91,6 +92,8 @@ and recreates the data file if it is found to be corrupted.
 semester and the inner 'layer' is the respective modules taken in that semester.
 
 A hashmap is used to store KEY:VALUE pairs of MODULE_CODE:SEMESTER for easy access to edit the 2D ArrayList.
+![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
+
 
 #### Design Considerations
 We decided to use a 2D array together with a Hashmap to store the modules and semesters, as we believe that it offers
@@ -112,9 +115,6 @@ User inputs are parsed into commands by the **`Parser`** class.
 
 * **Implementation:** A new parser object is instantiated in `ClassCraft.java` to handle user inputs,
   which calls the parser constructor in `Parser.java`, passing the raw user input string to parseInstructions().
-* A sample user input could be `add n/CS2113 s/1` to add module CS2113 to semester 1.
-![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
-
 
 * **Key Method: `parseInstructions(String userInput)`**
     * This method splits the user input into the command word and arguments.
@@ -299,18 +299,19 @@ streamlined and guided approach to academic planning.
 
 ## User Stories
 
-| Version |    As a ...    | I want to ...                                                   | So that I can ...                                           |
-|:-------:|:--------------:|:----------------------------------------------------------------|:------------------------------------------------------------|
-|  v1.0   |    new user    | see usage instructions                                          | refer to them when I forget how to use the application      |
-|  v1.0   |  CEG student   | view the sample study plan                                      | have a baseline and understand how to structure my own plan |
-|  v1.0   |  CEG student   | view the CEG default graduation requirements                    | know which core modules I must take for graduation          |
-|  v1.0   |  CEG student   | add a module to a specific semester                             | customize my study plan quickly                             |
-|  v1.0   |  CEG student   | remove a module from a specific semester                        | adjust my plan if my enrolment changes                      |
-|  v2.0   | Long time user | retrieve created study plan                                     | refer to it in the future for module planning               |
-|  v2.0:  | Potential user | generate a 4 year CEG study plan                                | find out the potential Specialisations/TE that i can do     |
-|  v2.0   |  Expert user   | find out what modules are needed for an intended specialisation | complete my specialisation in a reasonable time             |
-|  v2.0   |    New user    | find out the prerequisites of a specific module                 | know when the earliest I can complete the module is         |
-|  v2.0   |  CEG student   | find the number of module credits I have per semester           | know how I can balance my workload better                   |
+| Version | As a ...       | I want to ...                                                   | So that I can ...                                           |
+|---------|----------------|-----------------------------------------------------------------|-------------------------------------------------------------|
+| v1.0    | new user       | see usage instructions                                          | refer to them when I forget how to use the application      |
+| v1.0    | CEG student    | view the sample study plan                                      | have a baseline and understand how to structure my own plan |
+| v1.0    | CEG student    | view the CEG default graduation requirements                    | know which core modules I must take for graduation          |
+| v1.0    | CEG student    | add a module to a specific semester                             | customize my study plan quickly                             |
+| v1.0    | CEG student    | remove a module from a specific semester                        | adjust my plan if my enrolment changes                      |
+| v2.0    | Long time user | retrieve created study plan                                     | refer to it in the future for module planning               |
+| v2.0:   | Potential user | generate a 4 year CEG study plan                                | find out the potential Specialisations/TE that i can do     |
+| v2.0    | Expert user    | find out what modules are needed for an intended specialisation | complete my specialisation in a reasonable time             |
+| v2.0    | New user       | find out the prerequisites of a specific module                 | know when the earliest I can complete the module is         |
+| v2.0    | CEG student    | find the number of module credits I have per semester           | know how I can balance my workload better                   |
+
 ---
 ## Use cases
 
