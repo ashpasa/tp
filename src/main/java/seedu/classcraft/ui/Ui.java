@@ -125,7 +125,7 @@ public class Ui {
 
         System.out.print(line);
         System.out.println("ERROR: " + errorMessage);
-        System.out.println(line);
+        System.out.print(line);
     }
 
     /**
@@ -136,7 +136,7 @@ public class Ui {
     public void showMessage(String message) {
         System.out.print(line);
         System.out.println(message);
-        System.out.println(line);
+        System.out.print(line);
     }
 
     /**
@@ -150,7 +150,7 @@ public class Ui {
         assert moduleCode != null : "Module code cannot be null";
         logger.log(Level.INFO, "Displaying prerequisites for: {0}", moduleCode);
 
-        System.out.println(line);
+        System.out.print(line);
         System.out.println("Module: " + moduleCode + " - " + moduleTitle);
         System.out.print(line);
 
@@ -166,7 +166,7 @@ public class Ui {
             System.out.println("Note: You need to satisfy these prerequisites before taking this module.");
         }
 
-        System.out.println(line);
+        System.out.print(line);
     }
 
     /**
