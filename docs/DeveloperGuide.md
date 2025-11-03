@@ -307,7 +307,7 @@ streamlined and guided approach to academic planning.
 | v1.0    | CEG student    | add a module to a specific semester                             | customize my study plan quickly                             |
 | v1.0    | CEG student    | remove a module from a specific semester                        | adjust my plan if my enrolment changes                      |
 | v2.0    | Long time user | retrieve created study plan                                     | refer to it in the future for module planning               |
-| v2.0:   | Potential user | generate a 4 year CEG study plan                                | find out the potential Specialisations/TE that i can do     |
+| v2.0    | Potential user | generate a 4 year CEG study plan                                | find out the potential Specialisations/TE that i can do     |
 | v2.0    | Expert user    | find out what modules are needed for an intended specialisation | complete my specialisation in a reasonable time             |
 | v2.0    | New user       | find out the prerequisites of a specific module                 | know when the earliest I can complete the module is         |
 | v2.0    | CEG student    | find the number of module credits I have per semester           | know how I can balance my workload better                   |
