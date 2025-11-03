@@ -281,6 +281,11 @@ public class Ui {
 
     private String prettifyModuleNode(String codeRaw) {
         String code = stripGradeRequirement(codeRaw);
+
+        if (code.contains("%")) {
+            return code.replaceAll("%", " (or any variant)");
+        }
+
         if (isValidModuleCode(code) && !isBridgingModule(code)) {
             return code;
         }
