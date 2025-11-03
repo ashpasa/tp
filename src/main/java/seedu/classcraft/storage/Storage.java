@@ -235,10 +235,10 @@ public class Storage {
 
                 if (semesterInfo.contains("COMPLETED")) {
                     numberCompletedSem++;
-                    if(numberCompletedSem == 0) {
+                    if (numberCompletedSem == 0) {
                         firstCompletedSem = i;
                     }
-                    if((i < 7) && !(lines.get(i+1).contains("COMPLETED"))) {
+                    if ((i < 7) && !(lines.get(i + 1).contains("COMPLETED"))) {
                         lastCompletedSem = i;
                     }
                 }
@@ -252,6 +252,10 @@ public class Storage {
                 return true;
             }
 
+            if (numberCompletedSem <= 0) {
+                return false;
+            }
+
             for (int j = firstCompletedSem; j <= lastCompletedSem; j++) {
                 if (!lines.get(j).contains("COMPLETED")) {
                     ui.showMessage("Completed semesters are not in order.\n" +
@@ -259,6 +263,7 @@ public class Storage {
                     return true;
                 }
             }
+
 
         } catch (IOException e) {
             logger.log(Level.WARNING, "File format is incorrect " + e.getMessage());
@@ -298,11 +303,9 @@ public class Storage {
                         }
                         try {
                             String[] parts = module.split(":");
-                            String moduleCode = parts[0];
-                            ModuleStatus status =
-                                    parts.length > 1 ?
-                                            ModuleStatus.valueOf(parts[1])
-                                            : ModuleStatus.PLANNED;
+                            String moduleCode = parts[0].toUpperCase();
+                            ModuleStatus status = parts.length > 1 ? ModuleStatus.valueOf(parts[1]) :
+                                    ModuleStatus.PLANNED;
                             studyPlan.addExemptedModule(moduleCode, status, storage, true);
                         } catch (Exception e) {
                             logger.log(Level.WARNING, "Failed to restore secured/exempted module "
@@ -324,7 +327,7 @@ public class Storage {
                     try {
                         int semester = Integer.parseInt(section[0].trim());
                         for (String module : moduleInfo.split(",")) {
-                            String modCode = module.trim();
+                            String modCode = module.trim().toUpperCase();
                             if (!modCode.isEmpty()) {
                                 studyPlan.addModule(modCode, semester, storage, true);
                             }
