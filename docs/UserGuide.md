@@ -188,7 +188,7 @@ If you do choose to edit the file, please ensure that you have a backup copy of 
 | Command             | Format                          | Description                       |
 |---------------------|---------------------------------|-----------------------------------|
 | Add Module          | add n/MODULE_CODE s/SEMESTER    | Add a module to your study plan   |
-| Add Exempted Module | add n/MODULE_CODE s/SEMESTER    | Add a module to your study plan   |
+| Add Exempted Module | add MODULE_CODE               | Add a module to your exemptions   |
 | Delete Module       | delete MODULE_CODE              | Remove a module from your plan    |
 | View Plan           | view plan                       | Show your current study plan      |
 | View Grad req       | view grad                       | Show graduation requirements      |
