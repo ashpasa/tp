@@ -43,7 +43,7 @@ public class SetCurrentSemesterCommand extends Command {
 
             int previousSemester = StudyPlan.getCurrentSemester();
 
-            int modulesCompleted = studyPlan.setCurrentSemester(Integer.parseInt(currentSem), storage);
+            int modulesCompleted = studyPlan.setCurrentSemester(Integer.parseInt(currentSem), storage, false);
 
             if (previousSemester > currentSemester) {
                 ui.showMessage("Successfully set current semester to " + currentSem);

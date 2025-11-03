@@ -1,5 +1,6 @@
 package seedu.classcraft.storage;
 
+import seedu.classcraft.exceptions.StudyPlanException;
 import seedu.classcraft.studyplan.ModuleStatus;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.studyplan.Module;
@@ -29,7 +30,7 @@ public class Storage {
     private static Logger logger = Logger.getLogger(Storage.class.getName());
     private String dataFile;
     private Ui ui = new Ui();
-    private ModuleStatus status;
+    private StudyPlan studyPlan;
 
     /**
      * Constructor for Storage class.
@@ -97,7 +98,7 @@ public class Storage {
                         bw.write(i + " -");
                         bw.newLine();
                     }
-                    bw.write("SECURED -");
+                    bw.write("EXEMPTED -");
                     bw.newLine();
                 }
 
@@ -135,7 +136,7 @@ public class Storage {
 
     /**
      * Restores study plan data from the data file.
-     * Pass 1: Loads SECURED modules (prerequisites)
+     * Pass 1: Loads EXEMPTED modules (prerequisites)
      * Pass 2: Loads PLANNED modules (semesters)
      *
      * @param storage The storage handler to read/write data.
@@ -143,7 +144,7 @@ public class Storage {
      */
     public StudyPlan restoreData(Storage storage) {
         int totalSemesters = 8;
-        StudyPlan studyPlan = new StudyPlan(totalSemesters);
+        studyPlan = new StudyPlan(totalSemesters);
         Path filePath = Paths.get(dataFile);
 
         try {
@@ -165,6 +166,9 @@ public class Storage {
 
     private boolean isFileFormatInvalid(Path filePath) {
         int actualNoLines = 9;
+        int numberCompletedSem = 0;
+        int lastCompletedSem = 0;
+        int firstCompletedSem = 0;
         try {
             List<String> lines = Files.readAllLines(filePath);
             if (lines.size() != actualNoLines) {
@@ -194,11 +198,13 @@ public class Storage {
                     return true;
                 }
 
-                String semesterStr = restorationParts[0].trim();
+                String semesterInfo = restorationParts[0].trim();
+                String semNumber = semesterInfo.split(":")[0].trim();
+
                 int expectedSemester = i + 1;
                 int actualSemester;
                 try {
-                    actualSemester = Integer.parseInt(semesterStr);
+                    actualSemester = Integer.parseInt(semNumber);
                 } catch (NumberFormatException e) {
                     ui.showMessage("Semester number in line " + (i + 1) + " is not a valid integer.\n" +
                             "File format is invalid. Recreating a new file.");
@@ -227,13 +233,35 @@ public class Storage {
                     return true;
                 }
 
+                if (semesterInfo.contains("COMPLETED")) {
+                    numberCompletedSem++;
+                    if (numberCompletedSem == 0) {
+                        firstCompletedSem = i;
+                    }
+                    if ((i < 7) && !(lines.get(i + 1).contains("COMPLETED"))) {
+                        lastCompletedSem = i;
+                    }
+                }
+
             }
             String lastLine = lines.get(actualNoLines - 1);
             String[] restorationParts = lastLine.split("-", 2);
-            if (!restorationParts[0].trim().equals("SECURED")) {
-                ui.showMessage("Last line does not start with 'SECURED'.\n" +
+            if (!restorationParts[0].trim().equals("EXEMPTED")) {
+                ui.showMessage("Last line does not start with 'EXEMPTED'.\n" +
                         "File format is invalid. Recreating a new file.");
                 return true;
+            }
+
+            if (numberCompletedSem <= 0) {
+                return false;
+            }
+
+            for (int j = firstCompletedSem; j <= lastCompletedSem; j++) {
+                if (!lines.get(j).contains("COMPLETED")) {
+                    ui.showMessage("Completed semesters are not in order.\n" +
+                            "File format is invalid. Recreating a new file.");
+                    return true;
+                }
             }
 
 
@@ -252,82 +280,114 @@ public class Storage {
         createFile();
     }
 
-
-    public StudyPlan populateStudyPlan(Storage storage, StudyPlan studyPlan) {
+    public void populateStudyPlan(Storage storage, StudyPlan studyPlan) {
         Path dataFile = Paths.get(this.dataFile);
+        int countCurrentSem = 1;
         try {
-            List<String> lines = Files.readAllLines(dataFile);
-
-            for (String line : lines) {
-                String[] restorationParts = line.split("-");
-                if (restorationParts.length < 2) {
+            for (String line : Files.readAllLines(dataFile)) {
+                if (!line.contains("-")) {
                     continue;
                 }
+                String[] restorationParts = line.split("-", 2);
+                String semInfo = restorationParts[0].trim();
+                String moduleInfo = restorationParts[1].trim();
 
-                String lineType = restorationParts[0].trim();
-                String modulesPart = restorationParts[1].trim();
-
-                if (modulesPart.isEmpty() || !lineType.equals("SECURED")) {
-                    continue;
-                }
-
-                String[] modules = modulesPart.split(",");
-                for (String moduleData : modules) {
-                    String moduleInfo = moduleData.trim();
+                if (semInfo.equalsIgnoreCase("EXEMPTED")) {
                     if (moduleInfo.isEmpty()) {
                         continue;
                     }
-
-                    try {
-                        String[] parts = moduleInfo.split(":");
-                        String moduleCode = parts[0];
-                        seedu.classcraft.studyplan.ModuleStatus status =
-                                seedu.classcraft.studyplan.ModuleStatus.valueOf(parts[1]);
-
-                        studyPlan.addExemptedModule(moduleCode, status, storage, true);
-
-                    } catch (Exception e) {
-                        logger.log(Level.WARNING, "Failed to restore secured module "
-                                + moduleInfo + ": " + e.getMessage());
-                    }
-                }
-                break;
-            }
-
-            for (String line : lines) {
-                String[] restorationParts = line.split("-");
-                if (restorationParts.length < 2) {
-                    continue;
-                }
-
-                String lineType = restorationParts[0].trim();
-                String modulesPart = restorationParts[1].trim();
-
-                if (modulesPart.isEmpty() || lineType.equals("SECURED")) {
-                    continue;
-                }
-
-                try {
-                    int semester = Integer.parseInt(lineType);
-                    String[] modules = modulesPart.split(",");
-                    for (String module : modules) {
-                        String moduleCode = module.trim();
-                        if (!moduleCode.isEmpty()) {
-                            studyPlan.addModule(moduleCode, semester, storage, true);
+                    for (String module : moduleInfo.split(",")) {
+                        module = module.trim();
+                        if (module.isEmpty()) {
+                            continue;
+                        }
+                        try {
+                            String[] parts = module.split(":");
+                            String moduleCode = parts[0].toUpperCase();
+                            ModuleStatus status = parts.length > 1 ? ModuleStatus.valueOf(parts[1]) :
+                                    ModuleStatus.PLANNED;
+                            studyPlan.addExemptedModule(moduleCode, status, storage, true);
+                        } catch (Exception e) {
+                            logger.log(Level.WARNING, "Failed to restore secured/exempted module "
+                                    + module + ": " + e.getMessage());
                         }
                     }
-                } catch (NumberFormatException e) {
-                    logger.log(Level.WARNING, "Skipping invalid line in data file: " + line);
-                } catch (Exception e) {
-                    logger.log(Level.WARNING, "Error while restoring planned module: " + e.getMessage(), e);
+                } else {
+                    boolean completedFlag = false;
+                    String[] section = semInfo.split(":");
+                    if (section.length == 2) {
+                        completedFlag = true;
+                    }
+                    if (completedFlag && section[1].contains("COMPLETED")) {
+                        countCurrentSem++;
+                    }
+                    if (moduleInfo.isEmpty()) {
+                        continue;
+                    }
+                    try {
+                        int semester = Integer.parseInt(section[0].trim());
+                        for (String module : moduleInfo.split(",")) {
+                            String modCode = module.trim().toUpperCase();
+                            if (!modCode.isEmpty()) {
+                                studyPlan.addModule(modCode, semester, storage, true);
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        logger.log(Level.WARNING, "Skipping invalid line in data file: " + line);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-
+            try {
+                if (countCurrentSem > StudyPlan.getTotalSemesters()) {
+                    countCurrentSem = StudyPlan.getTotalSemesters();
+                }
+                studyPlan.setCurrentSemester(countCurrentSem, storage, true);
+            } catch (StudyPlanException e) {
+                throw new IOException(e);
+            }
         } catch (IOException e) {
             logger.log(Level.WARNING, "Failed to read the data file: " + e.getMessage());
             System.out.println("Oh no! I was not able to read the file: " + e.getMessage());
         }
-        return studyPlan;
+    }
+
+    public void addCompletionStatus(int semester) {
+        Path filePath = Paths.get(dataFile);
+        int prevSemester = semester - 1;
+        try {
+            List<String> lines = Files.readAllLines(filePath);
+            for (int i = 0; i < prevSemester; i++) {
+                String line = lines.get(i);
+                if (!line.contains("COMPLETED")) {
+                    String updatedLine = "";
+                    int dashIndex = line.indexOf("-");
+                    if (dashIndex != -1) {
+                        String beforeDash = line.substring(0, dashIndex).trim();
+                        String afterDash = line.substring(dashIndex);
+                        updatedLine = beforeDash + ":COMPLETED " + afterDash;
+                    }
+                    lines.set(i, updatedLine);
+                }
+            }
+            for (int j = prevSemester; j < lines.size() - 1; j++) {
+                String lineNotCompleted = lines.get(j);
+                if (lineNotCompleted.contains("COMPLETED")) {
+                    String updatedLineNotCompleted = "";
+                    int dashIndex = lineNotCompleted.indexOf("-");
+                    if (dashIndex != -1) {
+                        String beforeDash = lineNotCompleted.substring(0, dashIndex).trim();
+                        String afterDash = lineNotCompleted.substring(dashIndex);
+                        updatedLineNotCompleted = beforeDash.replace(":COMPLETED", " ") + afterDash;
+                    }
+                    lines.set(j, updatedLineNotCompleted);
+                }
+            }
+            Files.write(filePath, lines);
+        } catch (IOException e) {
+            System.out.println("Oh no! I was not able to update the file: " + e.getMessage());
+        }
     }
 
 
@@ -345,14 +405,14 @@ public class Storage {
 
             int securedLineIndex = -1;
             for (int i = 0; i < lines.size(); i++) {
-                if (lines.get(i).trim().startsWith("SECURED -")) {
+                if (lines.get(i).trim().startsWith("EXEMPTED -")) {
                     securedLineIndex = i;
                     break;
                 }
             }
 
             if (securedLineIndex == -1) {
-                lines.add("SECURED - " + moduleEntry);
+                lines.add("EXEMPTED - " + moduleEntry);
             } else {
                 String line = lines.get(securedLineIndex);
                 String updatedLine = line.concat(" " + moduleEntry);
@@ -377,7 +437,7 @@ public class Storage {
             List<String> lines = Files.readAllLines(filePath);
             int securedLineIndex = -1;
             for (int i = 0; i < lines.size(); i++) {
-                if (lines.get(i).trim().startsWith("SECURED -")) {
+                if (lines.get(i).trim().startsWith("EXEMPTED -")) {
                     securedLineIndex = i;
                     break;
                 }
