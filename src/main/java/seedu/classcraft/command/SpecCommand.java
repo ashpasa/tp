@@ -13,7 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Fetches data from SpecData.json and prints data when a specialisation is queried.
+ * SpecCommand class representing the command to display information about a specialisation.
+ * Extends the Command abstract class and implements the executeCommand method.
  */
 public class SpecCommand extends Command {
     private static final String SPEC_DATA =
@@ -40,6 +41,11 @@ public class SpecCommand extends Command {
     public String specToQuery;
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * SpecCommand constructor to create a SpecCommand object.
+     *
+     * @param specName a shortform of the specialisation name
+     */
     public SpecCommand(String specName) {
         super();
         this.specToQuery = specName;
@@ -48,6 +54,16 @@ public class SpecCommand extends Command {
         assert allowedValues.contains(specToQuery);
     }
 
+    /**
+     * Method from Command parent class.
+     * Reads data from the JsonNode object that stores the data for the 5 CEG specialisations.
+     * Then calls printJsonArray to print the Json Array objects nicely.
+     *
+     * @param studyPlan The current study plan ,including data restored from storage
+     * @param ui        The user interface to interact with the user
+     * @param storage   The storage handler to read/write data
+     * @throws IOException
+     */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws IOException {
         try {
@@ -71,6 +87,11 @@ public class SpecCommand extends Command {
         }
     }
 
+    /**
+     * Prints Json arrays nicely to the command line.
+     *
+     * @param jsonArray a JsonNode array object to print
+     */
     private void printJsonArray(JsonNode jsonArray) {
         List<String> listOfMods = new ArrayList<>();
         for (JsonNode module : jsonArray) {

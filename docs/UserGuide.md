@@ -59,7 +59,6 @@ and `SEMESTER` is the semester number (1-8), where you want to add the module to
 
 Example: `add n/CS2113 s/1`, `add s/2 n/CS2040C`, `add n/MA1511s/3`, `add s/4n/GEA1000`
 
-- 
 
 ### Add an Exempted Module: `add-exempted`
 

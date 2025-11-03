@@ -38,7 +38,7 @@ public class ModuleHandler {
      * @param moduleCode The module code of the module to be created.
      * @return The created Module object.
      */
-    public Module createModule(String moduleCode) {
+    public Module createModule(String moduleCode) throws Exception {
         String modName = "placeholder";
         int modCreds = 0;
         String modDescription = "placeholder";
@@ -49,16 +49,14 @@ public class ModuleHandler {
             modCreds = NUSmodsFetcher.getModuleCredits(moduleCode);
             modDescription = NUSmodsFetcher.getModuleDescription(moduleCode);
         } catch (NUSmodsFetcherException e) {
-            LOGGER.warning("Could not fetch details for " + moduleCode
-                    + ". Using default values. Error: " + e.getMessage());
-            throw new IllegalArgumentException("Module " + moduleCode + " does not exist.");
+            LOGGER.warning("Could not fetch details for " + moduleCode + ". Error: " + e.getMessage());
+            throw new Exception("Module code " + moduleCode + " is invalid or could not be fetched from NUSMods.");
         }
 
         List<String> prerequisites = new ArrayList<>();
 
         try {
             JsonNode rootJson = NUSmodsFetcher.fetchModuleJson(moduleCode);
-
             JsonNode prerequisiteNode = rootJson.get("prereqTree");
 
             if (prerequisiteNode != null && !prerequisiteNode.isNull()) {

@@ -9,18 +9,18 @@ import seedu.classcraft.storage.Storage;
  * @@author  lingru
  * A command to add a module as COMPLETED or EXEMPTED.
  */
-public class AddCompletedCommand extends Command {
+public class AddExemptedCommand extends Command {
 
     private String moduleCode;
     private ModuleStatus status;
 
     /**
      * @@author lingru
-     * Constructor for AddCompletedCommand.
+     * Constructor for AddExemptedCommand.
      * @param moduleCode The module code to add.
      * @param status The status (must be COMPLETED or EXEMPTED).
      */
-    public AddCompletedCommand(String moduleCode, ModuleStatus status) {
+    public AddExemptedCommand(String moduleCode, ModuleStatus status) {
         super();
         this.moduleCode = moduleCode;
         this.status = status;
@@ -37,9 +37,9 @@ public class AddCompletedCommand extends Command {
      * @param storage The storage handler
      */
     @Override
-    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws Exception {
+    public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         try {
-            studyPlan.addCompletedModule(moduleCode, status);
+            studyPlan.addCompletedModule(moduleCode, status, storage, false);
             ui.showMessage("Successfully added " + moduleCode + " as " + status.toString());
         } catch (Exception e) {
             ui.showMessage(e.getMessage());
