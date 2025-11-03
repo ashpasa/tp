@@ -358,6 +358,10 @@ public class PrerequisiteChecker {
     private static String prettifyModuleCode(String moduleText) {
         String code = stripGradeRequirement(moduleText);
 
+        if (code.contains("%")) {
+            return code.replaceAll("%", " (or any variant)");
+        }
+
         if (!isBridgingModule(code) && isValidModuleCode(code)) {
             return code;
         }

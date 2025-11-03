@@ -28,9 +28,9 @@ public class HelpCommand extends Command {
                 + "2. delete - Deletes a Module from your plan.\n   Format: delete {MODULE_CODE}\n\n"
                 + "3. view - View Current Plan, Sample Plan or Graduation Requirements.\n   Format: view {INFORMATION} "
                 + "(INFORMATION: plan,grad,sample)\n\n"
-                + "4. exit - Exit the program\n\n"
+                + "4. prereq - View Pre-Requisites for the given module.\n   Format: prereq {MODULE_CODE}\n\n"
                 + "5. help - View this message again\n\n"
-                + "6. prereq - View Pre-Requisites for the given module.\n   Format: prereq {MODULE_CODE}\n\n"
+                + "6. exit - Exit the program\n\n"
                 + "Advanced Commands:\n\n"
                 + "7. mc - Calculate MCs for a semester or total.\n" +
                 "   Format: mc {SEMESTER} (SEMESTER: 1 to 8 or total)\n\n"
