@@ -10,7 +10,7 @@ able to plan your semesters effectively, ensuring you meet all necessary require
 - [Quick Start](#quick-start)
 - [Features](#features)
     - [Add a Module](#add-a-module-add)
-    - [Set Current Semester](#set-current-semester-setcurrent)
+    - [Set Current Semester](#set-current-semester-set-current)
     - [Add an Exempted Module](#add-an-exempted-module-add-exempted)
     - [Delete a Module](#delete-a-module-delete)
     - [View Current Study Plan](#view-current-study-plan-view-information)
@@ -47,7 +47,7 @@ able to plan your semesters effectively, ensuring you meet all necessary require
 >  - Make sure that the first argument is always the command word, followed by the respective arguments,
     otherwise the command will be considered invalid.
 >  - {MODULE_CODE} refers to the code of a valid module, e.g., CS2113, MA1511.
->  The module codes are not case-sensitive
+>  The module codes are not case-sensitive.
 >  - {SEMESTER} refers to the semester number (1-8).
 >  - Extraneous parameters for commands will be detected and the command will be considered invalid.
 
@@ -86,16 +86,16 @@ Format: `delete {MODULE_CODE}`
 
 Example: `delete CS2113`
 
-### View Current Study Plan: `view {INFORMATION}`
+### View Study Information: `view`
 
 Displays your current study plan (`{INFORMATION}` is `plan`), a sample study plan (`{INFORMATION}` is `sample`)
-or the graduation requirements(`{INFORMATION}` is `grad`), based on the information requested.
+or the graduation requirements (`{INFORMATION}` is `grad`), based on the information requested.
 
-Format: `view {INFORMATION}`, where `{INFORMATION}` can be:`grad`, `sample` or `plan`.
+Format: `view {INFORMATION}`, where `{INFORMATION}` can be: `grad`, `sample` or `plan`.
 
 ### 1) View Graduation Requirements: `view grad`
 
-Shows the graduation requirements for Computer Engineering.
+Shows the graduation requirements for Computer Engineering Major.
 
 Format: `view grad`
 
@@ -111,7 +111,7 @@ Displays current study plan, with modules chosen by the user, in their respectiv
 
 Format: `view plan`
 
-### View Modules required for a Specialisation: `spec {Specialisation}`
+### View Modules Required for Specialisation: `spec`
 
 Displays modules required for the respective CEG specialisations.
 
@@ -129,13 +129,13 @@ where `{Specialisation}` can be the following:
 
 `st`: Space Technology
 
-### View Pre-Requisites for a Module: `prereq {MODULE_CODE}`
+### View Pre-Requisites for a Module: `prereq`
 
 Displays a list of pre-requisites for the given module.
 
 Format: `prereq {MODULE_CODE}`
 
-### Calculate module credits: `mc`
+### Calculate Module Credits: `mc`
 
 Calculates the number of module credits taken in a specific semester. 
 Trying to calculate for semester 0 will instead return the total number of module credits in the entire study plan.
@@ -150,13 +150,13 @@ Checks the workload of the study plan and detects any semesters with unusually h
 
 Format: `check`
 
-### View degree progression: `progress`
+### View Degree Progression: `progress`
 
 Calculates and displays the user's current degree progress as a percentage value.
 
 Format: `progress`
 
-### Set current semester: `set-current`
+### Set Current Semester: `set-current`
 
 Sets the current semester for the user, and marks all previous semesters as completed.
 

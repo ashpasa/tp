@@ -1,7 +1,9 @@
 package seedu.classcraft.storage;
 
 import seedu.classcraft.exceptions.StudyPlanException;
+import seedu.classcraft.studyplan.ModuleHandler;
 import seedu.classcraft.studyplan.ModuleStatus;
+import seedu.classcraft.studyplan.PrerequisiteChecker;
 import seedu.classcraft.studyplan.StudyPlan;
 import seedu.classcraft.studyplan.Module;
 import seedu.classcraft.ui.Ui;
@@ -28,9 +30,12 @@ import java.util.logging.Level;
 public class Storage {
 
     private static Logger logger = Logger.getLogger(Storage.class.getName());
+    StudyPlan tempStudyPlan = new StudyPlan(8);
     private String dataFile;
     private Ui ui = new Ui();
     private StudyPlan studyPlan;
+    private ModuleHandler moduleHandler = new ModuleHandler();
+
 
     /**
      * Constructor for Storage class.
@@ -219,6 +224,20 @@ public class Storage {
                 String[] modules = restorationParts[1].split(",");
                 for (String module : modules) {
                     module = module.trim();
+                    if (!module.isEmpty()) {
+                        Module newModule = moduleHandler.createModule(module);
+                        PrerequisiteChecker.validatePrerequisites(newModule,
+                                actualSemester, tempStudyPlan,true);
+                        if (!PrerequisiteChecker.isPrereqRestoreSatisfied()) {
+                            ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
+                                    " has invalid prerequisites.\n" +
+                                    "File format is invalid. Recreating a new file.");
+                            return true;
+                        }
+                        tempStudyPlan.addModule(newModule, actualSemester);
+
+
+                    }
                     if (module.split(" ").length > 1) {
                         ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
                                 " contains invalid spaces.\n" +
@@ -270,6 +289,10 @@ public class Storage {
             ui.showMessage("Oh no! I was not able to read the file: " + e.getMessage() +
                     "\nFile format is invalid. Recreating a new file.");
             return true;
+        } catch (StudyPlanException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return false;
     }
