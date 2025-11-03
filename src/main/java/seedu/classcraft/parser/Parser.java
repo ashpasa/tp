@@ -11,7 +11,7 @@ import seedu.classcraft.command.ExitCommand;
 import seedu.classcraft.command.HelpCommand;
 import seedu.classcraft.command.InvalidCommand;
 import seedu.classcraft.command.PrereqCommand;
-import seedu.classcraft.command.SetCurrentSemCommand;
+import seedu.classcraft.command.SetCurrentSemesterCommand;
 import seedu.classcraft.command.SpecCommand;
 import seedu.classcraft.command.ViewCurrentPlanCommand;
 import seedu.classcraft.command.ViewGradReqCommand;
@@ -142,11 +142,8 @@ public class Parser {
                 String prereqModuleCode = parsePrereq();
                 return new PrereqCommand(prereqModuleCode);
             case "setcurrent":
-                int semesterToSet = parseSetCurrentSem();
-                if (semesterToSet == -1) {
-                    return new InvalidCommand();
-                }
-                return new SetCurrentSemCommand(semesterToSet);
+                String semesterToSet = parseCurrentSem();
+                return new SetCurrentSemesterCommand(semesterToSet);
             case "check":
                 return new CheckCommand();
             default:
@@ -502,25 +499,45 @@ public class Parser {
         }
     }
 
-    // and setLoggerLevel from master. Discarded parseCurrentSem.
     /**
-     * Parses the user input for set-current-sem command.
-     * Expects a single integer.
+     * Parses the user input for the setcurrent command.
+     * Validates the inputs before setting the currentSemester attribute in StudyPlan.
      *
-     * @return int representing the semester, or -1 for error.
+     * @return returns a String containing the current semester
+     *                  Catches EmptyInstruction exceptions and sets commandType to "invalid"
+     *                  if any required instructions/its components are missing.
      */
-    private int parseSetCurrentSem() {
+    public String parseCurrentSem() throws EmptyInstruction {
+        String currentSem;
         try {
-            int semester = Integer.parseInt(userInstructions.trim());
-            if (semester < 1 || semester > 8) {
-                ui.showMessage("Error: Semester number must be between 1 and 8.");
-                return -1;
+
+            String[] currentSemInstructions = userInstructions.split("s/", 2);
+
+            if (currentSemInstructions.length < 2) {
+                logger.log(Level.WARNING, "Missing semester for setcurrent command.");
+                throw new EmptyInstruction("setcurrent");
             }
-            return semester;
-        } catch (NumberFormatException e) {
-            ui.showMessage("Error: Invalid format. Please enter a number (e.g., set-current-sem 3).");
-            return -1;
+
+            String semester = currentSemInstructions[1].trim();
+
+            if (semester.isEmpty()) {
+                logger.log(Level.WARNING, "Missing semester for setcurrent command.");
+                throw new EmptyInstruction("setcurrent");
+            }
+
+            if (!(semester.matches("^[a-zA-Z0-9]+$"))) {
+                logger.log(Level.WARNING, "Invalid format for setcurrent command, " +
+                        "may contain non-alphanumeric characters.");
+                throw new EmptyInstruction("setcurrent");
+            }
+
+            currentSem = semester;
+
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            logger.log(Level.WARNING, "Error parsing setcurrent command - Incorrect format " + e.getMessage());
+            throw new EmptyInstruction("setcurrent");
         }
+        return currentSem;
     }
 
     /**

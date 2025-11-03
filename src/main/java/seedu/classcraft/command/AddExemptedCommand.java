@@ -39,7 +39,7 @@ public class AddExemptedCommand extends Command {
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         try {
-            studyPlan.addCompletedModule(moduleCode, status, storage, false);
+            studyPlan.addExemptedModule(moduleCode, status, storage, false);
             ui.showMessage("Successfully added " + moduleCode + " as " + status.toString());
         } catch (Exception e) {
             ui.showMessage(e.getMessage());

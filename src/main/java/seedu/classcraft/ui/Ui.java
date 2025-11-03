@@ -44,7 +44,7 @@ public class Ui {
         System.out.println(title);
         System.out.print(line);
 
-        ArrayList<Module> completedMods = plan.getCompletedModulesList();
+        ArrayList<Module> completedMods = plan.getExemptedModulesList();
         if (completedMods != null && !completedMods.isEmpty()) {
             System.out.println("Completed / Exempted Modules:");
             for (Module mod : completedMods) {
