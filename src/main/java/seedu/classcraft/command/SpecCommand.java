@@ -17,6 +17,8 @@ import java.util.List;
  * Extends the Command abstract class and implements the executeCommand method.
  */
 public class SpecCommand extends Command {
+    private String line = "=============================================================" +
+            "====================================================================" + System.lineSeparator();
     private static final String SPEC_DATA =
         "{\"ae\": {\"prereq\": [\"EE3408C\",\"EE3431C\",\"EE4218\",\"EE4407\",\"EE4415\",\"EE5507\","
                 + "\"CG3207\",\"EE4409\",\"EE4435\",\"EE4436\",\"EE4437\",\"EE4438\"],\"EE2026\": [\"EE4415\"],"
@@ -68,7 +70,7 @@ public class SpecCommand extends Command {
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws IOException {
         try {
             JsonNode specNode = mapper.readTree(SPEC_DATA);
-            System.out.println("======================================================================");
+            System.out.println(line);
             System.out.println("These are all the mods that count towards your specialisation");
             printJsonArray(specNode.get(specToQuery).get("prereq"));
 
@@ -81,7 +83,7 @@ public class SpecCommand extends Command {
                     printJsonArray(specNode.get(specToQuery).get(key));
                 }
             }
-            System.out.println("============================================================");
+            System.out.println(line);
         } catch (IOException e) {
             System.out.println("Error reading specialisations file");
         }
