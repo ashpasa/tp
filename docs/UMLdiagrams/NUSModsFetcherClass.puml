@@ -1,0 +1,19 @@
+@startuml
+abstract class NUSmodsFetcher {
+
+}
+
+class HttpClient
+class HttpRequest
+class HttpResponse
+class URI
+class ObjectMapper
+class JsonNode
+
+NUSmodsFetcher --> HttpClient : calls
+NUSmodsFetcher --> HttpRequest : calls
+NUSmodsFetcher --> HttpResponse : calls
+NUSmodsFetcher --> URI : calls
+NUSmodsFetcher --> ObjectMapper : calls
+NUSmodsFetcher --> JsonNode : calls
+@enduml

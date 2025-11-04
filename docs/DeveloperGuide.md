@@ -90,8 +90,9 @@ and recreates the data file if it is found to be corrupted.
 semester and the inner 'layer' is the respective modules taken in that semester.
 
 A hashmap is used to store KEY:VALUE pairs of MODULE_CODE:SEMESTER for easy access to edit the 2D ArrayList.
-![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
+![StudyPlan class diagram](/UMLdiagrams/StudyPlanClass.png)
 
+When a command is executed, it interacts with the `StudyPlan` component to modify or retrieve information about the
 
 #### Design Considerations
 We decided to use a 2D array together with a Hashmap to store the modules and semesters, as we believe that it offers
@@ -109,7 +110,7 @@ When a command is executed, it interacts with the `Ui` component to display mess
 ### **Parsing user input to commands**
 
 User inputs are parsed into commands by the **`Parser`** class.
-
+![Parser class diagram](/UMLdiagrams/ParserClass.png)
 
 * **Implementation:** A new parser object is instantiated in `ClassCraft.java` to handle user inputs,
   which calls the parser constructor in `Parser.java`, passing the raw user input string to parseInstructions().
@@ -167,6 +168,12 @@ Each command class extends the abstract `Command` class.
     * `AddExemptedCommand`: Indicates module exemptions that the user has.
     * `CurrentSemCommand`: Sets the current semester the user is in (to determine completed modules and degree progress).
     * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
+
+* Below shows how the `AddCommand` class interacts with other components, with the AddCommand
+calling the `addModule()` method in `StudyPlan` to add the module, and using `Ui` to display messages to the user.
+
+![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
+
   
 #### Design Considerations
 - **Alternative 1** (current choice) : One class per command implementing an abstract execute(...) method. 
@@ -179,6 +186,8 @@ Each command class extends the abstract `Command` class.
 ### **Fetching of module data from NUSMods API**
 
 ClassCraft relies on the NUSMods API to determine module information, such as module credits, module titles, as well as prerequisites.
+
+![NUSMods API Class Diagram](/UMLdiagrams/NUSModsFetcherClass.png))
 
 * **Implementation:** The `NUSmodsFetcher.java` fetches data directly from the NUSMods API and returns each module as a JsonNode object. Each method returns a field of a specified module's `.json` file as a string, with the exception of getModuleCredits(moduleCode), which returns the field as an integer.
 Each method first attempts to fetch the module `.json` file, and throws an `NUSmodsFetcher` exception if the creation of the JsonNode object fails (i.e. if the given module code is a module that does not exist in the API)
