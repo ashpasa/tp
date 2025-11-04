@@ -1,0 +1,16 @@
+@startuml
+class StudyPlan {
+
+}
+
+class Module
+class ModuleHandler
+class ModuleStatus
+class Storage
+
+StudyPlan -->  ModuleHandler : contains
+ModuleHandler --> Module : manages
+StudyPlan --> ModuleStatus : calls
+StudyPlan --> Storage : calls
+
+@enduml
