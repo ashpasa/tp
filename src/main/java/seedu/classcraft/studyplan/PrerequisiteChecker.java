@@ -83,17 +83,13 @@ public class PrerequisiteChecker {
         logger.log(Level.INFO, "Prerequisites satisfied for module {0}", module.getModCode());
     }
 
-    private static String formatWildcardPrerequisite(String prereqText) {
-        // Remove grade requirements (e.g., ":D", ":B", etc.)
-        String cleaned = prereqText.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
-        // Replace % wildcard with descriptive text
-        cleaned = cleaned.replaceAll("%", " (or any variant)");
-        return cleaned;
-    }
-
     /**
      * Recursively evaluates the prerequisite tree
      * Returns true if prerequisites are satisfied
+     * 
+     * @param node             Current JsonNode in the prerequisite tree.
+     * @param completedModules Set of completed module codes.
+     * @return true if prerequisites are satisfied, false otherwise.
      */
     private static boolean evaluatePrereqTree(JsonNode node, Set<String> completedModules) {
         assert node != null : "JsonNode cannot be null";
@@ -283,36 +279,6 @@ public class PrerequisiteChecker {
     }
 
     /**
-     * Builds user-friendly error message
-     */
-    private static String buildErrorMessage(String moduleCode, int targetSemester, JsonNode prereqTree,
-                                            Set<String> completedModules) {
-        assert moduleCode != null : "Module code cannot be null";
-        assert prereqTree != null : "Prerequisite tree cannot be null";
-
-        StringBuilder message = new StringBuilder();
-        message.append("Cannot add ").append(moduleCode)
-                .append(" to semester ").append(targetSemester)
-                .append(".\n\n");
-
-        message.append("Required prerequisites: ")
-                .append(prettifyPrereqTree(prereqTree))
-                .append("\n\n");
-
-        if (completedModules.isEmpty()) {
-            message.append("You have not completed any prerequisite modules in earlier semesters.\n");
-        } else {
-            message.append("Completed modules: ")
-                    .append(String.join(", ", completedModules))
-                    .append("\n");
-        }
-
-        message.append("\nPlease add the required prerequisite modules to an earlier semester first.");
-
-        return message.toString();
-    }
-
-    /**
      * Converts prereqTree to human-readable format
      */
     private static String prettifyPrereqTree(JsonNode node) {
@@ -387,6 +353,8 @@ public class PrerequisiteChecker {
      * Sets logger level depending on how the program is run.
      * When running from a jar file, it disables logging.
      * Otherwise, when running from an IDE, it displays all logging messages.
+     * 
+     * @param logger The logger instance to set the level for.
      */
     public static void setLoggerLevel(Logger logger) {
         String className = "/" + logger.getClass().getName().replace('.', '/') + ".class";

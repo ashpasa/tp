@@ -89,7 +89,6 @@ public class Ui {
     }
 
     // @@author ashpasa
-
     /**
      * Displays the total module credits for a given semester or overall.
      *
@@ -165,7 +164,6 @@ public class Ui {
             System.out.println();
             System.out.println("Note: You need to satisfy these prerequisites before taking this module.");
         }
-
         System.out.print(line);
     }
 
@@ -185,7 +183,7 @@ public class Ui {
     }
 
     /**
-     * Converts prereqTree JSON to human-readable format
+     * Converts prereqTree JSON to human-readable format.
      */
     private String prettifyPrereqTree(JsonNode node) {
         if (node == null || node.isNull()) {

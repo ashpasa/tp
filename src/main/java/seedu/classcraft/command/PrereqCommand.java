@@ -24,6 +24,13 @@ public class PrereqCommand extends Command {
         logger.log(Level.FINE, "PrereqCommand created for module: {0}", moduleCode);
     }
 
+    /**
+     * Executes the prereq command to fetch and display prerequisites for a module.
+     * 
+     * @param studyPlan The study plan.
+     * @param ui        The user interface to display messages.
+     * @param storage   The storage system.
+     */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         assert studyPlan != null : "StudyPlan cannot be null";

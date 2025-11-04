@@ -71,4 +71,22 @@ public class NUSmodsFetcherTest {
         assertEquals(expectedPrerequisites, actualPrerequisites,
             "Retrieved module prerequisites should match actual");
     }
+
+    @Test
+    public void getModulePrerequisites_noPrerequisites_returnsEmptyString() throws Exception {
+        String moduleCode = "GEA1000";
+        String expectedPrerequisites = "";
+        String actualPrerequisites = NUSmodsFetcher.getModulePrerequisites(moduleCode);
+        assertEquals(expectedPrerequisites, actualPrerequisites,
+            "Modules with no prerequisites should return empty string");
+    }
+
+    @Test
+    public void getSemesterOffered_validModuleCode_returnsCorrectSemesters() throws Exception {
+        String moduleCode = "CG2111A";
+        int expectedSemesters = 2;
+        int actualSemesters = NUSmodsFetcher.getSemesterOffered(moduleCode);
+        assertEquals(expectedSemesters, actualSemesters,
+            "Retrieved semesters taught should match actual");
+    }
 }

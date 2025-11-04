@@ -15,7 +15,7 @@ public class SetCurrentSemesterCommand extends Command {
     /**
      * CurrentSemCommand constructor to create an CurrentSemCommand object.
      *
-     * @param currentSem a String object that indicates the current sem the user is in
+     * @param currentSem a String object that indicates the current sem the user is in.
      */
     public SetCurrentSemesterCommand(String currentSem) {
         super();
@@ -27,9 +27,9 @@ public class SetCurrentSemesterCommand extends Command {
      * Checks if the input is a valid semester before setting the currentSemester attribute in
      * the StudyPlan object.
      *
-     * @param studyPlan The current study plan ,including data restored from storage
-     * @param ui        The user interface to interact with the user
-     * @param storage   The storage handler to read/write data
+     * @param studyPlan The current study plan, including data restored from storage.
+     * @param ui        The user interface to interact with the user.
+     * @param storage   The storage handler to read/write data.
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {

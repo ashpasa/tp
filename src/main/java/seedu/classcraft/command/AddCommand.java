@@ -30,9 +30,9 @@ public class AddCommand extends Command {
      * and a boolean indicating if it's from a saved file.
      * Error is thrown if any exception occurs during the addition of the module.
      *
-     * @param studyPlan The current study plan ,including data restored from storage
-     * @param ui        The user interface to interact with the user
-     * @param storage   The storage handler to read/write data
+     * @param studyPlan The current study plan, including data restored from storage.
+     * @param ui        The user interface to interact with the user.
+     * @param storage   The storage handler to read/write data.
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
@@ -43,13 +43,10 @@ public class AddCommand extends Command {
             ui.showMessage("Successfully added " + moduleAddInfo[0]
                     + " to semester " + moduleAddInfo[1]);
         } catch (StudyPlanException e) {
-            // Handle prerequisite validation errors
             ui.showMessage("Prerequisite Error:\n" + e.getMessage());
         } catch (IllegalArgumentException e) {
-            // Handle invalid semester errors
             ui.showMessage("Invalid semester: " + e.getMessage());
         } catch (Exception e) {
-            // Handle other errors (API failures, etc.)
             ui.showMessage("Error adding module: " + e.getMessage());
         }
     }
