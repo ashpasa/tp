@@ -12,10 +12,13 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
+
+
 /**
  * Creates a study plan based on modules added by user
  */
 public class StudyPlan {
+    private static final int NUMBER_OF_SEMESTERS_IN_SAMPLE_PLAN = 8;
     private static final Logger LOGGER = Logger.getLogger(StudyPlan.class.getName());
     private static int totalSemesters = 8;
     private static int currentSemester = 1;
@@ -36,7 +39,7 @@ public class StudyPlan {
     HashMap<String, Integer> modules; // stores moduleCode: semester
 
     // @@author lingru
-    // --- Fields for COMPLETED/EXEMPTED modules---
+    // --- Fields for EXEMPTED modules---
     /**
      * @@author lingru
      * Stores all modules that are marked as COMPLETED or EXEMPTED.
@@ -61,14 +64,13 @@ public class StudyPlan {
         // @@author lingru
         this.exemptedModulesList = new ArrayList<>();
         this.exemptedModulesMap = new HashMap<>();
-        this.currentSemester = 1;
+        StudyPlan.currentSemester = 1;
         // @@author
     }
 
     public static int getCurrentSemester() {
         return currentSemester;
     }
-
 
     /**
      * Sets the current semester.
@@ -88,7 +90,7 @@ public class StudyPlan {
         }
 
         int modulesCompletedCount = 0;
-        int prevSemester = this.currentSemester;
+        int prevSemester = StudyPlan.currentSemester;
         StudyPlan.currentSemester = newCurrentSemester;
 
         if (!isRestore) {
@@ -107,7 +109,6 @@ public class StudyPlan {
 
         for (int i = prevSemester - 1; i < newCurrentSemester - 1; i++) {
             ArrayList<Module> semesterModules = studyPlan.get(i);
-            int currentSemesterNumber = i + 1;
 
             for (int j = semesterModules.size() - 1; j >= 0; j--) {
                 Module mod = semesterModules.get(j);
@@ -117,7 +118,6 @@ public class StudyPlan {
                 modulesCompletedCount++;
             }
         }
-
         return modulesCompletedCount;
     }
 
@@ -147,7 +147,6 @@ public class StudyPlan {
         }
 
         // @@author lingru
-        // Check if module is already marked as completed/exempted
         if (exemptedModulesMap.containsKey(module.getModCode())) {
             throw new IllegalArgumentException("Module " + module.getModCode()
                     + " is already marked as EXEMPTED.");
@@ -160,7 +159,6 @@ public class StudyPlan {
         module.setSemesterTaught(semester);
 
         // @@author lingru
-        // Set status just in case (though it should be PLANNED by default)
         module.setStatus(ModuleStatus.PLANNED);
         // @@author
 
@@ -232,20 +230,16 @@ public class StudyPlan {
         }
 
         if (semesterOffered == 3) {
-            return true; // Offered in all semesters
+            return true;
         }
 
-        // Check if targetSemester matches offering pattern
         if (semesterOffered == 1) {
-            // Offered only in odd semesters
-            return targetSemester % 2 == 1; // 1,3,5,7
+            return targetSemester % 2 == 1;
         }
 
         if (semesterOffered == 2) {
-            // Offered only in even semesters
-            return targetSemester % 2 == 0; // 2,4,6,8
+            return targetSemester % 2 == 0;
         }
-
         return false;
     }
 
@@ -310,8 +304,8 @@ public class StudyPlan {
      * Checks if the given module is a prerequisite for any other module in the study plan.
      * Returns a list of modules that depend on the given module.
      *
-     * @param moduleCode The module code to check
-     * @return List of dependent modules that have this module as a prerequisite
+     * @param moduleCode The module code to check.
+     * @return List of dependent modules that have this module as a prerequisite.
      */
     private List<String> checkForDependentModules(String moduleCode) {
         List<String> dependentModules = new ArrayList<>();
@@ -367,9 +361,9 @@ public class StudyPlan {
      * Checks if moduleCode satisfies the prerequisite requirement.
      * Handles both exact matches and wildcard patterns like "CS1010%"
      *
-     * @param moduleCode The module code to check (e.g., "CS1010")
-     * @param prereq     The prerequisite requirement (e.g., "CS1010" or "CS1010%")
-     * @return true if moduleCode matches the prerequisite
+     * @param moduleCode The module code to check (e.g., "CS1010").
+     * @param prereq     The prerequisite requirement (e.g., "CS1010" or "CS1010%").
+     * @return true if moduleCode matches the prerequisite.
      */
     private boolean isPrerequisiteMatch(String moduleCode, String prereq) {
         String cleanPrereq = prereq.replaceAll(":%[A-Z]", "").replaceAll(":[A-Z]", "");
@@ -389,7 +383,7 @@ public class StudyPlan {
     /**
      * Gets all modules in the study plan (both planned and completed)
      *
-     * @return List of all modules
+     * @return List of all modules.
      */
     private List<Module> getAllModules() {
         List<Module> allModules = new ArrayList<>();
@@ -411,7 +405,6 @@ public class StudyPlan {
      * @param isRestored Flag to prevent re-saving on load.
      * @throws Exception If module fetching fails or module is already in the plan.
      */
-
     public void addExemptedModule(String moduleCode, ModuleStatus status,
                                   Storage storage, boolean isRestored) throws Exception {
 
@@ -443,10 +436,8 @@ public class StudyPlan {
                     break;
                 }
             }
-
             modules.remove(moduleCode);
         }
-
 
         if (moduleToMove == null) {
             moduleToMove = moduleHandler.createModule(moduleCode);
@@ -468,7 +459,6 @@ public class StudyPlan {
                 storage.deleteModule(moduleCode, sem);
             }
         }
-
         LOGGER.info("Added " + moduleCode + " as " + status.toString());
     }
 
@@ -477,20 +467,17 @@ public class StudyPlan {
      * @return The progress percentage, rounded to two decimal places.
      */
     public double getDegreeProgressPercentage() {
-        if (TOTAL_MCS_FOR_GRADUATION <= 0) {
-            return 0.0;
-        }
 
         int totalSecuredMCs = getTotalSecuredMCs();
 
-        // Calculate percentage
         double percentage = ((double) totalSecuredMCs / TOTAL_MCS_FOR_GRADUATION) * 100.0;
 
-        // Format to 2 decimal places
         return Math.round(percentage * 100.0) / 100.0;
     }
 
     /**
+     * Fetches the map of completed/exempted modules.
+     * 
      * @return The HashMap of completed/exempted modules.
      */
     public HashMap<String, Module> getExemptedModulesMap() {
@@ -498,6 +485,8 @@ public class StudyPlan {
     }
 
     /**
+     * Fetches the list of completed/exempted modules.
+     * 
      * @return The ArrayList of completed/exempted modules.
      */
     public ArrayList<Module> getExemptedModulesList() {
@@ -506,6 +495,8 @@ public class StudyPlan {
 
     /**
      * @author lingru
+     * Calculates the total secured MCs from completed and exempted modules.
+     * 
      * @return Total secured MCs.
      */
     public int getTotalSecuredMCs() {
@@ -550,9 +541,8 @@ public class StudyPlan {
      * @return A StudyPlan object populated with sample modules.
      */
     public static StudyPlan createSampleStudyPlan() {
-        // Assuming CEG is an 8-semester course
-        StudyPlan samplePlan = new StudyPlan(8);
-        ModuleHandler handler = samplePlan.moduleHandler; // Use StudyPlan's internal handler
+        StudyPlan samplePlan = new StudyPlan(NUMBER_OF_SEMESTERS_IN_SAMPLE_PLAN);
+        ModuleHandler handler = samplePlan.moduleHandler;
 
         try {
 
@@ -574,8 +564,6 @@ public class StudyPlan {
             Module cs2040s = handler.createModule("CS2040S");
             samplePlan.addModule(cs2040s, 3);
 
-            // Add other core/sample modules for Semesters 3 to 8 (to be added)
-
             // @@author lingru
             // Example of adding a completed module (e.g., from poly exemption)
             // samplePlan.addCompletedModule("CS1010", ModuleStatus.EXEMPTED);
@@ -585,7 +573,6 @@ public class StudyPlan {
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error creating sample study plan module: " + e.getMessage(), e);
-            // This usually means NUSModsFetcher failed to retrieve data.
         }
 
         return samplePlan;
@@ -605,8 +592,8 @@ public class StudyPlan {
     /**
      * Calculates the total credits for a specific semester or for the entire study plan.
      *
-     * @param semesterIndex Index of the semester (0-based), with -1 returning total credits for the entire study plan
-     * @return Total credits for the specified semester or entire study plan
+     * @param semesterIndex Index of the semester (0-based), with -1 returning total credits for the entire study plan.
+     * @return Total credits for the specified semester or entire study plan.
      */
     public int calculateSemCredits(int semesterIndex) {
         numModules = 0;
@@ -632,7 +619,7 @@ public class StudyPlan {
      * Calculates the total module credits in the entire study plan.
      * This now includes BOTH planned and secured (completed/exempted) modules.
      *
-     * @return Total credits for the entire study plan
+     * @return Total credits for the entire study plan.
      */
     private int calculateTotalCredits() {
         int totalPlannedCredits = 0;
@@ -648,8 +635,9 @@ public class StudyPlan {
     }
     // @@author
 
+    // @@author Yeoh-Soo-Leong
     /**
-     * Indicates to the user which semesters have a high workload (2 or more modules than their average workload)
+     * Indicates to the user which semesters have a high workload (2 or more modules than their average workload).
      */
     public void checkStudyPlan() {
         int totalUncompletedCredits = 0;
@@ -672,6 +660,7 @@ public class StudyPlan {
             System.out.println("YAY! Your study plan is well balanced!");
         }
     }
+    // @@author
 
     /**
      * Sets logger level depending on how the program is run.

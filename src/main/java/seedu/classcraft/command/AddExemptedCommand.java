@@ -6,7 +6,7 @@ import seedu.classcraft.ui.Ui;
 import seedu.classcraft.storage.Storage;
 
 /**
- * @@author  lingru
+ * @@author lingru
  * A command to add a module as COMPLETED or EXEMPTED.
  */
 public class AddExemptedCommand extends Command {
@@ -17,8 +17,9 @@ public class AddExemptedCommand extends Command {
     /**
      * @@author lingru
      * Constructor for AddExemptedCommand.
+     * 
      * @param moduleCode The module code to add.
-     * @param status The status (must be COMPLETED or EXEMPTED).
+     * @param status     The status (must be COMPLETED or EXEMPTED).
      */
     public AddExemptedCommand(String moduleCode, ModuleStatus status) {
         super();
@@ -33,8 +34,8 @@ public class AddExemptedCommand extends Command {
      * if the module cannot be added (e.g., it already exists).
      *
      * @param studyPlan The study plan to modify.
-     * @param ui The UI to display messages to the user.
-     * @param storage The storage handler
+     * @param ui        The UI to display messages to the user.
+     * @param storage   The storage handler.
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {

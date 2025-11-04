@@ -27,9 +27,9 @@ public class DeleteCommand extends Command {
      * Uses the studyPlan's removeModule method to remove a module from the study plan,
      * which takes in module code and storage handler
      *
-     * @param studyPlan The current study plan ,including data restored from storage
-     * @param ui        The user interface to interact with the user
-     * @param storage   The storage handler to read/write data
+     * @param studyPlan The current study plan, including data restored from storage.
+     * @param ui        The user interface to interact with the user.
+     * @param storage   The storage handler to read/write data.
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {

@@ -304,7 +304,6 @@ class PrerequisiteCheckerTest {
         );
     }
 
-
     //Bridging Modules Tests
     @Test
     @DisplayName("Should ignore bridging module MA1301 in prerequisites")

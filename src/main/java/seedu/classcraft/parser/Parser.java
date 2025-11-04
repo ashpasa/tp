@@ -107,13 +107,9 @@ public class Parser {
                 return new DeleteCommand(deleteModuleCode);
             case "mc":
                 int semester = parseMC();
-                // semester - 1 is used for 0-based indexing in CalcCreditsCommand
                 return new CalcCreditsCommand(semester - 1);
 
             // @@author lingru (Start of changes for new commands)
-            /*
-             * e.g. : add-exempted CS1231
-             */
             case "add-exempted":
                 return parseAddWithStatus(ModuleStatus.EXEMPTED, "add-exempted");
 
@@ -203,7 +199,7 @@ public class Parser {
                 ui.showMessage("OOPS!!! Too many arguments provided for command '" + commandType + "'.");
                 this.commandType = "invalid";
             } catch (NullPointerException e) {
-                // This is expected if commandType is "invalid" or not in the map, do nothing.
+                logger.log(Level.SEVERE, "Command type not found in argument limits map: " + commandType);
             }
         } catch (EmptyInstruction | IllegalArgumentException e) {
             ui.showMessage(e.getMessage());
@@ -215,8 +211,8 @@ public class Parser {
     /**
      * Checks if the command is found in the CommandList enum.
      *
-     * @param instructions Array of strings containing command and instructions,
-     * @return boolean indicating if the command is found.
+     * @param instructions Array of strings containing command and instructions.
+     * @return true if the command is found, false otherwise.
      */
     private boolean isCommandFound(String[] instructions) {
         return CommandList.isCommandFound(instructions[0]);
@@ -283,13 +279,11 @@ public class Parser {
             }
 
             if (nIndex < sIndex) {
-                // n/ appears first
                 String codePart = normalized.substring(nIndex + 2, sIndex).trim();
                 String semesterPart = normalized.substring(sIndex + 2).trim();
                 moduleCode = codePart.toUpperCase();
                 semester = semesterPart;
             } else {
-                // s/ appears first
                 String semesterPart = normalized.substring(sIndex + 2, nIndex).trim();
                 String codePart = normalized.substring(nIndex + 2).trim();
                 moduleCode = codePart.toUpperCase();
@@ -503,9 +497,8 @@ public class Parser {
      * Parses the user input for the set-current command.
      * Validates the inputs before setting the currentSemester attribute in StudyPlan.
      *
-     * @return returns a String containing the current semester
-     *                  Catches EmptyInstruction exceptions and sets commandType to "invalid"
-     *                  if any required instructions/its components are missing.
+     * @return returns a String containing the current semester.
+     * @throws EmptyInstruction if parsing fails or required components are missing.
      */
     public String parseCurrentSem() throws EmptyInstruction {
         String currentSem;

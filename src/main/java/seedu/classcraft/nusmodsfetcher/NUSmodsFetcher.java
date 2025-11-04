@@ -53,7 +53,7 @@ public abstract class NUSmodsFetcher {
      * 
      * @param moduleCode The module code to fetch data for, as displayed on NUSMods.
      * @return String representing the module title.
-     * @throws NUSmodsFetcherException if fetching fails.
+     * @throws NUSmodsFetcherException
      */
     public static String getModuleTitle(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
@@ -65,7 +65,7 @@ public abstract class NUSmodsFetcher {
      * 
      * @param moduleCode The module code to fetch data for, as displayed on NUSMods.
      * @return String representing the module credits that the module counts for.
-     * @throws Exception
+     * @throws NUSmodsFetcherException
      */
     public static int getModuleCredits(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
@@ -80,7 +80,7 @@ public abstract class NUSmodsFetcher {
      * 
      * @param moduleCode The module code to fetch data for, as displayed on NUSMods.
      * @return String representing the department offering the module.
-     * @throws Exception
+     * @throws NUSmodsFetcherException
      */
     public static String getDepartment(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
@@ -92,7 +92,7 @@ public abstract class NUSmodsFetcher {
      * 
      * @param moduleCode The module code to fetch data for, as displayed on NUSMods.
      * @return String representing the faculty offering the module.
-     * @throws Exception
+     * @throws NUSmodsFetcherException
      */
     public static String getFaculty(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
@@ -104,7 +104,7 @@ public abstract class NUSmodsFetcher {
      * 
      * @param moduleCode The module code to fetch data for, as displayed on NUSMods.
      * @return The description of the module on NUSMods, as a string.
-     * @throws Exception
+     * @throws NUSmodsFetcherException
      */
     public static String getModuleDescription(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
@@ -116,7 +116,7 @@ public abstract class NUSmodsFetcher {
      * 
      * @param moduleCode The module code to fetch data for, as displayed on NUSMods.
      * @return The direct prerequisites of the module on NUSMods, as a string.
-     * @throws Exception
+     * @throws NUSmodsFetcherException
      */
     public static String getModulePrerequisites(String moduleCode) throws NUSmodsFetcherException {
         JsonNode root = fetchModuleJson(moduleCode);
