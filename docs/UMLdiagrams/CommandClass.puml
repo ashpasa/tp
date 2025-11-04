@@ -1,0 +1,16 @@
+@startuml
+class Parser {
+}
+
+
+abstract class Command
+
+class ModuleStatus
+
+Parser --> Ui : contains
+Parser --> CommandList : calls
+Parser --> ModuleStatus : calls
+Parser --> XYZCommand : creates
+Command <|-- XYZCommand
+
+@enduml

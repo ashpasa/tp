@@ -14,9 +14,9 @@ public abstract class Command {
      * Abstract method to execute a command.
      * Command classes extending this class must implement executeCommand.
      *
-     * @param studyPlan The current study plan ,including data restored from storage
-     * @param ui        The user interface to interact with the user
-     * @param storage   The storage handler to read/write data
+     * @param studyPlan The current study plan, including data restored from storage.
+     * @param ui        The user interface to interact with the user.
+     * @param storage   The storage handler to read/write data.
      */
     public abstract void executeCommand(StudyPlan studyPlan,
                                         Ui ui,

@@ -26,7 +26,6 @@ public class ModuleHandler {
     private static final Logger LOGGER = Logger.getLogger(ModuleHandler.class.getName());
     private HashMap<String, Module> modules;
 
-
     public ModuleHandler() {
         setLoggerLevel();
         this.modules = new HashMap<>();
@@ -36,7 +35,7 @@ public class ModuleHandler {
      * Gets a module by module code from the modules map.
      *
      * @param moduleCode The module code to retrieve
-     * @return The Module object if found, null otherwise
+     * @return The Module object if found, null otherwise.
      */
     public Module getModule(String moduleCode) {
         return modules.get(moduleCode.toUpperCase());

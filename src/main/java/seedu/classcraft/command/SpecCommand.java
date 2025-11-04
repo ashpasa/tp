@@ -50,7 +50,7 @@ public class SpecCommand extends Command {
     /**
      * SpecCommand constructor to create a SpecCommand object.
      *
-     * @param specName a shortform of the specialisation name
+     * @param specName a shortform of the specialisation name.
      */
     public SpecCommand(String specName) {
         super();
@@ -65,9 +65,9 @@ public class SpecCommand extends Command {
      * Reads data from the JsonNode object that stores the data for the 5 CEG specialisations.
      * Then calls printJsonArray to print the Json Array objects nicely.
      *
-     * @param studyPlan The current study plan ,including data restored from storage
-     * @param ui        The user interface to interact with the user
-     * @param storage   The storage handler to read/write data
+     * @param studyPlan The current study plan ,including data restored from storage.
+     * @param ui        The user interface to interact with the user.
+     * @param storage   The storage handler to read/write data.
      * @throws IOException
      */
     @Override

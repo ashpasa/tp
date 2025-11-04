@@ -154,7 +154,6 @@ public class Storage {
                 recreateFile(filePath);
                 return new StudyPlan(totalSemesters);
             }
-
             populateStudyPlan(storage, studyPlan);
             System.out.println("Data restored successfully from " + dataFile);
         } catch (IOException e) {
@@ -228,7 +227,6 @@ public class Storage {
                                 "File format is invalid. Recreating a new file.");
                         return true;
                     }
-
 
                     ModuleStatus status = parts.length > 1 ? ModuleStatus.valueOf(parts[1]) :
                             ModuleStatus.PLANNED;
@@ -311,7 +309,6 @@ public class Storage {
                         tempStudyPlan.addModule(newModule, actualSemester);
                     }
 
-
                     if (module.split(" ").length > 1) {
                         ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
                                 " contains invalid spaces.\n" +
@@ -329,7 +326,6 @@ public class Storage {
                         lastCompletedSem = i;
                     }
                 }
-
             }
 
 
@@ -344,7 +340,6 @@ public class Storage {
                     return true;
                 }
             }
-
 
         } catch (IOException e) {
             logger.log(Level.WARNING, "File format is incorrect " + e.getMessage());
@@ -362,6 +357,13 @@ public class Storage {
         createFile();
     }
 
+    /**
+     * Populates the StudyPlan object with data from the data file.
+     * 
+     * @param storage   The storage handler to read/write data.
+     * @param studyPlan The StudyPlan object to populate.
+     * @throws IOException
+     */
     public void populateStudyPlan(Storage storage, StudyPlan studyPlan) throws IOException {
         Path dataFile = Paths.get(this.dataFile);
         int countCurrentSem = 1;

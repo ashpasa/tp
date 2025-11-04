@@ -38,7 +38,7 @@ The bulk of ClassCraft's functionality is handled by the following components:
 
 ### How the architecture components interact with each other
 
-### Command component
+### Command Component
 
 The `command` package contains all the commands that can be carried out by the user.
 Each command is represented by a class that extends the abstract `Command` class.
@@ -47,7 +47,7 @@ This is how the 'AddCommand' class interacts with other components:
 
 When a command is executed, it interacts with the `Studyplan`, `UI`, and `Storage` components to perform its function.
 
-### NUSModsFetcher component
+### NUSModsFetcher Component
 
 `NUSmodsFetcher.java` is responsible for fetching the endpoints of the NUSMods API, which stores module information as
 `.json` files,
@@ -57,7 +57,7 @@ in order to obtain information about modules.
 `JsonNode`.
 The various methods then return the respective parts of the the `.json` file as required by the user.
 
-### Parser component
+### Parser Component
 
 The `Parser` class, under `Parser` package 
 is responsible for parsing user input into commands that can be executed by the application.
@@ -67,7 +67,7 @@ the `Parser` class processes the input string to identify the command type and i
 respective arguments. It checks whether the command is a single-word or double-word command
 and extracts the necessary information, and ensures that invalid inputs are handled gracefully.
 
-### Storage component
+### Storage Component
 
 The `Storage` class, under the `storage` package, is responsible for saving and loading the user's study plan to and
 from a local file.
@@ -78,7 +78,7 @@ study plan, and update the file when modules are added or deleted.
 It also ensures that the data format is maintained correctly when reading from the file, 
 and recreates the data file if it is found to be corrupted.
 
-### Studyplan component
+### Studyplan Component
 
 `StudyPlan.java` is responsible for maintaining the study plan created by the user.
 
@@ -89,9 +89,13 @@ and recreates the data file if it is found to be corrupted.
 `StudyPlan` adds `Module` objects to a 2D ArrayList<ArrayList<Module>>, where the first 'layer' is the respective
 semester and the inner 'layer' is the respective modules taken in that semester.
 
-A hashmap is used to store KEY:VALUE pairs of MODULE_CODE:SEMESTER for easy access to edit the 2D ArrayList.
-![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
+`PrerequisiteChecker` interacts with `NUSModsFetcher` to read in Pre-Requisite data from the API to extract out the 
+prerequisite tree and checks if they are met.
 
+A hashmap is used to store KEY:VALUE pairs of MODULE_CODE:SEMESTER for easy access to edit the 2D ArrayList.
+![StudyPlan class diagram](/UMLdiagrams/StudyPlanClass.png)
+
+When a command is executed, it interacts with the `StudyPlan` component to modify or retrieve information about the
 
 #### Design Considerations
 We decided to use a 2D array together with a Hashmap to store the modules and semesters, as we believe that it offers
@@ -106,10 +110,10 @@ When a command is executed, it interacts with the `Ui` component to display mess
 
 ## Implementation
 
-### **Parsing user input to commands**
+### **Parsing user input to Commands**
 
 User inputs are parsed into commands by the **`Parser`** class.
-
+![Parser class diagram](/UMLdiagrams/ParserClass.png)
 
 * **Implementation:** A new parser object is instantiated in `ClassCraft.java` to handle user inputs,
   which calls the parser constructor in `Parser.java`, passing the raw user input string to parseInstructions().
@@ -167,6 +171,12 @@ Each command class extends the abstract `Command` class.
     * `AddExemptedCommand`: Indicates module exemptions that the user has.
     * `CurrentSemCommand`: Sets the current semester the user is in (to determine completed modules and degree progress).
     * `InvalidCommand`: Handles unrecognized commands by displaying an error message.
+
+* Below shows how the `AddCommand` class interacts with other components, with the AddCommand
+calling the `addModule()` method in `StudyPlan` to add the module, and using `Ui` to display messages to the user.
+
+![Add command sequence diagram](/UMLdiagrams/AddCommandSequence.png)
+
   
 #### Design Considerations
 - **Alternative 1** (current choice) : One class per command implementing an abstract execute(...) method. 
@@ -176,9 +186,12 @@ Each command class extends the abstract `Command` class.
   - *Pros:* Fewer classes, simpler structure.
   - *Cons:* Harder to maintain and extend, violates single responsibility principle.
 
-### **Fetching of module data from NUSMods API**
+### **Fetching of Module Data from NUSMods API**
 
-ClassCraft relies on the NUSMods API to determine module information, such as module credits, module titles, as well as prerequisites.
+ClassCraft relies on the NUSMods API to determine module information, such as module credits, module titles, as well as 
+prerequisites.
+
+![NUSMods API Class Diagram](/UMLdiagrams/NUSModsFetcherClass.png))
 
 * **Implementation:** The `NUSmodsFetcher.java` fetches data directly from the NUSMods API and returns each module as a JsonNode object. Each method returns a field of a specified module's `.json` file as a string, with the exception of getModuleCredits(moduleCode), which returns the field as an integer.
 Each method first attempts to fetch the module `.json` file, and throws an `NUSmodsFetcher` exception if the creation of the JsonNode object fails (i.e. if the given module code is a module that does not exist in the API)
@@ -205,7 +218,7 @@ As the programme only fetches data from one source (NUSMods API), `NUSmodsFetche
 
 Certain modules in the NUSMods API store their prerequisite data in a unique format. We have tested extensively for these exceptional cases and implemented fixes for those we have identified, but due to the size of the database, please be informed that few modules may not have their prerequisites correctly identified by ClassCraft.
 
-### **Storing current study plan**
+### **Storing current Study Plan**
 
 The current study plan created by the user is stored into a local ".txt" file.
 file using the **`Storage`** class, and restored upon application launch.
@@ -265,6 +278,41 @@ and includes a factory method to generate a pre-set sample plan.
   factory method (`createSampleStudyPlan`) centralizes the knowledge of how a plan is structured and
   ensures that the sample plan is created using the same internal logic (`addModule`,
   `ModuleHandler`) as a user-generated plan.
+
+### **Checking Module Pre-Requisites**
+
+The **`PrerequisiteChecker`** class manages the data extracted from the NUSMods API and manages relevant pre-requisite tasks.
+
+* **Implementation:** Extracts `PrereqTree` from the NUSMods API JsonNode and uses helper functions to clean up the data to be ready for display.
+
+* **Key Methods:**
+    * `validatePrerequisites((Module module, int targetSemester, StudyPlan studyPlan, boolean isRestore))`: Takes in a module and its semester and checks previous semesters for satisfaction of its pre-requisites.
+
+* **Helper Methods**
+    * `evaluatePrereqTree(JsonNode node, Set<String> completedModules)`:
+      Recursively evaluates the prerequisite tree. Returns true if prerequisites are satisfied.
+    * `evaluateNOfNode(JsonNode nOfNode, Set<String> completedModules)`
+      Evaluate pre-requisites that require a certain number of modules from a list of modules.
+    * `evaluateOrNode(JsonNode orNode, Set<String> completedModules)`
+      Evaluate pre-requisites that require either modules.
+    * `evaluateAndNode(JsonNode andNode, Set<String> completedModules)`
+      Evaluate pre-requisites that require multiple modules all satisfied.
+    * `countCompletedModules(JsonNode moduleList, Set<String> completedModules)`
+      Returns the number of completed modules.
+    * `isNodeCompleted(JsonNode mod, Set<String> completedModules)`
+      Checks if the node is completed.
+    * `isModuleCompleted(String moduleText, Set<String> completedModules)`
+      Checks if the module is completed.
+    * `isValidModuleCode(String moduleCode)`
+      Checks if module code is valid.
+    * `isBridgingModule(String moduleCode)`
+      Checks if a module is a bridging module.
+    * `prettifyPrereqTree(JsonNode node)`
+      Formats the PrereqTree to make it ready for display to the user.
+    * `prettifyLogicNode(JsonNode logicNode, String separator)`
+      Formats the logic nodes to make it ready for display to the user.
+    * `prettifyModuleCode(String moduleText)`
+      Formats the module codes to make it ready for display to the user.
 
 ### **Checking Module Credits**
 

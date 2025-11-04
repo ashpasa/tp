@@ -10,6 +10,9 @@ import seedu.classcraft.storage.Storage;
  */
 public class ViewProgressCommand extends Command {
 
+    /**
+     * Constructor for ViewProgressCommand.
+     */
     public ViewProgressCommand() {
         super();
     }
@@ -20,8 +23,8 @@ public class ViewProgressCommand extends Command {
      * Uses the Ui.showMessage method to format the output.
      *
      * @param studyPlan The study plan to get data from.
-     * @param ui The UI to display the result.
-     * @param storage The storage handler
+     * @param ui        The UI to display the result.
+     * @param storage   The storage handler.
      */
     @Override
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) throws Exception {

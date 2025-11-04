@@ -38,11 +38,12 @@ public class Module {
         this.prerequisitesCount = 0;
 
         // @@author lingru
-        // By default, a newly created module is considered 'PLANNED'
         this.status = ModuleStatus.PLANNED;
+        // @@author
 
     }
 
+    // @@author Yeoh-Soo-Leong
     public int getPrerequisitesCount() {
         return prerequisitesCount;
     }
@@ -82,6 +83,7 @@ public class Module {
     public int getDefaultSemester() {
         return defaultSemester;
     }
+    // @@author
 
     // @@author lingru
     /**
@@ -103,6 +105,7 @@ public class Module {
     }
     // @@author
 
+    // @@author seantkj
     public JsonNode getPrereqTree() {
         return prereqTree;
     }
@@ -121,5 +124,6 @@ public class Module {
         String prereqsString = String.join(", ", prereqs);
         return " (Prerequisites: " + prereqsString + ")";
     }
+    // @@author
 }
 
