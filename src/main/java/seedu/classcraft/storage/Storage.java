@@ -234,11 +234,11 @@ public class Storage {
                             ModuleStatus.PLANNED;
                     tempStudyPlan.addExemptedModule(moduleCode, status, this, true);
                 } catch (StudyPlanException e) {
-                // Catch StudyPlanException (e.g., module with prerequisites)
-                ui.showMessage("Exempted module '" + module + "' is invalid.\n" +
-                        "File format is invalid. Recreating a new file.");
-                logger.log(Level.WARNING, "Invalid exempted module: " + e.getMessage());
-                return true;
+                    // Catch StudyPlanException (e.g., module with prerequisites)
+                    ui.showMessage("Exempted module '" + module + "' is invalid.\n" +
+                            "File format is invalid. Recreating a new file.");
+                    logger.log(Level.WARNING, "Invalid exempted module: " + e.getMessage());
+                    return true;
                 } catch (Exception e) {
                     ui.showMessage("Failed to restore exempted module ");
                     logger.log(Level.WARNING, "Failed to restore exempted module "
