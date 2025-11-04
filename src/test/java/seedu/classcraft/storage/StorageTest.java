@@ -86,11 +86,11 @@ class StorageTest {
         storage = new Storage(TEST_FILE_PATH);
 
         storage.appendToFile("CS1010", 1);
-        storage.appendToFile("MA1521", 2);
+        storage.appendToFile("MA1511", 2);
         StudyPlan restoredPlan = storage.restoreData(storage);
 
         assertTrue(restoredPlan.getStudyPlan().get(0).stream().anyMatch(m -> m.getModCode().equals("CS1010")));
-        assertTrue(restoredPlan.getStudyPlan().get(1).stream().anyMatch(m -> m.getModCode().equals("MA1521")));
+        assertTrue(restoredPlan.getStudyPlan().get(1).stream().anyMatch(m -> m.getModCode().equals("MA1511")));
 
 
     }

@@ -414,6 +414,7 @@ public class StudyPlan {
 
     public void addExemptedModule(String moduleCode, ModuleStatus status,
                                   Storage storage, boolean isRestored) throws Exception {
+
         if (status == ModuleStatus.PLANNED) {
             throw new IllegalArgumentException("Use addModule() for planned modules.");
         }
@@ -449,6 +450,12 @@ public class StudyPlan {
 
         if (moduleToMove == null) {
             moduleToMove = moduleHandler.createModule(moduleCode);
+        }
+
+        JsonNode prereqTree = moduleToMove.getPrereqTree();
+        if (!(prereqTree == null || prereqTree.isNull() || prereqTree.isMissingNode())) {
+            throw new StudyPlanException("Cannot exempt module " + moduleCode.toUpperCase() +
+                    ". Only modules without prerequisites can be exempted.");
         }
 
         moduleToMove.setStatus(status);

@@ -33,6 +33,16 @@ public class ModuleHandler {
     }
 
     /**
+     * Gets a module by module code from the modules map.
+     *
+     * @param moduleCode The module code to retrieve
+     * @return The Module object if found, null otherwise
+     */
+    public Module getModule(String moduleCode) {
+        return modules.get(moduleCode.toUpperCase());
+    }
+
+    /**
      * Creates a Module object by fetching details from NUSMods API.
      *
      * @param moduleCode The module code of the module to be created.
