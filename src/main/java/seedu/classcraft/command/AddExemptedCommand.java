@@ -40,10 +40,11 @@ public class AddExemptedCommand extends Command {
     public void executeCommand(StudyPlan studyPlan, Ui ui, Storage storage) {
         try {
             studyPlan.addExemptedModule(moduleCode, status, storage, false);
-            ui.showMessage("Successfully added " + moduleCode + " as " + status.toString());
+            ui.showMessage("Successfully added " + moduleCode.toUpperCase() + " as " + status.toString());
         } catch (Exception e) {
             ui.showMessage(e.getMessage());
         }
+
     }
 }
 

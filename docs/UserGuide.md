@@ -147,6 +147,9 @@ Example: `mc 4`
 ### Check Study Plan: `check`
 
 Checks the workload of the study plan and detects any semesters with unusually high workload.
+>This function checks the workload of each semester compared to the average workload of the remaining semesters.
+> 
+> i.e. if the average workload is only 4 MCs, a sem with 12 MCs would be flagged as high workload.
 
 Format: `check`
 
@@ -189,8 +192,8 @@ If you wish to edit the file, please follow the format below:
 e.g., `1 - CS1010, MA1511,`
 (":COMPLETED" is only necessary if the modules in that semester have been completed)
 
-`EXEMPTED - {MODULE_CODE1}, {MODULE_CODE2}, ...`
-e.g., `EXEMPTED - CS1231, GEQ1000,`
+`EXEMPTED - {MODULE_CODE1}:EXEMPTED, {MODULE_CODE2}:EXEMPTED, ...`
+e.g., `EXEMPTED - CS1231:EXEMPTED, GEQ1000:EXEMPTED,`
 
 where `SEMESTER_NUMBER` is an integer from 1 to 8 representing the semester,
 and `MODULE_CODE` is the code of a valid module in that semester.
