@@ -243,6 +243,7 @@ public class Storage {
                     ui.showMessage("Failed to restore exempted module ");
                     logger.log(Level.WARNING, "Failed to restore exempted module "
                             + module + ": " + e.getMessage());
+                    return true;
                 }
 
             }
@@ -310,13 +311,6 @@ public class Storage {
                         tempStudyPlan.addModule(newModule, actualSemester);
                     }
 
-                    Module tempModule = moduleHandler.createModule(module);
-                    com.fasterxml.jackson.databind.JsonNode prereqTree = tempModule.getPrereqTree();
-                    if (!(prereqTree == null || prereqTree.isNull() || prereqTree.isMissingNode())) {
-                        ui.showMessage("Exempted module '" + module + "' has prerequisites.\n" +
-                                "File format is invalid. Recreating a new file.");
-                        return true;
-                    }
 
                     if (module.split(" ").length > 1) {
                         ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
