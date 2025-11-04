@@ -203,7 +203,7 @@ file using the **`Storage`** class, and restored upon application launch.
 
 #### Design Considerations
 - **Alternative 1** (current choice) : Encapsulate file handling in a Storage class with methods
-- like createFile(), restoreData().
+like createFile(), restoreData().
   - *Pros:* Promotes single responsibility, easier future upgrades.
   - *Cons:* Increased code complexity and performance overhead.
 - **Alternative 2** : Direct file reads and writes scattered in application logic.
@@ -383,7 +383,7 @@ If the file is edited manually, ensure that the format is maintained as
 
 (":COMPLETED" is only necessary if the modules in that semester have been completed)
  
-`EXEMPTED - {MODULE_CODE1}, {MODULE_CODE2}, ...`
+`EXEMPTED - {MODULE_CODE1}:EXEMPTED, {MODULE_CODE2}:EXEMPTED, ...`
  
 
 
