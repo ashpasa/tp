@@ -36,7 +36,6 @@ public class Storage {
     private StudyPlan studyPlan;
     private ModuleHandler moduleHandler = new ModuleHandler();
 
-
     /**
      * Constructor for Storage class.
      * Initializes the storage with the specified data file path.
@@ -72,7 +71,6 @@ public class Storage {
         }
 
     }
-
 
     /**
      * Method to create a file at the specified file path.
@@ -113,7 +111,6 @@ public class Storage {
         }
 
     }
-
 
     /**
      * Deletes a module code from the specified semester in the data file.
@@ -157,6 +154,7 @@ public class Storage {
                 recreateFile(filePath);
                 return new StudyPlan(totalSemesters);
             }
+
             populateStudyPlan(storage, studyPlan);
             System.out.println("Data restored successfully from " + dataFile);
         } catch (IOException e) {
@@ -223,9 +221,24 @@ public class Storage {
                         return true;
                     }
 
+                    Module tempModule = moduleHandler.createModule(moduleCode);
+                    com.fasterxml.jackson.databind.JsonNode prereqTree = tempModule.getPrereqTree();
+                    if (!(prereqTree == null || prereqTree.isNull() || prereqTree.isMissingNode())) {
+                        ui.showMessage("Exempted module '" + moduleCode + "' has prerequisites.\n" +
+                                "File format is invalid. Recreating a new file.");
+                        return true;
+                    }
+
+
                     ModuleStatus status = parts.length > 1 ? ModuleStatus.valueOf(parts[1]) :
                             ModuleStatus.PLANNED;
                     tempStudyPlan.addExemptedModule(moduleCode, status, this, true);
+                } catch (StudyPlanException e) {
+                // Catch StudyPlanException (e.g., module with prerequisites)
+                ui.showMessage("Exempted module '" + module + "' is invalid.\n" +
+                        "File format is invalid. Recreating a new file.");
+                logger.log(Level.WARNING, "Invalid exempted module: " + e.getMessage());
+                return true;
                 } catch (Exception e) {
                     ui.showMessage("Failed to restore exempted module ");
                     logger.log(Level.WARNING, "Failed to restore exempted module "
@@ -297,6 +310,14 @@ public class Storage {
                         tempStudyPlan.addModule(newModule, actualSemester);
                     }
 
+                    Module tempModule = moduleHandler.createModule(module);
+                    com.fasterxml.jackson.databind.JsonNode prereqTree = tempModule.getPrereqTree();
+                    if (!(prereqTree == null || prereqTree.isNull() || prereqTree.isMissingNode())) {
+                        ui.showMessage("Exempted module '" + module + "' has prerequisites.\n" +
+                                "File format is invalid. Recreating a new file.");
+                        return true;
+                    }
+
                     if (module.split(" ").length > 1) {
                         ui.showMessage("Module code '" + module + "' in line " + (i + 1) +
                                 " contains invalid spaces.\n" +
@@ -341,7 +362,6 @@ public class Storage {
         }
         return false;
     }
-
 
     private void recreateFile(Path filePath) throws IOException {
         Files.deleteIfExists(filePath);
@@ -479,7 +499,6 @@ public class Storage {
             System.out.println("Oh no! I was not able to update the file: " + e.getMessage());
         }
     }
-
 
     /**
      * Appends a secured module to the data file.
