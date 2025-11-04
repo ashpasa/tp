@@ -47,7 +47,7 @@ public class Ui {
 
         ArrayList<Module> completedMods = plan.getExemptedModulesList();
         if (completedMods != null && !completedMods.isEmpty()) {
-            System.out.println("Completed / Exempted Modules:");
+            System.out.println("Exempted Modules:");
             for (Module mod : completedMods) {
                 System.out.println("  - " + mod.getModCode() + " (" + mod.getModName() + ") - "
                         + mod.getStatus().toString());
