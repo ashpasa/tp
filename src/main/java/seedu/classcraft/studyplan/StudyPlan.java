@@ -495,7 +495,6 @@ public class StudyPlan {
 
     /**
      * @author lingru
-     * Calculates the total secured MCs from completed and exempted modules.
      * 
      * @return Total secured MCs.
      */
